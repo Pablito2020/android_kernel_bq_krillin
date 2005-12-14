@@ -462,7 +462,7 @@ config TCP_CONG_BIC
 
 config TCP_CONG_CUBIC
 	tristate "CUBIC TCP"
-	default y
+	default m
 	---help---
 	This is version 2.0 of BIC-TCP which uses a cubic growth function
 	among other techniques.
