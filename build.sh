@@ -47,8 +47,20 @@ echo -e "${orange}#       THANKS TO: ASSUSDAN, AND GUYS OF 4PDA      #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 
-# Export google 4.8 toolchain
+# If the google toolchain 4.8 doesn't exist, clone it. 
+# If exists, export the toolchain path
+if [ ! -f ../arm-eabi-4.8/bin/arm-eabi- ]
+then
+    echo -e "####################################"
+    echo -e "#   GOOGLE TOOLCHAIN NOT FOUND!    #"
+    echo -e "####################################"
+cd ..
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
+cd android_kernel_bq_krillin
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
+else
+export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
+fi
 
 # User and Build Host
 export KBUILD_BUILD_USER=pablito
