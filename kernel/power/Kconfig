@@ -49,6 +49,10 @@ config FB_EARLYSUSPEND
 	depends on EARLYSUSPEND
 	default y
 	select HAS_EARLYSUSPEND
+
+config POWERSUSPEND
+	bool "Power suspend"
+	default n
 	---help---
 	  Call early suspend handlers when the user requested sleep state
 	  changes.
