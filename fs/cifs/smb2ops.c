@@ -558,6 +558,12 @@ smb2_new_lease_key(struct cifs_fid *fid)
 	get_random_bytes(fid->lease_key, SMB2_LEASE_KEY_SIZE);
 }
 
+static bool
+smb2_dir_needs_close(struct cifsFileInfo *cfile)
+{
+	return !cfile->invalidHandle;
+}
+
 struct smb_version_operations smb21_operations = {
 	.compare_fids = smb2_compare_fids,
 	.setup_request = smb2_setup_request,
@@ -622,6 +628,7 @@ struct smb_version_operations smb21_operations = {
 	.set_lease_key = smb2_set_lease_key,
 	.new_lease_key = smb2_new_lease_key,
 	.calc_signature = smb2_calc_signature,
+	.dir_needs_close = smb2_dir_needs_close,
 };
 
 
@@ -689,6 +696,7 @@ struct smb_version_operations smb30_operations = {
 	.set_lease_key = smb2_set_lease_key,
 	.new_lease_key = smb2_new_lease_key,
 	.calc_signature = smb3_calc_signature,
+	.dir_needs_close = smb2_dir_needs_close,
 };
 
 struct smb_version_values smb20_values = {
