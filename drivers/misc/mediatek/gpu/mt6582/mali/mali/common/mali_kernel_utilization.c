@@ -40,7 +40,7 @@ static u32 last_utilization_gpu = 0 ;
 static u32 last_utilization_gp = 0 ;
 static u32 last_utilization_pp = 0 ;
 
-static u32 mali_utilization_timeout = 1000;
+static u32 mali_utilization_timeout = 100;
 void (*mali_utilization_callback)(struct mali_gpu_utilization_data *data) = NULL;
 #if defined(CONFIG_MALI400_POWER_PERFORMANCE_POLICY)
 extern void mali_power_performance_policy_callback(struct mali_gpu_utilization_data *data);
