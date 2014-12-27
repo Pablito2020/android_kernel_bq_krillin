@@ -10,10 +10,6 @@
 #include <linux/mutex.h>
 #include <linux/pm_wakeup.h>
 
-#ifdef CONFIG_POWERSUSPEND
-#include <linux/powersuspend.h>
-#endif
-
 #include "power.h"
 
 //<20130327> <marc.huang> add autosleep dubug log
@@ -165,18 +161,10 @@ int pm_autosleep_set_state(suspend_state_t state)
 		autosleep_log("pm_wakep_autosleep_enabled(true)\n");
 		pm_wakep_autosleep_enabled(true);
 		queue_up_suspend_work();
-#ifdef CONFIG_POWERSUSPEND
-		// Yank555.lu : add hook to handle powersuspend tasks (sleep)
-		set_power_suspend_state_autosleep_hook(POWER_SUSPEND_ACTIVE);
-#endif
 	} else {
 		//<20130327> <marc.huang> add autosleep dubug log
 		autosleep_log("pm_wakep_autosleep_enabled(false)\n");
 		pm_wakep_autosleep_enabled(false);
-#ifdef CONFIG_POWERSUSPEND
-		// Yank555.lu : add hook to handle powersuspend tasks (wakeup)
-		set_power_suspend_state_autosleep_hook(POWER_SUSPEND_INACTIVE);
-#endif
 	}
 
 	mutex_unlock(&autosleep_lock);
