@@ -1675,59 +1675,59 @@ static int set_md_runtime(int md_id,
 
 int ccci_send_run_time_data(int md_id)
 {
-    int ret=0;
-    md_ctl_block_t                *ctl_b;
-    modem_runtime_info_tag_t    runtime_tag;
-    ccci_msg_t                    msg;
-    modem_runtime_t                *runtime;
+	int ret=0;
+	md_ctl_block_t				*ctl_b;
+	modem_runtime_info_tag_t	runtime_tag;
+	ccci_msg_t					msg;
+	modem_runtime_t				*runtime;
 
-    ctl_b = md_ctlb[md_id];
-    if(ctl_b == NULL) {
-        return -CCCI_ERR_FATAL_ERR;
-    }
+	ctl_b = md_ctlb[md_id];
+	if(ctl_b == NULL) {
+		return -CCCI_ERR_FATAL_ERR;
+	}
 
-    /* Set runtime data and echo start-boot command */
-    //CCCI_MSG_INF(md_id, "ctl", "set modem runtime\n");
-    runtime = (modem_runtime_t*)(ctl_b->smem_table->ccci_md_runtime_data_smem_base_virt);
-    ret = set_md_runtime(md_id, runtime, &runtime_tag);
-    if (ret < 0) {
-        CCCI_MSG_INF(md_id, "ctl", "set MODEM runtime data fail\n");
-        return ret;
-    }
+	/* Set runtime data and echo start-boot command */
+	//CCCI_MSG_INF(md_id, "ctl", "set modem runtime\n");
+	runtime = (modem_runtime_t*)(ctl_b->smem_table->ccci_md_runtime_data_smem_base_virt);
+	ret = set_md_runtime(md_id, runtime, &runtime_tag);
+	if (ret < 0) {
+		CCCI_MSG_INF(md_id, "ctl", "set MODEM runtime data fail\n");
+		return ret;
+	}
 
-    //if(ctl_b->is_first_boot) {
-        //CCCI_MSG_INF(md_id, "ctl", "dump md%d runtime data\n", md_id+1);
-        ccci_dump_runtime_data(md_id, runtime, ctl_b->smem_table);
-    //}
+	//if(ctl_b->is_first_boot) {
+		//CCCI_MSG_INF(md_id, "ctl", "dump md%d runtime data\n", md_id+1);
+		ccci_dump_runtime_data(md_id, runtime, ctl_b->smem_table);
+	//}
 
-    ret = ccci_write_runtime_data(md_id, (unsigned char*)&runtime_tag, sizeof(modem_runtime_info_tag_t) );
-    if (ret < 0) {
-        CCCI_MSG_INF(md_id, "ctl", "fail to write MODEM runtime data(%d)\n", ret);
-        return ret;
-    }
+	ret = ccci_write_runtime_data(md_id, (unsigned char*)&runtime_tag, sizeof(modem_runtime_info_tag_t) );
+	if (ret < 0) {
+		CCCI_MSG_INF(md_id, "ctl", "fail to write MODEM runtime data(%d)\n", ret);
+		return ret;
+	}
 
-    msg.magic = 0xFFFFFFFF;
-    msg.id = MD_INIT_START_BOOT;
-    msg.channel = CCCI_CONTROL_TX;
-    msg.reserved = MD_INIT_CHK_ID;
-    md_boot_up_additional_operation(md_id);
-    mb();
-    
-    ret = ccci_message_send(md_id, &msg, 1);
-    if (ret != sizeof(msg)) {
-        CCCI_MSG_INF(md_id, "ctl", "fail to write CCCI_CONTROL_TX(%d)\n", ret);
-        return ret;
-    }
-    
-    if ((get_debug_mode_flag()&(DBG_FLAG_JTAG|DBG_FLAG_DEBUG))==0)
+	msg.magic = 0xFFFFFFFF;
+	msg.id = MD_INIT_START_BOOT;
+	msg.channel = CCCI_CONTROL_TX;
+	msg.reserved = MD_INIT_CHK_ID;
+	md_boot_up_additional_operation(md_id);
+	mb();
+	
+	ret = ccci_message_send(md_id, &msg, 1);
+	if (ret != sizeof(msg)) {
+		CCCI_MSG_INF(md_id, "ctl", "fail to write CCCI_CONTROL_TX(%d)\n", ret);
+		return ret;
+	}
+	
+	if ((get_debug_mode_flag()&(DBG_FLAG_JTAG|DBG_FLAG_DEBUG))==0)
 		mod_timer(&ctl_b->md_boot_up_check_timer, jiffies+30*HZ);
-    
-    CCCI_MSG_INF(md_id, "ctl", "wait for NORMAL_BOOT_ID @ %d\n", get_curr_md_state(md_id));
+	
+	CCCI_MSG_INF(md_id, "ctl", "wait for NORMAL_BOOT_ID @ %d\n", get_curr_md_state(md_id));
 
-    //prepare md boot up env, such as set mpu protection
-    md_env_setup_before_ready(md_id);
+	//prepare md boot up env, such as set mpu protection
+	md_env_setup_before_ready(md_id);
 
-    return 0;
+	return 0;
 }
 
 int ccci_set_reload_modem(int md_id)
