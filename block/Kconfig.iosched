@@ -82,6 +82,13 @@ config IOSCHED_BFQ
 	  applications. If compiled built-in (saying Y here), BFQ can
 	  be configured to support hierarchical scheduling.
 
+config IOSCHED_FIOPS
+	tristate "FIOPS I/O scheduler"
+	default y
+	---help---
+	Requests are chosen according to SSTF with a penalty of rev_penalty
+	for switching head direction.
+
 config CGROUP_BFQIO
 	bool "BFQ hierarchical scheduling support"
 	depends on CGROUPS && IOSCHED_BFQ=y
@@ -122,6 +129,9 @@ choice
 	config DEFAULT_FIFO
 		bool "FIFO" if IOSCHED_FIFO=y
 
+	config DEFAULT_FIOPS
+		bool "FIOPS" if IOSCHED_FIOPS=y
+
 endchoice
 
 config DEFAULT_IOSCHED
@@ -134,6 +144,7 @@ config DEFAULT_IOSCHED
 	default "sio" if DEFAULT_SIO
 	default "zen" if DEFAULT_ZEN
 	default "fifo" if DEFAULT_FIFO
+	default "fiops" if DEFAULT_FIOPS
 
 endmenu
 
