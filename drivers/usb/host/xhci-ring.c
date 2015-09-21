@@ -3586,11 +3586,13 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
 		field |= 0x1;
 
 	/* xHCI 1.0 6.4.1.2.1: Transfer Type field */
-#ifdef CONFIG_MTK_XHCI
+/*#ifdef CONFIG_MTK_XHCI
 	if(1){
 #else
 	if (xhci->hci_version == 0x100) {
-#endif
+#endif*/
+	/* xHCI 1.0/1.1 6.4.1.2.1: Transfer Type field */
+	if (xhci->hci_version >= 0x100) {
 		if (urb->transfer_buffer_length > 0) {
 			if (setup->bRequestType & USB_DIR_IN)
 				field |= TRB_TX_TYPE(TRB_DATA_IN);
