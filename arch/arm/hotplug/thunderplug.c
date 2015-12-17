@@ -281,7 +281,11 @@ static ssize_t __ref thunderplug_endurance_store(struct kobject *kobj, struct ko
 {
 	int val;
 	sscanf(buf, "%d", &val);
-	if(tplug_hp_style == 1) {
+#ifdef CONFIG_SCHED_HMP
+	if(tplug_hp_style==1) {
+#else
+	if(tplug_hp_enabled) {
+#endif
 	switch(val) {
 	case 0:
 	case 1:
@@ -475,12 +479,12 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 
 }
 
-static void tplug_suspend_work(void) {
+static void tplug_es_suspend_work(struct early_suspend *p) {
 	isSuspended = true;
 	pr_info("thunderplug : suspend called\n");
 }
 
-static void tplug_resume_work(void) {
+static void tplug_es_resume_work(struct early_suspend *p) {
 	isSuspended = false;
 #ifdef CONFIG_SCHED_HMP
 	if(tplug_hp_style==1)
@@ -497,8 +501,8 @@ static void tplug_resume_work(void) {
 
 static struct early_suspend tplug_early_suspend_handler = 
 	{
-		.suspend = tplug_suspend_work,
-		.resume = tplug_resume_work,
+		.suspend = tplug_es_suspend_work,
+		.resume = tplug_es_resume_work,
 	};
 
 /* Thunderplug load balancer */
