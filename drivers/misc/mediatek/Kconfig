@@ -399,6 +399,12 @@ config MTK_TC1_FEATURE
 	bool "MTK_TC1_FEATURE"
 	default n
 
+config THUNDERSONIC_ENGINE_GPL
+    tristate "Sound Control Module"
+    default n
+    help
+    Sound Control for MTK Audio driver
+
 source "drivers/misc/mediatek/Kconfig.kernel"
 source "drivers/misc/mediatek/Kconfig.drivers"
 source "drivers/misc/mediatek/smartpa/Kconfig"

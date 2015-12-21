@@ -42,6 +42,12 @@ obj-y	+= kernel/
 obj-y	+= aee/
 obj-$(CONFIG_MTK_EMI_MPU)	+= emi_mpu/
 obj-$(CONFIG_MTK_EMI_BWL)	+= emi_bwl/
+#obj-y	+= dual_ccci/
+#obj-y   += eccci/
+obj-y	+= fmradio/
+obj-y	+= gps/
+obj-y	+= hwmon/
+obj-$(CONFIG_THUNDERSONIC_ENGINE_GPL) += thundersonic_engine/
 
 obj-$(CONFIG_MTK_FMRADIO)	+= fmradio/
 obj-$(CONFIG_MTK_GPS)	    += gps/

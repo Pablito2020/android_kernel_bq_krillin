@@ -50,6 +50,9 @@
 #include "AudDrv_Common.h"
 #include "AudDrv_Ana.h"
 #include "AudDrv_Clk.h"
+#ifdef CONFIG_THUNDERSONIC_ENGINE_GPL
+#include "../../thundersonic_engine/thundersonic_defs.h"
+#endif
 
 // define this to use wrapper to control
 #define AUDIO_USING_WRAP_DRIVER
@@ -67,8 +70,18 @@ void Ana_Set_Reg(uint32 offset, uint32 value, uint32 mask)
     int ret = 0;
 #ifdef AUDIO_USING_WRAP_DRIVER
     uint32 Reg_Value = Ana_Get_Reg(offset);
-    Reg_Value &= (~mask);
-    Reg_Value |= (value & mask);
+	Reg_Value &= (~mask);
+#ifdef CONFIG_THUNDERSONIC_ENGINE_GPL
+	if(((offset == AUDTOP_CON5) && lockhp ) ||
+		((offset == AUDTOP_CON7) && lockhs)) {
+		return;
+	}
+	else {
+#endif
+		Reg_Value |= (value & mask);
+#ifdef CONFIG_THUNDERSONIC_ENGINE_GPL
+	}
+#endif
     ret = pwrap_write(offset, Reg_Value);
     Reg_Value = Ana_Get_Reg(offset);
     if ((Reg_Value & mask) != (value & mask))
