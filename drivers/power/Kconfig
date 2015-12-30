@@ -355,6 +355,12 @@ config AB8500_BM
 	help
 	  Say Y to include support for AB8500 battery management.
 
+config THUNDERCHARGE_CONTROL
+     bool "Enable ThunderCharge Current Controlling mechanism"
+     depends on MTK_SMART_BATTERY
+     help
+       Say Y here to enable ability to adjust charger current
+
 config BATTERY_GOLDFISH
 	tristate "Goldfish battery driver"
 	depends on GENERIC_HARDIRQS
