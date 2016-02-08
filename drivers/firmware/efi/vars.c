@@ -172,10 +172,12 @@ struct variable_validate {
 };
 
 /*
- * This is the list of variables we need to validate.
+ * This is the list of variables we need to validate, as well as the
+ * whitelist for what we think is safe not to default to immutable.
  *
  * If it has a validate() method that's not NULL, it'll go into the
- * validation routine.  If not, it is assumed valid.
+ * validation routine.  If not, it is assumed valid, but still used for
+ * whitelisting.
  *
  * Note that it's sorted by {vendor,name}, but globbed names must come after
  * any other name with the same prefix.
@@ -193,49 +195,35 @@ static const struct variable_validate variable_validate[] = {
 	{ EFI_GLOBAL_VARIABLE_GUID, "ErrOut", validate_device_path },
 	{ EFI_GLOBAL_VARIABLE_GUID, "ErrOutDev", validate_device_path },
 	{ EFI_GLOBAL_VARIABLE_GUID, "Lang", validate_ascii_string },
+	{ EFI_GLOBAL_VARIABLE_GUID, "OsIndications", NULL },
 	{ EFI_GLOBAL_VARIABLE_GUID, "PlatformLang", validate_ascii_string },
 	{ EFI_GLOBAL_VARIABLE_GUID, "Timeout", validate_uint16 },
 	{ NULL_GUID, "", NULL },
 };
 
-/*
- * Check if @var_name matches the pattern given in @match_name.
- *
- * @var_name: an array of @len non-NUL characters.
- * @match_name: a NUL-terminated pattern string, optionally ending in "*". A
- *              final "*" character matches any trailing characters @var_name,
- *              including the case when there are none left in @var_name.
- * @match: on output, the number of non-wildcard characters in @match_name
- *         that @var_name matches, regardless of the return value.
- * @return: whether @var_name fully matches @match_name.
- */
 static bool
 variable_matches(const char *var_name, size_t len, const char *match_name,
 		 int *match)
 {
 	for (*match = 0; ; (*match)++) {
 		char c = match_name[*match];
+		char u = var_name[*match];
 
-		switch (c) {
-		case '*':
-			/* Wildcard in @match_name means we've matched. */
+		/* Wildcard in the matching name means we've matched */
+		if (c == '*')
 			return true;
 
-		case '\0':
-			/* @match_name has ended. Has @var_name too? */
-			return (*match == len);
+		/* Case sensitive match */
+		if (!c && *match == len)
+			return true;
 
-		default:
-			/*
-			 * We've reached a non-wildcard char in @match_name.
-			 * Continue only if there's an identical character in
-			 * @var_name.
-			 */
-			if (*match < len && c == var_name[*match])
-				continue;
+		if (c != u)
 			return false;
-		}
+
+		if (!c)
+			return true;
 	}
+	return true;
 }
 
 bool
@@ -261,30 +249,14 @@ efivar_validate(efi_guid_t vendor, efi_char16_t *var_name, u8 *data,
 		if (efi_guidcmp(vendor, variable_validate[i].vendor))
 			continue;
 
-		for (match = 0; ; match++) {
-			char c = name[match];
-			char u = utf8_name[match];
-
-			/* Wildcard in the matching name means we've matched */
-			if (c == '*') {
-				kfree(utf8_name);
-				return variable_validate[i].validate(var_name,
-							match, data, data_size);
-			}
-
 		if (variable_matches(utf8_name, utf8_size+1, name, &match)) {
 			if (variable_validate[i].validate == NULL)
 				break;
-
-			/* Reached the end of the string while matching */
-			if (!c) {
-				kfree(utf8_name);
-				return variable_validate[i].validate(var_name,
-							match, data, data_size);
-			}
+			kfree(utf8_name);
+			return variable_validate[i].validate(var_name, match,
+							     data, data_size);
 		}
 	}
-
 	kfree(utf8_name);
 	return true;
 }

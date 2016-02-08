@@ -148,6 +148,9 @@ static int efivarfs_callback(efi_char16_t *name16, efi_guid_t vendor,
 
 	ucs2_as_utf8(name, entry->var.VariableName, len);
 
+	if (efivar_variable_is_removable(entry->var.VendorGuid, name, len))
+		is_removable = true;
+
 	name[len] = '-';
 
 	efi_guid_unparse(&entry->var.VendorGuid, name + len + 1);
