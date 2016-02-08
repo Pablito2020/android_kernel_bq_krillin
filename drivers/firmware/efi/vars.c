@@ -243,8 +243,7 @@ variable_matches(const char *var_name, size_t len, const char *match_name,
 }
 
 bool
-efivar_validate(efi_guid_t vendor, efi_char16_t *var_name, u8 *data,
-		unsigned long data_size)
+efivar_validate(efi_char16_t *var_name, u8 *data, unsigned long data_size)
 {
 	int i;
 	unsigned long utf8_size;
@@ -258,21 +257,35 @@ efivar_validate(efi_guid_t vendor, efi_char16_t *var_name, u8 *data,
 	ucs2_as_utf8(utf8_name, var_name, utf8_size);
 	utf8_name[utf8_size] = '\0';
 
-	for (i = 0; variable_validate[i].name[0] != '\0'; i++) {
-		const char *name = variable_validate[i].name;
-		int match = 0;
+	utf8_size = ucs2_utf8size(var_name);
+	utf8_name = kmalloc(utf8_size + 1, GFP_KERNEL);
+	if (!utf8_name)
+		return false;
 
-		if (efi_guidcmp(vendor, variable_validate[i].vendor))
-			continue;
+		for (match = 0; ; match++) {
+			char c = name[match];
+			char u = utf8_name[match];
+
+			/* Wildcard in the matching name means we've matched */
+			if (c == '*') {
+				kfree(utf8_name);
+				return variable_validate[i].validate(var_name,
+							match, data, data_size);
+			}
 
 		if (variable_matches(utf8_name, utf8_size+1, name, &match)) {
 			if (variable_validate[i].validate == NULL)
 				break;
-			kfree(utf8_name);
-			return variable_validate[i].validate(var_name, match,
-							     data, data_size);
+
+			/* Reached the end of the string while matching */
+			if (!c) {
+				kfree(utf8_name);
+				return variable_validate[i].validate(var_name,
+							match, data, data_size);
+			}
 		}
 	}
+
 	kfree(utf8_name);
 	return true;
 }
@@ -878,7 +891,7 @@ int efivar_entry_set_get_size(struct efivar_entry *entry, u32 attributes,
 
 	*set = false;
 
-	if (efivar_validate(*vendor, name, data, *size) == false)
+	if (efivar_validate(name, data, *size) == false)
 		return -EINVAL;
 
 	/*
