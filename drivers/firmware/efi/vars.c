@@ -172,12 +172,10 @@ struct variable_validate {
 };
 
 /*
- * This is the list of variables we need to validate, as well as the
- * whitelist for what we think is safe not to default to immutable.
+ * This is the list of variables we need to validate.
  *
  * If it has a validate() method that's not NULL, it'll go into the
- * validation routine.  If not, it is assumed valid, but still used for
- * whitelisting.
+ * validation routine.  If not, it is assumed valid.
  *
  * Note that it's sorted by {vendor,name}, but globbed names must come after
  * any other name with the same prefix.
@@ -195,10 +193,8 @@ static const struct variable_validate variable_validate[] = {
 	{ EFI_GLOBAL_VARIABLE_GUID, "ErrOut", validate_device_path },
 	{ EFI_GLOBAL_VARIABLE_GUID, "ErrOutDev", validate_device_path },
 	{ EFI_GLOBAL_VARIABLE_GUID, "Lang", validate_ascii_string },
-	{ EFI_GLOBAL_VARIABLE_GUID, "OsIndications", NULL },
 	{ EFI_GLOBAL_VARIABLE_GUID, "PlatformLang", validate_ascii_string },
 	{ EFI_GLOBAL_VARIABLE_GUID, "Timeout", validate_uint16 },
-	{ LINUX_EFI_CRASH_GUID, "*", NULL },
 	{ NULL_GUID, "", NULL },
 };
 
@@ -243,7 +239,8 @@ variable_matches(const char *var_name, size_t len, const char *match_name,
 }
 
 bool
-efivar_validate(efi_char16_t *var_name, u8 *data, unsigned long data_size)
+efivar_validate(efi_guid_t vendor, efi_char16_t *var_name, u8 *data,
+		unsigned long data_size)
 {
 	int i;
 	unsigned long utf8_size;
@@ -257,10 +254,12 @@ efivar_validate(efi_char16_t *var_name, u8 *data, unsigned long data_size)
 	ucs2_as_utf8(utf8_name, var_name, utf8_size);
 	utf8_name[utf8_size] = '\0';
 
-	utf8_size = ucs2_utf8size(var_name);
-	utf8_name = kmalloc(utf8_size + 1, GFP_KERNEL);
-	if (!utf8_name)
-		return false;
+	for (i = 0; variable_validate[i].name[0] != '\0'; i++) {
+		const char *name = variable_validate[i].name;
+		int match = 0;
+
+		if (efi_guidcmp(vendor, variable_validate[i].vendor))
+			continue;
 
 		for (match = 0; ; match++) {
 			char c = name[match];
@@ -891,7 +890,7 @@ int efivar_entry_set_get_size(struct efivar_entry *entry, u32 attributes,
 
 	*set = false;
 
-	if (efivar_validate(name, data, *size) == false)
+	if (efivar_validate(*vendor, name, data, *size) == false)
 		return -EINVAL;
 
 	/*
