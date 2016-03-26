@@ -170,9 +170,10 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
 		req, CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
 		page_crypt_complete, &ecr);
 
-	BUILD_BUG_ON(sizeof(xts_tweak) != FS_XTS_TWEAK_SIZE);
-	xts_tweak.index = cpu_to_le64(lblk_num);
-	memset(xts_tweak.padding, 0, sizeof(xts_tweak.padding));
+	BUILD_BUG_ON(FS_XTS_TWEAK_SIZE < sizeof(index));
+	memcpy(xts_tweak, &index, sizeof(index));
+	memset(&xts_tweak[sizeof(index)], 0,
+			FS_XTS_TWEAK_SIZE - sizeof(index));
 
 	sg_init_table(&dst, 1);
 	sg_set_page(&dst, dest_page, len, offs);
