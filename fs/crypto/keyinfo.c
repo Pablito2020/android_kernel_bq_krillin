@@ -77,33 +77,26 @@ out:
 
 static int validate_user_key(struct fscrypt_info *crypt_info,
 			struct fscrypt_context *ctx, u8 *raw_key,
-			const char *prefix)
+			u8 *prefix, int prefix_size)
 {
-	char *description;
+	u8 *full_key_descriptor;
 	struct key *keyring_key;
 	struct fscrypt_key *master_key;
 	const struct user_key_payload *ukp;
-	int prefix_size = strlen(prefix);
 	int full_key_len = prefix_size + (FS_KEY_DESCRIPTOR_SIZE * 2) + 1;
 	int res;
 
-	/* FIXME: 3.18 causes kernel panic.
-	 description = kasprintf(GFP_NOFS, "%s%*phN", prefix,
-				FS_KEY_DESCRIPTOR_SIZE,
-				ctx->master_key_descriptor);
-	 */
-	description = kmalloc(full_key_len, GFP_NOFS);
-	if (!description)
+	full_key_descriptor = kmalloc(full_key_len, GFP_NOFS);
+	if (!full_key_descriptor)
 		return -ENOMEM;
 
-	memcpy(description, prefix, prefix_size);
-	sprintf(description + prefix_size,
+	memcpy(full_key_descriptor, prefix, prefix_size);
+	sprintf(full_key_descriptor + prefix_size,
 			"%*phN", FS_KEY_DESCRIPTOR_SIZE,
 			ctx->master_key_descriptor);
-	description[full_key_len - 1] = '\0';
-
-	keyring_key = request_key(&key_type_logon, description, NULL);
-	kfree(description);
+	full_key_descriptor[full_key_len - 1] = '\0';
+	keyring_key = request_key(&key_type_logon, full_key_descriptor, NULL);
+	kfree(full_key_descriptor);
 	if (IS_ERR(keyring_key))
 		return PTR_ERR(keyring_key);
 
@@ -114,7 +107,7 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
 		goto out;
 	}
 	down_read(&keyring_key->sem);
-	ukp = user_key_payload(keyring_key);
+	ukp = ((struct user_key_payload *)keyring_key->payload.data);
 	if (ukp->datalen != sizeof(struct fscrypt_key)) {
 		res = -EINVAL;
 		up_read(&keyring_key->sem);
@@ -142,39 +135,6 @@ out:
 	key_put(keyring_key);
 	return res;
 }
-
-static int determine_cipher_type(struct fscrypt_info *ci, struct inode *inode,
-				 const char **cipher_str_ret, int *keysize_ret)
-{
-	if (S_ISREG(inode->i_mode)) {
-		if (ci->ci_data_mode == FS_ENCRYPTION_MODE_AES_256_XTS) {
-			*cipher_str_ret = "xts(aes)";
-			*keysize_ret = FS_AES_256_XTS_KEY_SIZE;
-			return 0;
-		}
-		pr_warn_once("fscrypto: unsupported contents encryption mode "
-			     "%d for inode %lu\n",
-			     ci->ci_data_mode, inode->i_ino);
-		return -ENOKEY;
-	}
-
-	if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) {
-		if (ci->ci_filename_mode == FS_ENCRYPTION_MODE_AES_256_CTS) {
-			*cipher_str_ret = "cts(cbc(aes))";
-			*keysize_ret = FS_AES_256_CTS_KEY_SIZE;
-			return 0;
-		}
-		pr_warn_once("fscrypto: unsupported filenames encryption mode "
-			     "%d for inode %lu\n",
-			     ci->ci_filename_mode, inode->i_ino);
-		return -ENOKEY;
-	}
-
-	pr_warn_once("fscrypto: unsupported file type %d for inode %lu\n",
-		     (inode->i_mode & S_IFMT), inode->i_ino);
-	return -ENOKEY;
-}
-
 static void put_crypt_info(struct fscrypt_info *ci)
 {
 	if (!ci)
@@ -243,24 +203,41 @@ retry:
 	crypt_info->ci_keyring_key = NULL;
 	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
 				sizeof(crypt_info->ci_master_key));
+	if (S_ISREG(inode->i_mode))
+		mode = crypt_info->ci_data_mode;
+	else if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode))
+		mode = crypt_info->ci_filename_mode;
+	else
+		BUG();
 
-	res = determine_cipher_type(crypt_info, inode, &cipher_str, &keysize);
-	if (res)
+	switch (mode) {
+	case FS_ENCRYPTION_MODE_AES_256_XTS:
+		cipher_str = "xts(aes)";
+		break;
+	case FS_ENCRYPTION_MODE_AES_256_CTS:
+		cipher_str = "cts(cbc(aes))";
+		break;
+	default:
+		printk_once(KERN_WARNING
+			    "%s: unsupported key mode %d (ino %u)\n",
+			    __func__, mode, (unsigned) inode->i_ino);
+		res = -ENOKEY;
 		goto out;
+	}
+	if (fscrypt_dummy_context_enabled(inode)) {
+		memset(raw_key, 0x42, FS_AES_256_XTS_KEY_SIZE);
+		goto got_key;
+	}
 
-	/*
-	 * This cannot be a stack buffer because it is passed to the scatterlist
-	 * crypto API as part of key derivation.
-	 */
-	res = -ENOMEM;
-	raw_key = kmalloc(FS_MAX_KEY_SIZE, GFP_NOFS);
-	if (!raw_key)
-		goto out;
-
-	res = validate_user_key(crypt_info, &ctx, raw_key, FS_KEY_DESC_PREFIX);
+	res = validate_user_key(crypt_info, &ctx, raw_key,
+			FS_KEY_DESC_PREFIX, FS_KEY_DESC_PREFIX_SIZE);
 	if (res && inode->i_sb->s_cop->key_prefix) {
-		int res2 = validate_user_key(crypt_info, &ctx, raw_key,
-					     inode->i_sb->s_cop->key_prefix);
+		u8 *prefix = NULL;
+		int prefix_size, res2;
+
+		prefix_size = inode->i_sb->s_cop->key_prefix(inode, &prefix);
+		res2 = validate_user_key(crypt_info, &ctx, raw_key,
+							prefix, prefix_size);
 		if (res2) {
 			if (res2 == -ENOKEY)
 				res = -ENOKEY;
@@ -269,6 +246,7 @@ retry:
 	} else if (res) {
 		goto out;
 	}
+got_key:
 	ctfm = crypto_alloc_ablkcipher(cipher_str, 0, 0);
 	if (!ctfm || IS_ERR(ctfm)) {
 		res = ctfm ? PTR_ERR(ctfm) : -ENOMEM;
