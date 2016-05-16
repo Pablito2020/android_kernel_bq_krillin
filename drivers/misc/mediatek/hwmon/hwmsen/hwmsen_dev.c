@@ -597,35 +597,40 @@ EXPORT_SYMBOL_GPL(hwmsen_detach);
 /*----------------------------------------------------------------------------*/
 static int hwmsen_enable(struct hwmdev_object *obj, int sensor, int enable)
 {
-	struct hwmsen_context *cxt = NULL;
-	int err = 0;
-	uint32_t sensor_type;
+    struct hwmsen_context *cxt = NULL;
+    int err = 0;
+    uint32_t sensor_type;
 
-	sensor_type = 1 << sensor;
-	
-	if(!obj)
-	{
-		HWM_ERR("hwmdev obj pointer is NULL!\n");
-		return -EINVAL;
-	}
-	else if(obj->dc->cxt[sensor] == NULL)
-	{
-		HWM_ERR("the sensor (%d) is not attached!!\n", sensor);
-		return -ENODEV;
-	}
-	
+    sensor_type = 1 << sensor;
 
-	mutex_lock(&obj->dc->lock);
-	cxt = obj->dc->cxt[sensor];    
-	
-	
-	if(enable == 1)
-	{
-//{@for mt6582 blocking issue work around		
-		if(sensor == 7){
-			HWM_LOG("P-sensor disable LDO low power\n");
-			pmic_ldo_suspend_enable(0);
-			}
+    if (sensor > MAX_ANDROID_SENSOR_NUM) {
+	HWM_ERR("handle %d!\n", sensor);
+	return -EINVAL;
+    }
+
+    if(!obj)
+    {
+        HWM_ERR("hwmdev obj pointer is NULL!\n");
+        return -EINVAL;
+    }
+    else if(obj->dc->cxt[sensor] == NULL)
+    {
+        HWM_ERR("the sensor (%d) is not attached!!\n", sensor);
+        return -ENODEV;
+    }
+
+
+    mutex_lock(&obj->dc->lock);
+    cxt = obj->dc->cxt[sensor];
+
+
+    if(enable == 1)
+    {
+//{@for mt6582 blocking issue work around
+        if(sensor == 7){
+            HWM_LOG("P-sensor disable LDO low power\n");
+            pmic_ldo_suspend_enable(0);
+            }
 //@}
 		enable_again = true;
 		obj->active_data_sensor |= sensor_type;
@@ -713,88 +718,98 @@ static int hwmsen_enable(struct hwmdev_object *obj, int sensor, int enable)
 /*-------------no data sensor enable/disable--------------------------------------*/
 static int hwmsen_enable_nodata(struct hwmdev_object *obj, int sensor, int enable)
 {
-	struct hwmsen_context *cxt = NULL;
-	int err = 0;
-	uint32_t sensor_type;
-	HWM_FUN(f);
-	sensor_type = 1 << sensor;
+    struct hwmsen_context *cxt = NULL;
+    int err = 0;
+    uint32_t sensor_type;
+    HWM_FUN(f);
+    sensor_type = 1 << sensor;
 
-	if(NULL == obj)
-	{
-		HWM_ERR("hwmdev obj pointer is NULL!\n");
-		return -EINVAL;
-	}
-	else if(obj->dc->cxt[sensor] == NULL)
-	{
-		HWM_ERR("the sensor (%d) is not attached!!\n", sensor);
-		return -ENODEV;
-	}
-	
+    if (sensor > MAX_ANDROID_SENSOR_NUM) {
+	HWM_ERR("handle %d!\n", sensor);
+	return -EINVAL;
+    }
 
-	mutex_lock(&obj->dc->lock);
-	cxt = obj->dc->cxt[sensor];
+    if(NULL == obj)
+    {
+        HWM_ERR("hwmdev obj pointer is NULL!\n");
+        return -EINVAL;
+    }
+    else if(obj->dc->cxt[sensor] == NULL)
+    {
+        HWM_ERR("the sensor (%d) is not attached!!\n", sensor);
+        return -ENODEV;
+    }
 
-	if(enable == 1)
-	{
-		obj->active_sensor |= sensor_type;
-		
-		if((obj->active_data_sensor & sensor_type) == 0)	// no data active
-		{
-			if(cxt->obj.sensor_operate(cxt->obj.self, SENSOR_ENABLE, &enable, sizeof(int), NULL, 0, NULL) != 0)
-			{
-				HWM_ERR("activate sensor(%d) err = %d\n", sensor, err);
-				err = -EINVAL;
-				goto exit;
-			}
 
-			atomic_set(&cxt->enable, 1);
-		}
-	}
-	else
-	{
-		obj->active_sensor &= ~sensor_type;
-		
-		if((obj->active_data_sensor & sensor_type) == 0)	// no data active
-		{
-			if(cxt->obj.sensor_operate(cxt->obj.self, SENSOR_ENABLE, &enable,sizeof(int), NULL, 0, NULL) != 0)
-			{
-				HWM_ERR("Deactivate sensor(%d) err = %d\n", sensor, err);
-				err = -EINVAL;
-				goto exit;
-			}
+    mutex_lock(&obj->dc->lock);
+    cxt = obj->dc->cxt[sensor];
 
-			atomic_set(&cxt->enable, 0);
-		}
-		
-	}
-	
-	exit:
-		
-	mutex_unlock(&obj->dc->lock);
-	return err;
+    if(enable == 1)
+    {
+        obj->active_sensor |= sensor_type;
+
+        if((obj->active_data_sensor & sensor_type) == 0)    // no data active
+        {
+            if(cxt->obj.sensor_operate(cxt->obj.self, SENSOR_ENABLE, &enable, sizeof(int), NULL, 0, NULL) != 0)
+            {
+                HWM_ERR("activate sensor(%d) err = %d\n", sensor, err);
+                err = -EINVAL;
+                goto exit;
+            }
+
+            atomic_set(&cxt->enable, 1);
+        }
+    }
+    else
+    {
+        obj->active_sensor &= ~sensor_type;
+
+        if((obj->active_data_sensor & sensor_type) == 0)    // no data active
+        {
+            if(cxt->obj.sensor_operate(cxt->obj.self, SENSOR_ENABLE, &enable,sizeof(int), NULL, 0, NULL) != 0)
+            {
+                HWM_ERR("Deactivate sensor(%d) err = %d\n", sensor, err);
+                err = -EINVAL;
+                goto exit;
+            }
+
+            atomic_set(&cxt->enable, 0);
+        }
+
+    }
+
+    exit:
+
+    mutex_unlock(&obj->dc->lock);
+    return err;
 }
 /*------------set delay--------------------------------------------------------*/
 static int hwmsen_set_delay(int delay, int handle )
 {
-	int err = 0;
-	struct hwmsen_context *cxt = NULL;
+    int err = 0;
+    struct hwmsen_context *cxt = NULL;
 
-	cxt = hwm_obj->dc->cxt[handle];
-	if(NULL == cxt ||(cxt->obj.sensor_operate == NULL))
-	{
-	  HWM_ERR("have no this sensor %d or operator point is null!\r\n", handle);
-	}
-	else //if(atomic_read(&cxt->enable) != 0) //always update delay even sensor is not enabled.
-	{
-		if(cxt->obj.sensor_operate(cxt->obj.self, SENSOR_DELAY, &delay,sizeof(int), NULL, 0, NULL) != 0)
-		{
-			HWM_ERR("%d sensor's sensor_operate function error %d!\r\n",handle,err);
-			return err;
-		}
-		//record sensor delay
-		atomic_set(&cxt->delay, delay);
-	}
-	return err;
+    if (handle > MAX_ANDROID_SENSOR_NUM) {
+	HWM_ERR("handle %d!\n", handle);
+	return -EINVAL;
+    }
+
+    cxt = hwm_obj->dc->cxt[handle];
+    if(NULL == cxt ||(cxt->obj.sensor_operate == NULL))
+    {
+      HWM_ERR("have no this sensor %d or operator point is null!\r\n", handle);
+    }
+    else if(atomic_read(&cxt->enable) != 0)
+    {
+        if(cxt->obj.sensor_operate(cxt->obj.self, SENSOR_DELAY, &delay,sizeof(int), NULL, 0, NULL) != 0)
+        {
+            HWM_ERR("%d sensor's sensor_operate function error %d!\r\n",handle,err);
+            return err;
+        }
+        //record sensor delay
+        atomic_set(&cxt->delay, delay);
+    }
+    return err;
 }
 /*----------------------------------------------------------------------------*/
 static int hwmsen_wakeup(struct hwmdev_object *obj)
