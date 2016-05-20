@@ -213,8 +213,7 @@ typedef enum
 
 #define DISP_IOCTL_MAGIC        'x'
 
-#define DISP_IOCTL_WRITE_REG       _IOW     (DISP_IOCTL_MAGIC, 1, DISP_WRITE_REG)   // also defined in atci_pq_cmd.h
-#define DISP_IOCTL_READ_REG        _IOWR    (DISP_IOCTL_MAGIC, 2, DISP_READ_REG)    // also defined in atci_pq_cmd.h
+#define DISP_IOCTL_READ_REG        _IOWR    (DISP_IOCTL_MAGIC, 2, DISP_READ_REG)
 #define DISP_IOCTL_WAIT_IRQ        _IOR     (DISP_IOCTL_MAGIC, 3, disp_wait_irq_struct)
 #define DISP_IOCTL_DUMP_REG        _IOR     (DISP_IOCTL_MAGIC, 4, int)
 #define DISP_IOCTL_LOCK_THREAD     _IOR     (DISP_IOCTL_MAGIC, 5, int)
@@ -287,8 +286,6 @@ typedef enum
 //#define DISP_IOCTL_PQ_SET_DC_PARAM  _IOW    (DISP_IOCTL_MAGIC, 76, DISP_PQ_DC_PARAM)
 #define DISP_IOCTL_WRITE_SW_REG     _IOW    (DISP_IOCTL_MAGIC, 77, DISP_WRITE_REG)   // also defined in atci_pq_cmd.h
 #define DISP_IOCTL_READ_SW_REG      _IOWR   (DISP_IOCTL_MAGIC, 78, DISP_READ_REG)    // also defined in atci_pq_cmd.h
-
-#define DISP_IOCTL_READ_REG_TABLE       _IOWR    (DISP_IOCTL_MAGIC, 61, DISP_READ_REG_TABLE)
 
 // secure video path implementation: the handle value
 #define DISP_IOCTL_SET_TPLAY_HANDLE    _IOW    (DISP_IOCTL_MAGIC, 200, unsigned int)
