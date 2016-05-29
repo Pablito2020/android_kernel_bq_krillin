@@ -454,13 +454,17 @@ allowed to execute.
 0: disable the mechanism.  Do not monitor or correct perf's
    sampling rate no matter how CPU time it takes.
 
-1-100: attempt to throttle perf's sample rate to this
-   percentage of CPU.  Note: the kernel calculates an
-   "expected" length of each sample event.  100 here means
-   100% of that expected length.  Even if this is set to
-   100, you may still see sample throttling if this
-   length is exceeded.  Set to 0 if you truly do not care
-   how much CPU is consumed.
+perf_event_paranoid:
+
+Controls use of the performance events system by unprivileged
+users (without CAP_SYS_ADMIN).  The default value is 3 if
+CONFIG_SECURITY_PERF_EVENTS_RESTRICT is set, or 1 otherwise.
+
+ -1: Allow use of (almost) all events by all users
+>=0: Disallow raw tracepoint access by users without CAP_IOC_LOCK
+>=1: Disallow CPU event access by users without CAP_SYS_ADMIN
+>=2: Disallow kernel profiling by users without CAP_SYS_ADMIN
+>=3: Disallow all event access by users without CAP_SYS_ADMIN
 
 ==============================================================
 
