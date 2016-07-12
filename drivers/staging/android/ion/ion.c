@@ -1670,28 +1670,6 @@ static const struct file_operations debug_heap_fops = {
 	.release = single_release,
 };
 
-static int ion_debug_heap_pool_show(struct seq_file *s, void *unused)
-{
-	struct ion_heap *heap = s->private;
-	size_t total_size = heap->ops->page_pool_total(heap);
-
-	seq_printf(s, "%16.s %16zu\n", "total_in_pool ", total_size);
-
-	return 0;
-}
-
-static int ion_debug_heap_pool_open(struct inode *inode, struct file *file)
-{
-	return single_open(file, ion_debug_heap_pool_show, inode->i_private);
-}
-
-static const struct file_operations debug_heap_pool_fops = {
-	.open = ion_debug_heap_pool_open,
-	.read = seq_read,
-	.llseek = seq_lseek,
-	.release = single_release,
-};
-
 #ifdef DEBUG_HEAP_SHRINKER
 static int debug_shrink_set(void *data, u64 val)
 {
@@ -1781,17 +1759,6 @@ void ion_device_add_heap(struct ion_device *dev, struct ion_heap *heap)
 		}
 	}
 #endif
-
-	snprintf(tmp_name, ARRAY_SIZE(tmp_name), "%s_total_in_pool", heap->name);
-	debug_file = debugfs_create_file(
-			tmp_name, 0644, dev->heaps_debug_root, heap,
-				     &debug_heap_pool_fops);
-	if (!debug_file) {
-		char buf[256], *path;
-		path = dentry_path(dev->heaps_debug_root, buf, ARRAY_SIZE(buf));
-		pr_err("Failed to create heap page pool debugfs at %s/%s\n", path, tmp_name);
-	}
-
 	up_write(&dev->lock);
 }
 
