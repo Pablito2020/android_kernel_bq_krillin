@@ -221,7 +221,7 @@ unsigned int custom_pll_clock_remap(int input_mipi_clock)
 #endif
 static void lcm_mdelay(UINT32 ms)
 {
-    udelay(1000 * ms);
+    mdelay(ms); /*udelay(1000 * ms);*/
 }
 void DSI_Enable_Log(bool enable)
 {
