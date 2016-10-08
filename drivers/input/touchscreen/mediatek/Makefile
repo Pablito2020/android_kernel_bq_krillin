@@ -19,6 +19,10 @@ ifeq ($(CONFIG_TOUCHSCREEN_MTK_GT9XX),y)
 obj-y	+=  GT9XX/
 endif
 
+ifeq ($(CONFIG_TOUCHSCREEN_MTK_GT9147),y)
+obj-y	+=  GT9147/
+endif
+
 ifeq ($(CONFIG_MTK_MMS244),y)
 obj-y	+=  mms244/
 endif
@@ -108,3 +112,16 @@ endif
 ifeq ($(CONFIG_MTK_MIT200),y)
 obj-y	+=  melfas_mit200/
 endif
+
+ifeq ($(CONFIG_MTK_EKTF2K),y)
+obj-y	+=  ektf2k/
+endif
+
+ifeq ($(CONFIG_MTK_FT5336),y)
+obj-y	+=  ft5336/
+endif
+
+ifeq ($(CONFIG_TOUCHSCREEN_MTK_MSG2238),y)
+obj-y	+=  MSG2238/
+endif
+

@@ -335,6 +335,7 @@ static int tpd_probe(struct platform_device *pdev)
 	tpd_mode_keypad_tolerance = TPD_RES_X * TPD_RES_X / 1600;
 	/* struct input_dev dev initialization and registration */
 	tpd->dev->name = TPD_DEVICE;
+	tpd->dev->hint_events_per_packet=33;
 	set_bit(EV_ABS, tpd->dev->evbit);
 	set_bit(EV_KEY, tpd->dev->evbit);
 	set_bit(ABS_X, tpd->dev->absbit);

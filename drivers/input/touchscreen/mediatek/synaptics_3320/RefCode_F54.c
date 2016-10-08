@@ -1,19 +1,7 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright ?2012 Synaptics Incorporated. All rights reserved.
-//
-// The information in this file is confidential under the terms
-// of a non-disclosure agreement with Synaptics and is provided
-// AS IS.
-//
-// The information in this file shall remain the exclusive property
-// of Synaptics and may be the subject of Synaptics?patents, in
-// whole or part. Synaptics?intellectual property rights in the
-// information in this file are not expressly or implicitly licensed
-// or otherwise transferred to you as a result of such information
-// being made available to you.
+// (c) Synaptics Incorporated. 2012
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// FullRawCapacitance Support 0D button
-//
+
 #include "RefCode_F54.h"
 #if defined(CONFIG_MACH_MSM8974_VU3_KR)
 #include "TestLimits_vu3.h"
