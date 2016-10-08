@@ -52,7 +52,6 @@ typedef enum
 
 typedef enum
 {    
-   LCM_DRIVING_CURRENT_DEFAULT,
    LCM_DRIVING_CURRENT_8MA       = (1 << 0),
    LCM_DRIVING_CURRENT_4MA       = (1 << 1),
    LCM_DRIVING_CURRENT_2MA       = (1 << 2),
@@ -60,25 +59,9 @@ typedef enum
    LCM_DRIVING_CURRENT_6575_4MA  = (1 << 4),
    LCM_DRIVING_CURRENT_6575_8MA  = (3 << 4),
    LCM_DRIVING_CURRENT_6575_12MA  = (2 << 4),
-   LCM_DRIVING_CURRENT_6575_16MA  = (4 << 4),
-   LCM_DRIVING_CURRENT_6MA,
-   LCM_DRIVING_CURRENT_12MA,
-   LCM_DRIVING_CURRENT_16MA
+   LCM_DRIVING_CURRENT_6575_16MA  = (4 << 4)
 } LCM_DRIVING_CURRENT;
 
-typedef enum{
-	LCM_INTERFACE_NOTDEFINED = 0,
-	LCM_INTERFACE_DSI0,
-	LCM_INTERFACE_DSI1,
-	LCM_INTERFACE_DSI_DUAL,
-	LCM_INTERFACE_DPI0,
-	LCM_INTERFACE_DPI1,
-	LCM_INTERFACE_DBI0	
-}LCM_INTERFACE_ID;
-
-typedef enum{
-	LCM_IOCTL_NULL = 0,
-}LCM_IOCTL;
 
 /* DBI related enumerations */
 
@@ -344,21 +327,7 @@ typedef struct
     LCM_DSI_FORMAT format;
 } LCM_DSI_DATA_FORMAT;
 
-typedef struct
-{
-	LCM_DSI_MODE_CON mode;
-	unsigned int cmd_if;
-	unsigned int addr;
-	unsigned int val[4];
-}LCM_DSI_MODE_SWITCH_CMD;
 
-typedef struct
-{
-	unsigned int compress_ratio;
-	unsigned int lr_mode_en;
-	unsigned int vlc_disable;
-	unsigned int vlc_config;
-}LCM_UFOE_CONFIG_PARAMS;
 // ---------------------------------------------------------------------------
 
 typedef struct
@@ -370,7 +339,6 @@ typedef struct
     LCM_DBI_DATA_FORMAT    data_format;
     LCM_DBI_CPU_WRITE_BITS cpu_write_bits;
     LCM_DRIVING_CURRENT    io_driving_current;
-    LCM_DRIVING_CURRENT    msb_io_driving_current;
     
     /* tearing control */
     LCM_DBI_TE_MODE              te_mode;
@@ -404,11 +372,6 @@ typedef struct
     unsigned int ssc_disable;
     unsigned int ssc_range;
 
-    unsigned int width;
-    unsigned int height;
-    unsigned int bg_width;
-    unsigned int bg_height;
-    
     /* polarity parameters */
     LCM_POLARITY clk_pol;
     LCM_POLARITY de_pol;
@@ -436,45 +399,15 @@ typedef struct
 
     /* iopad parameters */
     LCM_DRIVING_CURRENT io_driving_current;
-    LCM_DRIVING_CURRENT lsb_io_driving_current;
     
 } LCM_DPI_PARAMS;
 
 
 // ---------------------------------------------------------------------------
-typedef struct {
-    unsigned char cmd;
-    unsigned char count;
-    unsigned char para_list[2];
-} LCM_esd_check_item;
-typedef enum
-{
-    DUAL_DSI_NONE = 0x0,
-	DUAL_DSI_CMD = 0x1,
-	DUAL_DSI_VDO = 0x2,	
-}DUAL_DSI_TYPE;
 
-typedef enum
-{
-	MIPITX_PHY_LANE_0 = 0,
-	MIPITX_PHY_LANE_1,
-	MIPITX_PHY_LANE_2,
-	MIPITX_PHY_LANE_3,
-	MIPITX_PHY_LANE_CK,
-	MIPITX_PHY_LANE_RX,
-	MIPITX_PHY_LANE_NUM
-}MIPITX_PHY_LANE_SWAP;
-
-typedef enum
-{
-	MIPITX_PHY_PORT_0 = 0,
-	MIPITX_PHY_PORT_1,
-	MIPITX_PHY_PORT_NUM
-}MIPITX_PHY_PORT;
 typedef struct
 {
     LCM_DSI_MODE_CON 	mode;
-	LCM_DSI_MODE_CON 	switch_mode;
     unsigned int		DSI_WMEM_CONTI;
     unsigned int		DSI_RMEM_CONTI;	
     unsigned int		VC_NUM;
@@ -493,7 +426,6 @@ typedef struct
     unsigned int		vertical_sync_active;
     unsigned int		vertical_backporch;
     unsigned int		vertical_frontporch;
-	unsigned int		vertical_frontporch_for_low_power;
     unsigned int		vertical_active_line;
     
     unsigned int		horizontal_sync_active;
@@ -548,10 +480,7 @@ typedef struct
     unsigned int		compatibility_for_nvk;
     unsigned int		cont_clock;
     unsigned int		ufoe_enable;
-    LCM_UFOE_CONFIG_PARAMS ufoe_params;
-    unsigned int		edp_panel;
-    unsigned int                customization_esd_check_enable;
-    unsigned int                esd_check_enable;
+    
     unsigned int		lcm_int_te_monitor;
     unsigned int		lcm_int_te_period;
     
@@ -560,21 +489,7 @@ typedef struct
     
     unsigned int		noncont_clock;
     unsigned int		noncont_clock_period;
-    unsigned int		clk_lp_per_line_enable;
-    LCM_esd_check_item          lcm_esd_check_table[3];
-    unsigned int switch_mode_enable;
-	DUAL_DSI_TYPE       dual_dsi_type;    
-	unsigned int			lane_swap_en;
-	MIPITX_PHY_LANE_SWAP lane_swap[MIPITX_PHY_PORT_NUM][MIPITX_PHY_LANE_NUM];
-
-    unsigned int        vertical_vfp_lp;
     
-#ifdef CONFIG_MIXMODE_FOR_INCELL
-    unsigned int		mixmode_enable;
-    unsigned int		mixmode_mipi_clock; 
-    unsigned int		pwm_fps;
-#endif
-
 } LCM_DSI_PARAMS;
 
 // ---------------------------------------------------------------------------
@@ -583,8 +498,7 @@ typedef struct
 {
     LCM_TYPE type;
     LCM_CTRL ctrl;  //! how to control LCM registers
-    LCM_INTERFACE_ID lcm_if;
-	LCM_INTERFACE_ID lcm_cmd_if; 
+
     /* common parameters */
     unsigned int width;
     unsigned int height;
@@ -596,8 +510,6 @@ typedef struct
     LCM_DSI_PARAMS dsi;
     unsigned int physical_width;
     unsigned int physical_height;
-	unsigned int od_table_size;
-	void *od_table;
 } LCM_PARAMS;
 
 
@@ -642,13 +554,9 @@ typedef struct
     int (*set_gpio_mode)(unsigned int pin, unsigned int mode);
     int (*set_gpio_dir)(unsigned int pin, unsigned int dir);
     int (*set_gpio_pull_enable)(unsigned int pin, unsigned char pull_en);
-    void (*dsi_set_cmdq_V22)(void* cmdq, unsigned cmd, unsigned char count, unsigned char *para_list, unsigned char force_update);
-    void (*dsi_swap_port)(int swap);
+    
 } LCM_UTIL_FUNCS;
-typedef enum
-{
-	LCM_DRV_IOCTL_ENABLE_CMD_MODE = 0x100,
-}LCM_DRV_IOCTL_CMD;
+
 
 typedef struct
 {
@@ -680,12 +588,8 @@ typedef struct
     unsigned int  (*esd_recover)(void);
     unsigned int (*check_status)(void);
     unsigned int (*ata_check)(unsigned char *buffer);
-	void (*read_fb)(unsigned char *buffer);	
-    int (*ioctl)(LCM_DRV_IOCTL_CMD cmd, unsigned int data);
+	void (*read_fb)(unsigned char *buffer);
     /////////////////////////////////////////////////
-    ////switch mode
-    void* (*switch_mode)(int mode);
-	void (*set_cmd)(void* handle,int* mode,unsigned int cmd_num);
 } LCM_DRIVER;
 
 
