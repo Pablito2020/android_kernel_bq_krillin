@@ -20,10 +20,9 @@ then
 else
  #if OK
 echo 'Moving CM Zera S'
-mv arch/arm/boot/zImage /var/www/compiled/CM-zImage-zeras
+mv arch/arm/boot/zImage zImage # /var/www/compiled/CM-zImage-zeras
 fi
 
 
 #write worktime
 echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
-
