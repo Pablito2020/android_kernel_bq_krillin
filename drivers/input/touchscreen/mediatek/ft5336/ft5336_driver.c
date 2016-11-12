@@ -2254,7 +2254,7 @@ EXPORT_SYMBOL(tp_write_reg1);
 		TPD_DMESG("resume I2C transfer error, line: %d\n", __LINE__);
 	}
 
-    if(check_charger_exist()==KAL_TRUE)
+    //if(check_charger_exist()==KAL_TRUE)
     {
 		ft5x0x_write_reg(0x8B,0x01);
 	}

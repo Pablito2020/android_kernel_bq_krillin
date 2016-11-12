@@ -2,6 +2,7 @@
 #ifndef __ALSPS_H__
 #define __ALSPS_H__
 
+#define MT6582
 
 #include <linux/wakelock.h>
 #include <linux/interrupt.h>

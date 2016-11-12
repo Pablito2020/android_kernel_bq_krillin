@@ -1,39 +1,7 @@
-/*****************************************************************************
- *
- * Copyright (c) 2013 mCube, Inc.  All rights reserved.
- *
- * This source is subject to the mCube Software License.
- * This software is protected by Copyright and the information and source code
- * contained herein is confidential. The software including the source code
- * may not be copied and the information contained herein may not be used or
- * disclosed except with the written permission of mCube Inc.
- *
- * All other rights reserved.
- *
- * This code and information are provided "as is" without warranty of any
- * kind, either expressed or implied, including but not limited to the
- * implied warranties of merchantability and/or fitness for a
- * particular purpose.
- *
- * The following software/firmware and/or related documentation ("mCube Software")
- * have been modified by mCube Inc. All revisions are subject to any receiver's
- * applicable license agreements with mCube Inc.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- *
- *****************************************************************************/
- 
-/*******************************************************************************
- *** INCLUDE FILES
- *******************************************************************************/
+/*
+ * (c) mCube, Inc. 2013
+ */
+
 #include <linux/interrupt.h>
 #include <linux/i2c.h>
 #include <linux/slab.h>
@@ -2017,4 +1985,6 @@ MODULE_AUTHOR("mCube-inc");
 MODULE_DESCRIPTION("MC41XX M-Sensor Driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(MCMAG_DRV_DRIVER_VERSION);
+
+
 

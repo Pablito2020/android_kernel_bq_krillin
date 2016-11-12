@@ -2764,7 +2764,7 @@ static void __exit akm09911_exit(void)
 module_init(akm09911_init);
 module_exit(akm09911_exit);
 
-MODULE_AUTHOR("viral wang");
+MODULE_AUTHOR("viral wang <viral_wang@htc.com>");
 MODULE_DESCRIPTION("AKM09911 compass driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRIVER_VERSION);

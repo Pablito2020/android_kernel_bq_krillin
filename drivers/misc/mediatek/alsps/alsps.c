@@ -783,10 +783,12 @@ static int alsps_real_driver_init(void)
 	return err;
 }
 
+#define DEFAULT_ALSPS_NAME "cktps"
   int alsps_driver_add(struct alsps_init_info* obj) 
 {
     int err=0;
 	int i =0;
+	int currentindex=0;
 	
 	ALSPS_FUN();
 	if (!obj) {
@@ -808,9 +810,28 @@ static int alsps_real_driver_init(void)
 	    {
 	      obj->platform_diver_addr = &als_ps_driver;
 	      alsps_init_list[i] = obj;
+		  currentindex=i;
 		  break;
 	    }
 	}
+
+	for(i=currentindex;i>=0;i--)
+	{
+		char * name =alsps_init_list[i]->name;
+		if(0 ==  strcmp(name,DEFAULT_ALSPS_NAME) )
+		{
+			struct alsps_init_info *temp;
+			if(i !=currentindex)
+			{
+				// 交换cktps到最后,之前的顺序无所谓 苏 勇 2014年12月18日 10:39:01
+		 		temp=alsps_init_list[i];
+		 		alsps_init_list[i]=alsps_init_list[currentindex];
+				alsps_init_list[currentindex]=temp;
+			}
+			break;
+		}
+	}
+	
 	if(i >= MAX_CHOOSE_ALSPS_NUM)
 	{
 	   ALSPS_ERR("ALSPS driver add err \n");

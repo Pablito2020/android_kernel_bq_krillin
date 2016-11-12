@@ -43,6 +43,15 @@ ifeq ($(CONFIG_MTK_APDS9930_NEW),y)
 obj-y	+=  APDS9930-new/
 endif
 
+	
 ifeq ($(CONFIG_MTK_TMD2772_AUTO),y)
 obj-y	+=  tmd2772_auto/
+endif
+
+ifeq ($(CONFIG_EPL2182_AUTO),y)
+obj-y	+=  EPL2182_auto/
+endif
+
+ifeq ($(CONFIG_CKTPS),y)
+obj-y	+=  cktps/
 endif

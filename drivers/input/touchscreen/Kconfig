@@ -426,6 +426,10 @@ config MTK_GT9XX
         bool "GT9XX for Mediatek package"
         default n
 
+config MTK_FT5336
+        bool "FT5336 for Mediatek package"
+        default n
+
 config MTK_FT5406
         bool "FT5406 for Mediatek package"
         default n
