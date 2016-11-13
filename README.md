@@ -6,9 +6,14 @@
   * Touchscreen Driver (FT5336)
   * Batery Table
   * Vibrator driver
-  * Frontal Camera
+  * Frontal Camera (Reverted)
+  * Storage (emulated storage and sdcard working)
+  * WIFI
+  * Bluetooth
+  * GPS
+  * VPN
 
-* Bugs:
+* Bugs (not working):
 
   * Rear Camera
   * Flashlight
