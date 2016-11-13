@@ -1,16 +1,18 @@
 /*
-* Copyright (C) 2011-2014 MediaTek Inc.
-*
-* This program is free software: you can redistribute it and/or modify it under the terms of the
-* GNU General Public License version 2 as published by the Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-* See the GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License along with this program.
-* If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /*******************************************************************************
  *
  * Filename:
@@ -93,12 +95,11 @@ void AudDrv_Clk_On(void)
     spin_lock_irqsave(&auddrv_Clk_lock, flags);
     if (Aud_AFE_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_Clk_On, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_CLK("+AudDrv_Clk_On, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
 #ifdef PM_MANAGER_API
         if (enable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            //xlog_printk(ANDROID_LOG_ERROR, "Sound", "Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
-            pr_err("Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
+            xlog_printk(ANDROID_LOG_ERROR, "Sound", "Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
         }
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x60004000, 0xffffffff);  // bit2: afe power on
 #else
@@ -119,15 +120,14 @@ void AudDrv_Clk_Off(void)
     Aud_AFE_Clk_cntr--;
     if (Aud_AFE_Clk_cntr == 0)
     {
-        pr_debug("+ AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_CLK("+ AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
         {
             // Disable AFE clock
 #ifdef PM_MANAGER_API
             Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00004044, 0x00004044);    // bit2: power down afe
             if (disable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
             {
-                //xlog_printk(ANDROID_LOG_ERROR, "Sound", "disable_clock MT_CG_AUDIO_AFE fail");
-                pr_err("disable_clock MT_CG_AUDIO_AFE fail\n");
+                xlog_printk(ANDROID_LOG_ERROR, "Sound", "disable_clock MT_CG_AUDIO_AFE fail");
             }
 #else
             Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00000000, 0x00004043);  // bit2: power on
@@ -136,7 +136,7 @@ void AudDrv_Clk_Off(void)
     }
     else if (Aud_AFE_Clk_cntr < 0)
     {
-        pr_err("!! AudDrv_Clk_Off, Aud_AFE_Clk_cntr<0 (%d) \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_ERROR("!! AudDrv_Clk_Off, Aud_AFE_Clk_cntr<0 (%d) \n", Aud_AFE_Clk_cntr);
         AUDIO_ASSERT(true);
         Aud_AFE_Clk_cntr = 0;
     }
@@ -161,17 +161,17 @@ void AudDrv_Suspend_Clk_On(void)
 
     if (Aud_AFE_Clk_cntr > 0)
     {
-        pr_debug("AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
+        PRINTK_AUD_CLK("AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
 #ifdef PM_MANAGER_API
 
         //Enable AFE clock
         if (enable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            pr_err("AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_AFE fai\n");
+            PRINTK_AUD_CLK("AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_AFE fail");
         }
         else
         {
-            pr_debug("AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_AFE success\n");
+            PRINTK_AUD_CLK("AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_AFE success");
         }
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x60004000, 0xffffffff); // bit2: afe power on, bit6: I2S power on
         if (Aud_I2S_Clk_cntr > 0)
@@ -179,8 +179,7 @@ void AudDrv_Suspend_Clk_On(void)
             ///Enable I2S clock
             if (enable_clock(MT_CG_AUDIO_I2S, "AUDIO"))
             {
-                //xlog_printk(ANDROID_LOG_ERROR, "Sound", "AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_I2S fail");
-                pr_err("AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_I2S fail\n");
+                xlog_printk(ANDROID_LOG_ERROR, "Sound", "AudDrv_Suspend_Clk_On() Aud enable_clock() MT_CG_AUDIO_I2S fail");
             }
         }
         //Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00004000, 0x00004044); // bit2: afe power on, bit6: I2S power on
@@ -191,7 +190,7 @@ void AudDrv_Suspend_Clk_On(void)
     spin_unlock_irqrestore(&auddrv_Clk_lock, flags);
     if (Aud_ANA_Clk_cntr > 0)
     {
-        pr_debug("AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
+        PRINTK_AUD_CLK("AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
         upmu_set_rg_clksq_en_aud(1);
     }
     //PRINTK_AUD_CLK("-AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n",Aud_AFE_Clk_cntr,Aud_ANA_Clk_cntr);
@@ -203,23 +202,21 @@ void AudDrv_Suspend_Clk_Off(void)
     spin_lock_irqsave(&auddrv_Clk_lock, flags);
     if (Aud_AFE_Clk_cntr > 0)
     {
-        pr_debug("AudDrv_Suspend_Clk_Off Aud_AFE_Clk_cntr:%d ANA_Clk(%d)\n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
+        PRINTK_AUD_CLK("AudDrv_Suspend_Clk_Off Aud_AFE_Clk_cntr:%d ANA_Clk(%d)\n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
 #ifdef PM_MANAGER_API
         //Disable AFE clock and I2S clock
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00004044, 0x00004044); // bit2: afe power off, bit6: I2S power off
 
         if (disable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            //xlog_printk(ANDROID_LOG_ERROR, "Sound", "AudDrv_Suspend_Clk_Off() disable_clock MT_CG_AUDIO_AFE fail");
-            pr_err("AudDrv_Suspend_Clk_Off() disable_clock MT_CG_AUDIO_AFE fail\n");
+            xlog_printk(ANDROID_LOG_ERROR, "Sound", "AudDrv_Suspend_Clk_Off() disable_clock MT_CG_AUDIO_AFE fail");
         }
 
         if (Aud_I2S_Clk_cntr > 0)
         {
             if (disable_clock(MT_CG_AUDIO_I2S, "AUDIO"))
             {
-                //xlog_printk(ANDROID_LOG_ERROR, "Sound", "AudDrv_Suspend_Clk_Off() disable_clock MT_CG_AUDIO_I2S fail");
-                pr_err("AudDrv_Suspend_Clk_Off() disable_clock MT_CG_AUDIO_I2S fail\n");
+                xlog_printk(ANDROID_LOG_ERROR, "Sound", "AudDrv_Suspend_Clk_Off() disable_clock MT_CG_AUDIO_I2S fail");
             }
         }
 #else
@@ -229,7 +226,7 @@ void AudDrv_Suspend_Clk_Off(void)
     spin_unlock_irqrestore(&auddrv_Clk_lock, flags);
     if (Aud_ANA_Clk_cntr > 0)
     {
-        pr_debug("AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
+        PRINTK_AUD_CLK("AudDrv_Suspend_Clk_On Aud_AFE_Clk_cntr:%d ANA_Clk(%d) \n", Aud_AFE_Clk_cntr, Aud_ANA_Clk_cntr);
         upmu_set_rg_clksq_en_aud(0);
     }
 }
@@ -247,7 +244,7 @@ void AudDrv_ANA_Clk_On(void)
     mutex_lock(&auddrv_pmic_mutex);
     if (Aud_ANA_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_ANA_Clk_On, Aud_ANA_Clk_cntr:%d \n", Aud_ANA_Clk_cntr);
+        PRINTK_AUD_CLK("+AudDrv_ANA_Clk_On, Aud_ANA_Clk_cntr:%d \n", Aud_ANA_Clk_cntr);
         upmu_set_rg_clksq_en_aud(1);
     }
     Aud_ANA_Clk_cntr++;
@@ -262,7 +259,7 @@ void AudDrv_ANA_Clk_Off(void)
     Aud_ANA_Clk_cntr--;
     if (Aud_ANA_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_ANA_Clk_Off disable_clock Ana clk(%x)\n", Aud_ANA_Clk_cntr);
+        PRINTK_AUD_CLK("+AudDrv_ANA_Clk_Off disable_clock Ana clk(%x)\n", Aud_ANA_Clk_cntr);
         // Disable ADC clock
 #ifdef PM_MANAGER_API
         upmu_set_rg_clksq_en_aud(0);
@@ -272,7 +269,7 @@ void AudDrv_ANA_Clk_Off(void)
     }
     else if (Aud_ANA_Clk_cntr < 0)
     {
-        pr_err("!! AudDrv_ANA_Clk_Off, Aud_ADC_Clk_cntr<0 (%d) \n", Aud_ANA_Clk_cntr);
+        PRINTK_AUD_ERROR("!! AudDrv_ANA_Clk_Off, Aud_ADC_Clk_cntr<0 (%d) \n", Aud_ANA_Clk_cntr);
         AUDIO_ASSERT(true);
         Aud_ANA_Clk_cntr = 0;
     }
@@ -296,7 +293,7 @@ void AudDrv_ADC_Clk_On(void)
 
     if (Aud_ADC_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_ADC_Clk_On enable_clock ADC clk(%x)\n", Aud_ADC_Clk_cntr);
+        PRINTK_AUDDRV("+AudDrv_ADC_Clk_On enable_clock ADC clk(%x)\n", Aud_ADC_Clk_cntr);
 #ifdef PM_MANAGER_API
         //hwPowerOn(MT65XX_POWER_LDO_VA28,VOL_2800 , "AUDIO");
 #endif
@@ -312,14 +309,14 @@ void AudDrv_ADC_Clk_Off(void)
     Aud_ADC_Clk_cntr--;
     if (Aud_ADC_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_ADC_Clk_On disable_clock ADC clk(%x)\n", Aud_ADC_Clk_cntr);
+        PRINTK_AUDDRV("+AudDrv_ADC_Clk_On disable_clock ADC clk(%x)\n", Aud_ADC_Clk_cntr);
 #ifdef PM_MANAGER_API
         //hwPowerDown(MT65XX_POWER_LDO_VA28, "AUDIO");
 #endif
     }
     if (Aud_ADC_Clk_cntr < 0)
     {
-        pr_err("!! AudDrv_ADC_Clk_Off, Aud_ADC_Clk_cntr<0 (%d) \n", Aud_ADC_Clk_cntr);
+        PRINTK_AUDDRV("!! AudDrv_ADC_Clk_Off, Aud_ADC_Clk_cntr<0 (%d) \n", Aud_ADC_Clk_cntr);
         Aud_ADC_Clk_cntr = 0;
     }
     mutex_unlock(&auddrv_pmic_mutex);
@@ -344,7 +341,7 @@ void AudDrv_I2S_Clk_On(void)
 #ifdef PM_MANAGER_API
         if (enable_clock(MT_CG_AUDIO_I2S, "AUDIO"))
         {
-            pr_err("Aud enable_clock MT65XX_PDN_AUDIO_I2S fail !!!\n");
+            PRINTK_AUD_ERROR("Aud enable_clock MT65XX_PDN_AUDIO_I2S fail !!!\n");
         }
 #else
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00000040, 0x00000040);  //power on I2S clock
@@ -365,7 +362,7 @@ void AudDrv_I2S_Clk_Off(void)
 #ifdef PM_MANAGER_API
         if (disable_clock(MT_CG_AUDIO_I2S, "AUDIO"))
         {
-            pr_err("disable_clock MT_CG_AUDIO_I2S fail");
+            PRINTK_AUD_ERROR("disable_clock MT_CG_AUDIO_I2S fail");
         }
 #else
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00000000, 0x00000040);  //power off I2S clock
@@ -373,7 +370,7 @@ void AudDrv_I2S_Clk_Off(void)
     }
     else if (Aud_I2S_Clk_cntr < 0)
     {
-        pr_err("!! AudDrv_I2S_Clk_Off, Aud_I2S_Clk_cntr<0 (%d) \n", Aud_I2S_Clk_cntr);
+        PRINTK_AUD_ERROR("!! AudDrv_I2S_Clk_Off, Aud_I2S_Clk_cntr<0 (%d) \n", Aud_I2S_Clk_cntr);
         AUDIO_ASSERT(true);
         Aud_I2S_Clk_cntr = 0;
     }
@@ -400,7 +397,7 @@ void AudDrv_Core_Clk_On(void)
 #ifdef PM_MANAGER_API
         if (enable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            pr_err("AudDrv_Core_Clk_On Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
+            PRINTK_AUD_ERROR("AudDrv_Core_Clk_On Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
         }
 #endif
     }
@@ -420,7 +417,7 @@ void AudDrv_Core_Clk_Off(void)
 #ifdef PM_MANAGER_API
         if (disable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            pr_err("AudDrv_Core_Clk_On Aud disable_clock MT_CG_AUDIO_AFE fail !!!\n");
+            PRINTK_AUD_ERROR("AudDrv_Core_Clk_On Aud disable_clock MT_CG_AUDIO_AFE fail !!!\n");
         }
 #endif
     }
@@ -440,7 +437,7 @@ void AudDrv_Core_Clk_Off(void)
   *****************************************************************************/
 void AudDrv_Linein_Clk_On(void)
 {
-    pr_debug("+AudDrv_Linein_Clk_On, Aud_I2S_Clk_cntr:%d \n", Aud_LineIn_Clk_cntr);
+    PRINTK_AUD_CLK("+AudDrv_Linein_Clk_On, Aud_I2S_Clk_cntr:%d \n", Aud_LineIn_Clk_cntr);
     if (Aud_LineIn_Clk_cntr == 0)
     {
 #ifdef PM_MANAGER_API
@@ -455,7 +452,7 @@ void AudDrv_Linein_Clk_On(void)
 
 void AudDrv_Linein_Clk_Off(void)
 {
-    pr_debug("+AudDrv_Linein_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_LineIn_Clk_cntr);
+    PRINTK_AUD_CLK("+AudDrv_Linein_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_LineIn_Clk_cntr);
     Aud_LineIn_Clk_cntr--;
     if (Aud_LineIn_Clk_cntr == 0)
     {
@@ -468,11 +465,11 @@ void AudDrv_Linein_Clk_Off(void)
     }
     else if (Aud_LineIn_Clk_cntr < 0)
     {
-        pr_debug("!! AudDrv_Linein_Clk_Off, Aud_I2S_Clk_cntr<0 (%d) \n", Aud_LineIn_Clk_cntr);
+        PRINTK_AUD_ERROR("!! AudDrv_Linein_Clk_Off, Aud_I2S_Clk_cntr<0 (%d) \n", Aud_LineIn_Clk_cntr);
         AUDIO_ASSERT(true);
         Aud_LineIn_Clk_cntr = 0;
     }
-    pr_debug("-AudDrv_I2S_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_LineIn_Clk_cntr);
+    PRINTK_AUD_CLK("-AudDrv_I2S_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_LineIn_Clk_cntr);
 }
 
 /*****************************************************************************
@@ -486,7 +483,7 @@ void AudDrv_Linein_Clk_Off(void)
 
 void AudDrv_HDMI_Clk_On(void)
 {
-    pr_debug("+AudDrv_HDMI_Clk_On, Aud_I2S_Clk_cntr:%d \n", Aud_HDMI_Clk_cntr);
+    PRINTK_AUD_CLK("+AudDrv_HDMI_Clk_On, Aud_I2S_Clk_cntr:%d \n", Aud_HDMI_Clk_cntr);
     if (Aud_HDMI_Clk_cntr == 0)
     {
         AudDrv_ANA_Clk_On();
@@ -497,7 +494,7 @@ void AudDrv_HDMI_Clk_On(void)
 
 void AudDrv_HDMI_Clk_Off(void)
 {
-    pr_debug("+AudDrv_HDMI_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_HDMI_Clk_cntr);
+    PRINTK_AUD_CLK("+AudDrv_HDMI_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_HDMI_Clk_cntr);
     Aud_HDMI_Clk_cntr--;
     if (Aud_HDMI_Clk_cntr == 0)
     {
@@ -506,46 +503,44 @@ void AudDrv_HDMI_Clk_Off(void)
     }
     else if (Aud_HDMI_Clk_cntr < 0)
     {
-        pr_debug("!! AudDrv_Linein_Clk_Off, Aud_I2S_Clk_cntr<0 (%d) \n", Aud_HDMI_Clk_cntr);
+        PRINTK_AUD_ERROR("!! AudDrv_Linein_Clk_Off, Aud_I2S_Clk_cntr<0 (%d) \n", Aud_HDMI_Clk_cntr);
         AUDIO_ASSERT(true);
         Aud_HDMI_Clk_cntr = 0;
     }
-    pr_debug("-AudDrv_I2S_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_HDMI_Clk_cntr);
+    PRINTK_AUD_CLK("-AudDrv_I2S_Clk_Off, Aud_I2S_Clk_cntr:%d \n", Aud_HDMI_Clk_cntr);
 }
 
 void AudDrv_Clk_On_DisableISR(void)
 {
     unsigned long flags;
-    pr_debug("+AudDrv_Clk_On_DisableISR");
+    PRINTK_AUD_CLK("+AudDrv_Clk_On_DisableISR");
     spin_lock_irqsave(&auddrv_Clk_lock, flags);
     if (Aud_AFE_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_Clk_On, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_CLK("+AudDrv_Clk_On, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
 #ifdef PM_MANAGER_API
         if (enable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            //xlog_printk(ANDROID_LOG_ERROR, "Sound", "Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
-            pr_err("Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
+            xlog_printk(ANDROID_LOG_ERROR, "Sound", "Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
         }
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x60004000, 0xffffffff);  // bit2: afe power on
 #else
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x60004000, 0xffffffff);  // bit2: afe power on
 #endif
     }
-
-    Afe_Set_Reg(AFE_IRQ_MCU_CON, 0, 0x03);
+    
+    Afe_Set_Reg(AFE_IRQ_MCU_CON, 0, 0x03);  
 
     if (Aud_AFE_Clk_cntr == 0)
     {
-        pr_debug("+ AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_CLK("+ AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
         {
             // Disable AFE clock
 #ifdef PM_MANAGER_API
             Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00004044, 0x00004044);    // bit2: power down afe
             if (disable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
             {
-                //xlog_printk(ANDROID_LOG_ERROR, "Sound", "disable_clock MT_CG_AUDIO_AFE fail");
-                pr_err("disable_clock MT_CG_AUDIO_AFE fail\n");
+                xlog_printk(ANDROID_LOG_ERROR, "Sound", "disable_clock MT_CG_AUDIO_AFE fail");
             }
 #else
             Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00000000, 0x00004043);  // bit2: power on
@@ -554,30 +549,29 @@ void AudDrv_Clk_On_DisableISR(void)
     }
 
     spin_unlock_irqrestore(&auddrv_Clk_lock, flags);
-    pr_debug("-AudDrv_Clk_On_DisableISR");
+    PRINTK_AUD_CLK("-AudDrv_Clk_On_DisableISR");
     //PRINTK_AUD_CLK("-!! AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n",Aud_AFE_Clk_cntr);
 }
 
 void AudDrv_Clk_On_ClrISRStatus(void)
 {
     unsigned long flags;
-    pr_debug("+AudDrv_Clk_On_ClrISRStatus");
+    PRINTK_AUD_CLK("+AudDrv_Clk_On_ClrISRStatus");
     spin_lock_irqsave(&auddrv_Clk_lock, flags);
     if (Aud_AFE_Clk_cntr == 0)
     {
-        pr_debug("+AudDrv_Clk_On, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_CLK("+AudDrv_Clk_On, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
 #ifdef PM_MANAGER_API
         if (enable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
         {
-            //xlog_printk(ANDROID_LOG_ERROR, "Sound", "Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
-            pr_err("Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
+            xlog_printk(ANDROID_LOG_ERROR, "Sound", "Aud enable_clock MT_CG_AUDIO_AFE fail !!!\n");
         }
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x60004000, 0xffffffff);  // bit2: afe power on
 #else
         Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x60004000, 0xffffffff);  // bit2: afe power on
 #endif
     }
-
+    
     Afe_Set_Reg(AFE_IRQ_CLR, 1 << 6 , 0xff);
     Afe_Set_Reg(AFE_IRQ_CLR, 1 , 0xff);
     Afe_Set_Reg(AFE_IRQ_CLR, 1 << 1 , 0xff);
@@ -588,15 +582,14 @@ void AudDrv_Clk_On_ClrISRStatus(void)
 
      if (Aud_AFE_Clk_cntr == 0)
     {
-        pr_debug("+ AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
+        PRINTK_AUD_CLK("+ AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n", Aud_AFE_Clk_cntr);
         {
             // Disable AFE clock
 #ifdef PM_MANAGER_API
             Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00004044, 0x00004044);    // bit2: power down afe
             if (disable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
             {
-                //xlog_printk(ANDROID_LOG_ERROR, "Sound", "disable_clock MT_CG_AUDIO_AFE fail");
-                pr_err("disable_clock MT_CG_AUDIO_AFE fail\n");
+                xlog_printk(ANDROID_LOG_ERROR, "Sound", "disable_clock MT_CG_AUDIO_AFE fail");
             }
 #else
             Afe_Set_Reg(AUDIOAFE_TOP_CON0, 0x00000000, 0x00004043);  // bit2: power on
@@ -605,7 +598,7 @@ void AudDrv_Clk_On_ClrISRStatus(void)
     }
 
     spin_unlock_irqrestore(&auddrv_Clk_lock, flags);
-    pr_debug("-AudDrv_Clk_On_ClrISRStatus");
+    PRINTK_AUD_CLK("-AudDrv_Clk_On_ClrISRStatus");
     //PRINTK_AUD_CLK("-!! AudDrv_Clk_Off, Aud_AFE_Clk_cntr:%d \n",Aud_AFE_Clk_cntr);
 }
 // export symbol for other module use

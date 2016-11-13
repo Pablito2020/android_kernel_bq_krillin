@@ -19,7 +19,7 @@ else
 ifeq ($(CONFIG_MTK_NCP1851_SUPPORT),y) 
     obj-$(CONFIG_MTK_SMART_BATTERY) += ncp1851.o charging_hw_ncp1851.o tbl_helper_func.o
 else
-ifeq ($(CONFIG_MTK_NCP1854_SUPPORT),y) 
+ifeq ($(MTK_NCP1854_SUPPORT),y) 
     obj-$(CONFIG_MTK_SMART_BATTERY) += ncp1854.o charging_hw_ncp1854.o tbl_helper_func.o
 else
 ifeq ($(CONFIG_MTK_FAN5405_SUPPORT),y)
@@ -28,7 +28,7 @@ else
 ifeq ($(CONFIG_MTK_BQ24158_SUPPORT),y)
     obj-$(CONFIG_MTK_SMART_BATTERY) += bq24158.o charging_hw_bq24158.o
 else
-ifeq ($(CONFIG_MTK_BQ24296_SUPPORT),y) 
+ifeq ($(MTK_BQ24296_SUPPORT),y) 
     obj-$(CONFIG_MTK_SMART_BATTERY) += bq24296.o charging_hw_bq24296.o tbl_helper_func.o
 else
 ifeq ($(CONFIG_MTK_SWCHR_SUPPORT),y)

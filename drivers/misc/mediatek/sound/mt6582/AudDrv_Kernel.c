@@ -785,13 +785,13 @@ void Auddrv_UL_Interrupt_Handler(void)  // irq2 ISR handler
  */
 void Auddrv_DL_Interrupt_Handler(void)  // irq1 ISR handler
 {
-    unsigned long flags1,flags2;
+    unsigned long flags = 0;
     kal_int32 Afe_consumed_bytes = 0;
     kal_int32 HW_memory_index = 0;
     kal_int32 HW_Cur_ReadIdx = 0;
     AFE_BLOCK_T *Afe_Block = &(AFE_dL1_Control_context.rBlock);
     //spin lock with interrupt disable
-    spin_lock_irqsave(&auddrv_irqstatus_lock, flags1);
+    spin_lock_irqsave(&auddrv_irqstatus_lock, flags);
 
     if (AudDrvSuspendStatus == true)
     {
@@ -831,7 +831,7 @@ void Auddrv_DL_Interrupt_Handler(void)  // irq1 ISR handler
     PRINTK_AUDDRV("+Auddrv_DL_Interrupt_Handler ReadIdx:%x WriteIdx:%x, DataRemained:%x, Afe_consumed_bytes:%x HW_memory_index = %x \n",
         Afe_Block->u4DMAReadIdx,Afe_Block->u4WriteIdx,Afe_Block->u4DataRemained,Afe_consumed_bytes,HW_memory_index);
         */
-    spin_lock_irqsave(&auddrv_DLCtl_lock, flags2);// Add for ISR data concurrency
+    spin_lock_irqsave(&auddrv_DLCtl_lock, flags);// Add for ISR data concurrency
 
     if (Afe_Block->u4DataRemained < Afe_consumed_bytes || Afe_Block->u4DataRemained <= 0 || Afe_Block->u4DataRemained  > Afe_Block->u4BufferSize || AudIrqReset)
     {
@@ -858,11 +858,11 @@ void Auddrv_DL_Interrupt_Handler(void)  // irq1 ISR handler
         PRINTK_AUDDRV("-DL_Handling normal ReadIdx:%x ,DataRemained:%x, WriteIdx:%x \n",
             Afe_Block->u4DMAReadIdx,Afe_Block->u4DataRemained,Afe_Block->u4WriteIdx);*/
     }
-    spin_unlock_irqrestore(&auddrv_DLCtl_lock, flags2);
+    spin_unlock_irqrestore(&auddrv_DLCtl_lock, flags);
     // wait up write thread
     DL1_wait_queue_flag = 1;
     wake_up_interruptible(&DL1_Wait_Queue);
-    spin_unlock_irqrestore(&auddrv_irqstatus_lock, flags1);
+    spin_unlock_irqrestore(&auddrv_irqstatus_lock, flags);
 
 }
 
@@ -1651,6 +1651,17 @@ void Auddrv_Free_Dma_Memory(AFE_MEM_CONTROL_T *pAFE_MEM)
     }
 
     pblock =  &(pAFE_MEM->rBlock);
+#if defined(MTK_AUDIO_DYNAMIC_SRAM_SUPPORT)
+    if ((pblock->pucVirtBufAddrBackup != NULL) && (pblock->pucPhysBufAddrBackup != 0))
+    {
+        PRINTK_AUDDRV("dma_free_coherent pucVirtBufAddrBackup = %p pucPhysBufAddrBackup = %x", pblock->pucVirtBufAddrBackup, pblock->pucPhysBufAddrBackup);
+        dma_free_coherent(0, pblock->u4BufferSize, pblock->pucVirtBufAddrBackup, pblock->pucPhysBufAddrBackup);
+    }
+    else
+    {
+        PRINTK_AUDDRV("cannot dma_free_coherent pucVirtBufAddrBackup = %p pucPhysBufAddrBackup = %x", pblock->pucVirtBufAddrBackup, pblock->pucPhysBufAddrBackup);
+    }
+#else
     if ((pblock->pucVirtBufAddr != NULL) && (pblock->pucPhysBufAddr != 0))
     {
         PRINTK_AUDDRV("dma_free_coherent pucVirtBufAddr = %p pucPhysBufAddr = %x", pblock->pucVirtBufAddr, pblock->pucPhysBufAddr);
@@ -1660,6 +1671,7 @@ void Auddrv_Free_Dma_Memory(AFE_MEM_CONTROL_T *pAFE_MEM)
     {
         PRINTK_AUDDRV("cannot dma_free_coherent pucVirtBufAddr = %p pucPhysBufAddr = %x", pblock->pucVirtBufAddr, pblock->pucPhysBufAddr);
     }
+#endif
 }
 
 /*****************************************************************************
@@ -3503,13 +3515,6 @@ static long AudDrv_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
             ret = adc_return;
             break;
         }
-        case AUDDRV_GET_EXT_AMP_SUPPORT:
-        {
-			int mtk_get_sound_return = 0;
-            PRINTK_AUDDRV("Uses YUSU sound card");
-			ret = mtk_get_sound_return;
-            break;
-        }
         case AUDDRV_AEE_IOCTL:
         {
             PRINTK_AUDDRV("AudDrv AUDDRV_AEE_IOCTL  arg = %lu", arg);
@@ -4240,7 +4245,10 @@ static ssize_t audio_read_proc(struct file *fp,  char __user *data, size_t count
         return 0;
     }    
     AudDrv_Read_Procmem(stAudioInfo,NULL,0,AUDIOREG_CAT_LEN,NULL,NULL);
-    copy_to_user(data,stAudioInfo, AUDIOREG_CAT_LEN);
+    if(copy_to_user(data,stAudioInfo, AUDIOREG_CAT_LEN))
+    {
+    		PRINTK_AUDDRV("audio_read_proc copy_to_user fail\n");
+    }
     vfree(stAudioInfo);
     bPrintDone = true;
     PRINTK_AUDDRV("audio_read_proc-\n");
@@ -4259,7 +4267,7 @@ static int AudDrv_mod_init(void)
     PRINTK_AUDDRV("+AudDrv_mod_init \n");
 
     //register speaker driver
-    //Speaker_Register();
+    Speaker_Register();
 
 
     // Register platform DRIVER

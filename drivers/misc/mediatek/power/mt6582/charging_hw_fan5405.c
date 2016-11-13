@@ -500,16 +500,22 @@ static void hw_bc11_dump_register(void)
 	upmu_set_rg_usbdl_rst(1);		//force leave USBDL mode
    
 	#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
-	fan5405_reg_config_interface(0x06,0x77); // ISAFE = 1250mA, VSAFE = 4.34V
+	fan5405_reg_config_interface(0x06,0x67); // ISAFE = 1250mA, VSAFE = 4.34V
 	#else
 	fan5405_reg_config_interface(0x06,0x70);
 	#endif
 	    
 	fan5405_reg_config_interface(0x00,0xC0);	//kick chip watch dog
-	fan5405_reg_config_interface(0x01,0xb8);	//TE=1, CE=0, HZ_MODE=0, OPA_MODE=0
-	fan5405_reg_config_interface(0x05,0x03);
+    //fan5405_reg_config_interface(0x06,0x67); //set ISAFE//0x10//0x57		
+	fan5405_reg_config_interface(0x01,0xC8);//0xF8	
+	fan5405_reg_config_interface(0x02,0xAA);//4.34V
+	//fan5405_reg_config_interface(0x04,0x78); //set IOCHARGE 1000MA
+// 苏 勇 2014年05月19日 17:59:16	fan5405_reg_config_interface(0x04,0x7D); //修改截止充电电流为200ma
+	fan5405_reg_config_interface(0x04,0x7a); //修改截止充电电流为9.9/82=120.7ma
+	fan5405_reg_config_interface(0x05,0x04);//VSP=4.533v
+	//end
 	if ( !charging_init_flag ) {   
-		fan5405_reg_config_interface(0x04,0x1A); //146mA
+       // fan5405_config_interface_liao(0x04,0x1A); //146mA
 		charging_init_flag = KAL_TRUE;
 	}        
  	return status;
@@ -533,6 +539,15 @@ static void hw_bc11_dump_register(void)
 
 	if(KAL_TRUE == enable)
 	{
+		fan5405_set_ce(0);
+		fan5405_set_hz_mode(0);
+		fan5405_set_opa_mode(0);
+	}
+	else if(2==enable) // 模式2是先复位,再置位 苏 勇 2014年05月19日 11:30:47
+	{
+		fan5405_set_ce(1);
+		fan5405_set_hz_mode(1);
+		mdelay(50);
 		fan5405_set_ce(0);
 		fan5405_set_hz_mode(0);
 		fan5405_set_opa_mode(0);
@@ -727,13 +742,15 @@ kal_bool charging_type_detection_done(void)
 #if defined(MTK_WIRELESS_CHARGER_SUPPORT)
 	int wireless_state = 0;
 	wireless_state = mt_get_gpio_in(wireless_charger_gpio_number);
-	if(wireless_state == WIRELESS_CHARGER_EXIST_STATE) {
+    if(wireless_state == WIRELESS_CHARGER_EXIST_STATE)
+    {
 		*(CHARGER_TYPE*)(data) = WIRELESS_CHARGER;
 		battery_xlog_printk(BAT_LOG_CRTI, "WIRELESS_CHARGER!\r\n");
 		return status;
 	}
 #endif
-	if(g_charger_type!=CHARGER_UNKNOWN && g_charger_type!=WIRELESS_CHARGER) {
+    if(g_charger_type!=CHARGER_UNKNOWN && g_charger_type!=WIRELESS_CHARGER)
+    {
 		*(CHARGER_TYPE*)(data) = g_charger_type;
 		battery_xlog_printk(BAT_LOG_CRTI, "return %d!\r\n", g_charger_type);
 		return status;
@@ -750,14 +767,30 @@ kal_bool charging_type_detection_done(void)
 		/********* Step A1 ***************/
 		if(1 == hw_bc11_stepA1())
 		{
+			 if(1 == hw_bc11_stepB1())
+			 {
 			*(CHARGER_TYPE*)(data) = APPLE_2_1A_CHARGER;
-			battery_xlog_printk(BAT_LOG_CRTI, "step A1 : Apple 2.1A CHARGER!\r\n");
+				 battery_xlog_printk(BAT_LOG_CRTI, "step B1 : Apple 2.1A CHARGER!\r\n");
 		}	 
 		else
 		{
 			*(CHARGER_TYPE*)(data) = NONSTANDARD_CHARGER;
-			battery_xlog_printk(BAT_LOG_CRTI, "step A1 : Non STANDARD CHARGER!\r\n");
+				 battery_xlog_printk(BAT_LOG_CRTI, "step B1 : Non STANDARD CHARGER!\r\n");
 		}
+		 }
+		 else
+		 {
+			 if(1 == hw_bc11_stepC1())
+			 {
+				 *(CHARGER_TYPE*)(data) = APPLE_1_0A_CHARGER;
+				 battery_xlog_printk(BAT_LOG_CRTI, "step C1 : Apple 1A CHARGER!\r\n");
+			 }	 
+			 else
+			 {
+				 *(CHARGER_TYPE*)(data) = APPLE_0_5A_CHARGER;
+				 battery_xlog_printk(BAT_LOG_CRTI, "step C1 : Apple 0.5A CHARGER!\r\n");			 
+			 }	 
+		 }
 	}
 	else
 	{

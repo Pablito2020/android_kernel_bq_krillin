@@ -1,17 +1,3 @@
-/*
-* Copyright (C) 2011-2014 MediaTek Inc.
-*
-* This program is free software: you can redistribute it and/or modify it under the terms of the
-* GNU General Public License version 2 as published by the Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-* See the GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License along with this program.
-* If not, see <http://www.gnu.org/licenses/>.
-*/
-
 /*******************************************************************************
  *
  * Filename:
@@ -45,7 +31,6 @@
  *******************************************************************************/
 #ifndef _AUDDRV_IOCTL_MSG_H
 #define _AUDDRV_IOCTL_MSG_H
-
 #include <linux/time.h>
 
 /*****************************************************************************
@@ -157,7 +142,6 @@
 //auxadc
 #define AUDDRV_GET_AUXADC_CHANNEL_VALUE   _IOW(AUD_DRV_IOC_MAGIC, 0xb0, int)
 
-#define AUDDRV_GET_EXT_AMP_SUPPORT   _IOW(AUD_DRV_IOC_MAGIC, 0xc0, int)
 // used for debug
 #define AUDDRV_AEE_IOCTL              _IOW(AUD_DRV_IOC_MAGIC, 0xFA, int)
 #define AUDDRV_GPIO_IOCTL              _IOW(AUD_DRV_IOC_MAGIC, 0xFB, int)
