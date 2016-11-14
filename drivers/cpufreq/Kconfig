@@ -170,6 +170,11 @@ config CPU_FREQ_DEFAULT_GOV_WHEATLEY
 	help
 	  Use the CPUFreq governor 'wheatley' as default.
 
+config CPU_FREQ_DEFAULT_GOV_THUNDERX
+	bool "thunderx"
+	select CPU_FREQ_GOV_THUNDERX
+	help
+
 endchoice
 
 config CPU_FREQ_GOV_BALANCE
@@ -363,6 +368,12 @@ config CPU_FREQ_GOV_WHEATLEY
           For details, take a look at linux/Documentation/cpu-freq.
 
           If in doubt, say N.
+
+config CPU_FREQ_GOV_THUNDERX
+	tristate "'thunderx' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	  'thunderx' - a "power optimized" governor for Mediatek SoCs
 
 config GENERIC_CPUFREQ_CPU0
 	tristate "Generic CPU0 cpufreq driver"
