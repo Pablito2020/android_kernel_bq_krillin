@@ -959,8 +959,8 @@ static void OV5648MIPI_Sensor_Init(void)
     OV5648MIPI_write_cmos_sensor(0x3817, 0x00); // hsync start
 
     // Horizontal binning
-    OV5648MIPI_write_cmos_sensor(0x3820, 0x08); // flip off, v bin off  0x08
-    OV5648MIPI_write_cmos_sensor(0x3821, 0x07); // mirror on, h bin on 0x07
+    OV5648MIPI_write_cmos_sensor(0x3820, 0x0E); // flip off, v bin off  0x08
+    OV5648MIPI_write_cmos_sensor(0x3821, 0x01); // mirror on, h bin on 0x07
     
     OV5648MIPI_write_cmos_sensor(0x3826, 0x03);
     OV5648MIPI_write_cmos_sensor(0x3829, 0x00);
@@ -1119,8 +1119,8 @@ static void OV5648MIPI_Preview_Setting(void)
        *   ISP and Sensor flip or mirror register bit should be the same!!
        *
        ********************************************************/
-    OV5648MIPI_write_cmos_sensor(0x3820, 0x08); // flip off, v bin off  0x08
-    OV5648MIPI_write_cmos_sensor(0x3821, 0x07); // mirror on, h bin on 0x07
+    OV5648MIPI_write_cmos_sensor(0x3820, 0x0E); // flip off, v bin off  0x08
+    OV5648MIPI_write_cmos_sensor(0x3821, 0x01); // mirror on, h bin on 0x07
 
     
     OV5648MIPI_write_cmos_sensor(0x4004, 0x02); // black line number
@@ -1204,8 +1204,8 @@ static void OV5648MIPI_Capture_Setting(void)
        *   ISP and Sensor flip or mirror register bit should be the same!!
        *
        ********************************************************/
-    OV5648MIPI_write_cmos_sensor(0x3820, 0x40); // flip off, v bin off   0x40
-    OV5648MIPI_write_cmos_sensor(0x3821, 0x06); // mirror on, v bin off 0x06
+    OV5648MIPI_write_cmos_sensor(0x3820, 0x46); // flip off, v bin off   0x40
+    OV5648MIPI_write_cmos_sensor(0x3821, 0x00); // mirror on, v bin off 0x06
 
     
     OV5648MIPI_write_cmos_sensor(0x4004, 0x04); // black line number
