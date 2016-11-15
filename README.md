@@ -6,7 +6,7 @@
   * Touchscreen Driver (FT5336)
   * Batery Table
   * Vibrator driver
-  * Frontal Camera (Reverted)
+  * Frontal Camera
   * Storage (emulated storage and sdcard working)
   * WIFI
   * Bluetooth
@@ -22,7 +22,7 @@
     
     
 # Thanks to:
-   * @zormax
-   * @assusdan
-   * BQ for his sources
+   * @zormax for the project cm12/13
+   * @assusdan for the BIG help adapting the kernel source to our bq device
+   * BQ for relasing his sources
     
