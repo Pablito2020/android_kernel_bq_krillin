@@ -231,22 +231,16 @@ static atomic_t g_CamDrvOpenCnt;
 
 static DEFINE_MUTEX(kdCam_Mutex);
 static BOOL bSesnorVsyncFlag = FALSE;
+static char g_SensorName[2][32] = {KDIMGSENSOR_NOSENSOR,KDIMGSENSOR_NOSENSOR};
 static ACDK_KD_SENSOR_SYNC_STRUCT g_NewSensorExpGain = {128, 128, 128, 128, 1000, 640, 0xFF, 0xFF, 0xFF, 0};
 
 
 extern MULTI_SENSOR_FUNCTION_STRUCT kd_MultiSensorFunc;
 static MULTI_SENSOR_FUNCTION_STRUCT *g_pSensorFunc = &kd_MultiSensorFunc;;
-#if 1//isp suspend resume patch
-BOOL g_bEnableDriver[KDIMGSENSOR_MAX_INVOKE_DRIVERS] = {FALSE,FALSE};
-SENSOR_FUNCTION_STRUCT *g_pInvokeSensorFunc[KDIMGSENSOR_MAX_INVOKE_DRIVERS] = {NULL,NULL};
-CAMERA_DUAL_CAMERA_SENSOR_ENUM g_invokeSocketIdx[KDIMGSENSOR_MAX_INVOKE_DRIVERS] = {DUAL_CAMERA_NONE_SENSOR,DUAL_CAMERA_NONE_SENSOR};
-char g_invokeSensorNameStr[KDIMGSENSOR_MAX_INVOKE_DRIVERS][32] = {KDIMGSENSOR_NOSENSOR,KDIMGSENSOR_NOSENSOR};
-#else
 static SENSOR_FUNCTION_STRUCT *g_pInvokeSensorFunc[KDIMGSENSOR_MAX_INVOKE_DRIVERS] = {NULL,NULL};
 static BOOL g_bEnableDriver[KDIMGSENSOR_MAX_INVOKE_DRIVERS] = {FALSE,FALSE};
 static CAMERA_DUAL_CAMERA_SENSOR_ENUM g_invokeSocketIdx[KDIMGSENSOR_MAX_INVOKE_DRIVERS] = {DUAL_CAMERA_NONE_SENSOR,DUAL_CAMERA_NONE_SENSOR};
 static char g_invokeSensorNameStr[KDIMGSENSOR_MAX_INVOKE_DRIVERS][32] = {KDIMGSENSOR_NOSENSOR,KDIMGSENSOR_NOSENSOR};
-#endif
 static wait_queue_head_t kd_sensor_wait_queue;
 bool setExpGainDoneFlag = 0;
 /*=============================================================================
@@ -575,9 +569,9 @@ MUINT32 ret = ERROR_NONE;
 MINT32 i = 0;
     KD_MULTI_FUNCTION_ENTRY();
     //from hear to tail
-    for ( i = KDIMGSENSOR_INVOKE_DRIVER_0 ; i < KDIMGSENSOR_MAX_INVOKE_DRIVERS ; i++ ) {
+    //for ( i = KDIMGSENSOR_INVOKE_DRIVER_0 ; i < KDIMGSENSOR_MAX_INVOKE_DRIVERS ; i++ ) {
     //from tail to head.
-    //for ( i = (KDIMGSENSOR_MAX_INVOKE_DRIVERS-1) ; i >= KDIMGSENSOR_INVOKE_DRIVER_0 ; i-- ) {
+    for ( i = (KDIMGSENSOR_MAX_INVOKE_DRIVERS-1) ; i >= KDIMGSENSOR_INVOKE_DRIVER_0 ; i-- ) {
         if ( g_bEnableDriver[i] && g_pInvokeSensorFunc[i] ) {
             // turn on power
             ret = kdCISModulePowerOn((CAMERA_DUAL_CAMERA_SENSOR_ENUM)g_invokeSocketIdx[i],(char*)g_invokeSensorNameStr[i],true,CAMERA_HW_DRVNAME1);
@@ -743,12 +737,6 @@ MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData)
             //set i2c slave ID
             //KD_SET_I2C_SLAVE_ID(i,g_invokeSocketIdx[i],IMGSENSOR_SET_I2C_ID_STATE);
             //
-            #if 1//isp suspend resume patch
-            g_pInvokeSensorFunc[i]->ScenarioId = ScenarioId;
-			memcpy(&g_pInvokeSensorFunc[i]->imageWindow, pImageWindow, sizeof(ACDK_SENSOR_EXPOSURE_WINDOW_STRUCT));
-			memcpy(&g_pInvokeSensorFunc[i]->sensorConfigData, pSensorConfigData, sizeof(ACDK_SENSOR_CONFIG_STRUCT));
-            #endif
-
             ret = g_pInvokeSensorFunc[i]->SensorControl(ScenarioId,pImageWindow,pSensorConfigData);
             if ( ERROR_NONE != ret ) {
                 PK_ERR("ERR:SensorControl(), i =%d\n",i);
@@ -1144,6 +1132,10 @@ inline static int adopt_CAMERA_HW_CheckIsAlive(void)
                 else {
 
                     PK_DBG(" Sensor found ID = 0x%x\n", sensorID);
+                    if(g_invokeSocketIdx[i]==DUAL_CAMERA_MAIN_SENSOR||g_invokeSocketIdx[i]==DUAL_CAMERA_SUB_SENSOR)
+                    {
+                        memcpy((char*)g_SensorName[g_invokeSocketIdx[i]-DUAL_CAMERA_MAIN_SENSOR],(char*)g_invokeSensorNameStr[i],sizeof(g_invokeSensorNameStr[i]));
+                    }
                     err = ERROR_NONE;
                 }
                 if(ERROR_NONE != err)
@@ -2026,13 +2018,71 @@ struct i2c_driver CAMERA_HW_i2c_driver = {
 /*******************************************************************************
 * i2c relative end
 *****************************************************************************/
+CAMERA_DUAL_CAMERA_SENSOR_ENUM get_current_invokeSensorIdx(void)
+{
+  
+	return g_invokeSocketIdx[0];
 
+}
+char* get_current_sensorname(void)
+{
+  
+	return g_invokeSensorNameStr[0];
 
+}
+static ssize_t show_camera_name(struct device *dev,struct device_attribute *attr, char *buf)
+{
+	sprintf(buf,"main: %s\nsub:  %s\n",g_SensorName[0],g_SensorName[1]);
+}
+
+static ssize_t show_main_camera_name(struct device *dev,struct device_attribute *attr, char *buf)
+{
+    sprintf(buf,"%s\n",g_SensorName[0]);
+}
+
+static ssize_t show_sub_camera_name(struct device *dev,struct device_attribute *attr, char *buf)
+{
+    sprintf(buf,"%s\n", g_SensorName[1]);
+}
+
+static ssize_t store_camera_name(struct device *dev,struct device_attribute *attr, char *buf)
+{
+
+}
+
+static ssize_t store_main_camera_name(struct device *dev,struct device_attribute *attr, char *buf)
+{
+
+}
+
+static ssize_t store_sub_camera_name(struct device *dev,struct device_attribute *attr, char *buf)
+{
+
+}
+
+static  DEVICE_ATTR(camera_name,0664,show_camera_name,store_camera_name);
+static  DEVICE_ATTR(main_camera_name,0664,show_main_camera_name,store_main_camera_name);
+static  DEVICE_ATTR(sub_camera_name,0664,show_sub_camera_name,store_sub_camera_name);
+static ssize_t show_currSensorName(struct device *dev,struct device_attribute *attr, char *buf)
+{
+	sprintf(buf,"%s\n",g_invokeSensorNameStr[0]);
+}
+
+static ssize_t store_currSensorName(struct device *dev,struct device_attribute *attr, char *buf)
+{
+
+}
+
+static  DEVICE_ATTR(currSensorName,0664,show_currSensorName,store_currSensorName);
 /*******************************************************************************
 * CAMERA_HW_remove
 ********************************************************************************/
 static int CAMERA_HW_probe(struct platform_device *pdev)
 {
+	device_create_file(&(pdev->dev),&dev_attr_camera_name);
+    device_create_file(&(pdev->dev),&dev_attr_main_camera_name);
+    device_create_file(&(pdev->dev),&dev_attr_sub_camera_name);
+	device_create_file(&(pdev->dev),&dev_attr_currSensorName);
     return i2c_add_driver(&CAMERA_HW_i2c_driver);
 }
 

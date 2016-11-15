@@ -1,4 +1,4 @@
-#include <linux/kernel.h> //constant xx 
+#include <linux/kernel.h> //constant xx
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/types.h>
@@ -36,6 +36,7 @@
 
 
 
+
 /******************************************************************************
  * Debug configuration
 ******************************************************************************/
@@ -67,6 +68,36 @@
 	#define PK_VER(a,...)
 	#define PK_ERR(a,...)
 #endif
+
+//control by BB gpio
+#define GPIO_CAMERA_FLASH_MODE GPIO_CAMERA_FLASH_MODE_PIN //GPIO12
+#define GPIO_CAMERA_FLASH_MODE_M_GPIO  GPIO_MODE_00
+        //CAMERA-FLASH-T/F
+            //H:flash mode
+            //L:torch mode
+#define GPIO_CAMERA_FLASH_EN GPIO_CAMERA_FLASH_EN_PIN//GPIO13
+#define GPIO_CAMERA_FLASH_EN_M_GPIO  GPIO_MODE_00
+#define GPIO_FLASH_LEVEL GPIO_CAMERA_FLASH_LEVEL_PIN//114
+#define GPIO_FLASH_LEVEL_M_GPIO  GPIO_CAMERA_FLASH_LEVEL_PIN_M_GPIO
+
+#if 0
+#define GPIO_CAMERA_FLASH_FRONT_EN GPIO_CAMERA_FLASH_EXT2_PIN//119 for front flashliht
+#define GPIO_CAMERA_FLASH_FRONT_EN_M_GPIO GPIO_CAMERA_FLASH_EXT2_PIN_M_GPIO
+
+#define GPIO_CAMERA_FLASH_BACK_EN GPIO_CAMERA_FLASH_EXT1_PIN//118 for back flashlight
+#define GPIO_CAMERA_FLASH_BACK_EN_M_GPIO GPIO_CAMERA_FLASH_EXT1_PIN_M_GPIO
+#else
+#undef GPIO_CAMERA_FLASH_FRONT_EN
+#undef GPIO_CAMERA_FLASH_BACK_EN
+#endif
+        //CAMERA-FLASH-EN
+#define TORCH_LIGHT_LEVEL 3 //just 1st level modified by tyrael
+#define PRE_LIGHT_LEVEL 6
+
+//add by tyrael for back/front flashlight
+#include "kd_camera_feature.h"
+extern CAMERA_DUAL_CAMERA_SENSOR_ENUM get_current_invokeSensorIdx(void);
+//add end
 
 /******************************************************************************
  * local variables
@@ -100,7 +131,6 @@ Functions
 #define GPIO_ENF GPIO_CAMERA_FLASH_EN_PIN
 #define GPIO_ENT GPIO_CAMERA_FLASH_MODE_PIN
 
-#define FLASH_ON_PULSE 15
 
     /*CAMERA-FLASH-EN */
 
@@ -111,15 +141,36 @@ static void work_timeOutFunc(struct work_struct *data);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 int FL_Enable(void)
 {
-	int i =0;
+#if 1
+/*Enable*/
+    if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_EN,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+    if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_EN,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+	PK_DBG("[constant_flashlight] set gpio %d %s \n",GPIO_CAMERA_FLASH_EN,GPIO_OUT_ONE?"HIGH":"LOW");
+
+     #ifdef GPIO_CAMERA_FLASH_BACK_EN
+     if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_BACK_EN, GPIO_CAMERA_FLASH_BACK_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+     if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_BACK_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+     if(mt_set_gpio_out(GPIO_CAMERA_FLASH_BACK_EN,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}	
+     #endif
+
+#else
 	if(g_duty==0)
-	{  
-		{
-		    PK_DBG(" Torch mode enable\n");
-		    mt_set_gpio_out(GPIO_ENT,GPIO_OUT_ONE);
-		}
+	{
+		mt_set_gpio_out(GPIO_ENT,GPIO_OUT_ONE);
 		mt_set_gpio_out(GPIO_ENF,GPIO_OUT_ZERO);
 		PK_DBG(" FL_Enable line=%d\n",__LINE__);
 	}
@@ -127,40 +178,120 @@ int FL_Enable(void)
 	{
 		mt_set_gpio_out(GPIO_ENT,GPIO_OUT_ZERO);
 		mt_set_gpio_out(GPIO_ENF,GPIO_OUT_ONE);
-
-		for(i =0 ; i< FLASH_ON_PULSE;i++)
-		{
-			udelay(100);
-			mt_set_gpio_out(GPIO_ENF,GPIO_OUT_ZERO);
-			udelay(100);
-			mt_set_gpio_out(GPIO_ENF,GPIO_OUT_ONE);
-		}
 		PK_DBG(" FL_Enable line=%d\n",__LINE__);
 	}
-
+#endif
     return 0;
 }
 
 int FL_Disable(void)
 {
-
+#if 1
+	/*Disable*/	   
+    if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_EN,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+    if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_EN,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+	PK_DBG("[constant_flashlight] set gpio %d %s \n",GPIO_CAMERA_FLASH_EN,GPIO_OUT_ZERO?"HIGH":"LOW");
+	 //disable back flashlight en pin
+	 #ifdef GPIO_CAMERA_FLASH_BACK_EN
+     if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_BACK_EN, GPIO_CAMERA_FLASH_BACK_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+     if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_BACK_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+     if(mt_set_gpio_out(GPIO_CAMERA_FLASH_BACK_EN,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+	 #endif
+#else
 	mt_set_gpio_out(GPIO_ENT,GPIO_OUT_ZERO);
 	mt_set_gpio_out(GPIO_ENF,GPIO_OUT_ZERO);
 	PK_DBG(" FL_Disable line=%d\n",__LINE__);
+#endif
     return 0;
 }
 
 int FL_dim_duty(kal_uint32 duty)
 {
-	g_duty=duty;
-	PK_DBG(" FL_dim_duty line=%d\n",__LINE__);
+    int i;
+   switch (duty){
+   	case 0://in torch mode
+   	            PK_DBG("set torch mode\n");
+
+			if(mt_set_gpio_mode(GPIO_FLASH_LEVEL, GPIO_FLASH_LEVEL_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_FLASH_LEVEL,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_FLASH_LEVEL,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+
+		    /*set torch mode*/
+		    if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+		    if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+		    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		
+		break;
+	case 1://in pre flash & af flash mode
+	             PK_DBG("set pre flash & af flash mdoe\n");
+                    for(i=0;i<PRE_LIGHT_LEVEL;i++)
+                    {
+                    if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_EN,GPIO_CAMERA_FLASH_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                    if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_EN,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+                    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_EN,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+                    }
+                    PK_DBG("[constant_flashlight] set gpio %d %s \n",GPIO_CAMERA_FLASH_EN,GPIO_OUT_ONE?"HIGH":"LOW");
+	
+				 
+	             if(mt_set_gpio_mode(GPIO_FLASH_LEVEL, GPIO_FLASH_LEVEL_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_FLASH_LEVEL,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_FLASH_LEVEL,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+
+					 
+                   if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		break;
+	case 2://in main flash mode
+	            PK_DBG("set main flash mode\n");
+	            if(mt_set_gpio_mode(GPIO_FLASH_LEVEL, GPIO_FLASH_LEVEL_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_FLASH_LEVEL,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_FLASH_LEVEL,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+
+					 
+                   if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		break;
+	default:
+		PK_DBG("error duty=%d value !!!%d\n",duty);
+		break;
+   	}
     return 0;
 }
 
 
+int FL_step(kal_uint32 step)
+{
+//	upmu_set_flash_sel(step);
+    return 0;
+}
+
 int FL_Init(void)
 {
+#if 1
 
+	PK_DBG("start\n");
+    /*set torch mode*/
+    if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+    if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+    /*Init. to disable*/
+    if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_EN,GPIO_CAMERA_FLASH_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+    if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+    if(mt_set_gpio_out(GPIO_CAMERA_FLASH_EN,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+  	//disable front flashlight en pin
+  	#ifdef GPIO_CAMERA_FLASH_FRONT_EN
+     if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_FRONT_EN, GPIO_CAMERA_FLASH_FRONT_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+     if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_FRONT_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+     if(mt_set_gpio_out(GPIO_CAMERA_FLASH_FRONT_EN,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}	
+	 #endif
+	INIT_WORK(&workTimeOut, work_timeOutFunc);
+PK_DBG("done\n");
+
+#else
 
 	if(mt_set_gpio_mode(GPIO_ENF,GPIO_MODE_00)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
     if(mt_set_gpio_dir(GPIO_ENF,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
@@ -172,6 +303,7 @@ int FL_Init(void)
 
     INIT_WORK(&workTimeOut, work_timeOutFunc);
     PK_DBG(" FL_Init line=%d\n",__LINE__);
+#endif
     return 0;
 }
 
@@ -210,6 +342,63 @@ void timerInit(void)
 }
 
 
+static int set_flashlight_state(unsigned long state)
+{
+
+    if(state==1){
+    /*Enable*/
+     PK_DBG("in flash light test mode so open so enable back and front flash light at same time \n");
+	#ifdef GPIO_CAMERA_FLASH_BACK_EN
+	if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_BACK_EN, GPIO_CAMERA_FLASH_BACK_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+	if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_BACK_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+	if(mt_set_gpio_out(GPIO_CAMERA_FLASH_BACK_EN,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+	#endif
+
+	#ifdef GPIO_CAMERA_FLASH_FRONT_EN
+	if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_FRONT_EN, GPIO_CAMERA_FLASH_FRONT_EN_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+	if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_FRONT_EN,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+	if(mt_set_gpio_out(GPIO_CAMERA_FLASH_FRONT_EN,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+	#endif
+#if 0
+    switch(state){
+	case 1:
+		if(mt_set_gpio_mode(GPIO_FLASH_LEVEL, GPIO_FLASH_LEVEL_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+             if(mt_set_gpio_dir(GPIO_FLASH_LEVEL,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+             if(mt_set_gpio_out(GPIO_FLASH_LEVEL,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+
+		    /*set torch mode*/
+		if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+		if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+		if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		break;
+	case 2:
+			if(mt_set_gpio_mode(GPIO_FLASH_LEVEL, GPIO_FLASH_LEVEL_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_FLASH_LEVEL,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_FLASH_LEVEL,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		 
+                   if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+                   if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+                   if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		break;
+	case 3:
+		 if(mt_set_gpio_mode(GPIO_FLASH_LEVEL, GPIO_FLASH_LEVEL_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+              if(mt_set_gpio_dir(GPIO_FLASH_LEVEL,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+              if(mt_set_gpio_out(GPIO_FLASH_LEVEL,GPIO_OUT_ZERO)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+			 
+              if(mt_set_gpio_mode(GPIO_CAMERA_FLASH_MODE,GPIO_CAMERA_FLASH_MODE_M_GPIO)){PK_DBG("[constant_flashlight] set gpio mode failed!! \n");}
+              if(mt_set_gpio_dir(GPIO_CAMERA_FLASH_MODE,GPIO_DIR_OUT)){PK_DBG("[constant_flashlight] set gpio dir failed!! \n");}
+              if(mt_set_gpio_out(GPIO_CAMERA_FLASH_MODE,GPIO_OUT_ONE)){PK_DBG("[constant_flashlight] set gpio failed!! \n");}
+		break;
+	default :
+    		PK_DBG(" No such command \n");	
+	}
+#endif
+    		return 0;
+	}
+	else{
+		PK_DBG("There must be something wrong !!!\n");
+	}
+}
 
 static int constant_flashlight_ioctl(MUINT32 cmd, MUINT32 arg)
 {
@@ -224,6 +413,11 @@ static int constant_flashlight_ioctl(MUINT32 cmd, MUINT32 arg)
     switch(cmd)
     {
 
+		case FLASHLIGHTIOC_T_STATE:
+			PK_DBG("FLASHLIGHTIOC_T_STATE: %d\n",arg);
+			set_flashlight_state(arg);
+		break;
+		
 		case FLASH_IOC_SET_TIME_OUT_TIME_MS:
 			PK_DBG("FLASH_IOC_SET_TIME_OUT_TIME_MS: %d\n",arg);
 			g_timeOutTimeMs=arg;
@@ -232,13 +426,14 @@ static int constant_flashlight_ioctl(MUINT32 cmd, MUINT32 arg)
 
     	case FLASH_IOC_SET_DUTY :
     		PK_DBG("FLASHLIGHT_DUTY: %d\n",arg);
+		g_duty=arg;
     		FL_dim_duty(arg);
     		break;
 
 
     	case FLASH_IOC_SET_STEP:
     		PK_DBG("FLASH_IOC_SET_STEP: %d\n",arg);
-
+    		FL_step(arg);
     		break;
 
     	case FLASH_IOC_SET_ONOFF :
@@ -252,11 +447,13 @@ static int constant_flashlight_ioctl(MUINT32 cmd, MUINT32 arg)
 					hrtimer_start( &g_timeOutTimer, ktime, HRTIMER_MODE_REL );
 	            }
     			FL_Enable();
+			g_strobe_On=1;
     		}
     		else
     		{
     			FL_Disable();
 				hrtimer_cancel( &g_timeOutTimer );
+				g_strobe_On=0;
     		}
     		break;
 		default :

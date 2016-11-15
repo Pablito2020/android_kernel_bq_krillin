@@ -882,11 +882,6 @@ typedef struct {
    MUINT32 (* SensorFeatureControl) (MSDK_SENSOR_FEATURE_ENUM FeatureId, MUINT8 *pFeaturePara,MUINT32 *pFeatureParaLen);
    MUINT32 (* SensorControl) (MSDK_SCENARIO_ID_ENUM ScenarioId,MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *pImageWindow, MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData);
    MUINT32 (* SensorClose)(void);
-#if 1 //isp suspend resume patch
-   MSDK_SCENARIO_ID_ENUM ScenarioId;
-   MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT imageWindow;
-   MSDK_SENSOR_CONFIG_STRUCT sensorConfigData;
-#endif
 } SENSOR_FUNCTION_STRUCT, *PSENSOR_FUNCTION_STRUCT;
 
 typedef struct {

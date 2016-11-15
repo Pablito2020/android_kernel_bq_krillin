@@ -100,7 +100,6 @@
 #define MC501CB_SENSOR_ID                       0x0062
 #define MC501CC_SENSOR_ID                       0x0074
 #define MC501CA_SENSOR_ID                       0x0011
-#define SP2529_SENSOR_ID 						0x0025
 
 #define MT9D011_SENSOR_ID                       0x1511
 #define MT9D111_SENSOR_ID                       0x1511
@@ -204,8 +203,7 @@
 
 #define ET8EE6_SENSOR_ID                        0x0034
 #define ET8EF2_SENSOR_ID                        0x1048
-#define GC2155_SENSOR_ID 		        		0x2155
-#define GC2145_SENSOR_ID 		        		0x2145
+
 #define OM6802_SENSOR_ID                        0x1705
 
 #define HV7131_SENSOR_ID                        0x0042
@@ -257,7 +255,7 @@
 #define GC2235_SENSOR_ID        0x2235
 #define OV8865_SENSOR_ID			  0x8865
 #define GC2355_SENSOR_ID			0x2355
-#define HI551_SENSOR_ID			    0x0551
+#define HI551MIPI_SENSOR_ID			    0x0551
 
 #define HI841_SENSOR_ID			    0x0841
 #define GC0310_SENSOR_ID			0xa310
@@ -270,6 +268,12 @@
 #define HI544MIPI_SENSOR_ID                     0x0544
 #define HI707_SENSOR_ID                         0x00b8
 #define MN34152_SENSOR_ID       0x01
+#define T4K04_SENSOR_ID                        0x1452
+
+#define GC0312_YUV_SENSOR_ID				0xb310
+#define HI708_SENSOR_ID					0x0096
+#define OV5670_SENSOR_ID				0x5670
+
 /* CAMERA DRIVER NAME */
 #define CAMERA_HW_DEVNAME            "kd_camera_hw"
 
@@ -285,32 +289,18 @@
 #define SENSOR_DRVNAME_OV2650_RAW   "ov265x"
 #define SENSOR_DRVNAME_OV2655_YUV   "ov2655yuv"
 #define SENSOR_DRVNAME_OV2659_YUV   "ov2659yuv"
-#define SENSOR_DRVNAME_OV5650_RAW   	"ov5650raw"#define GC2155_SENSOR_ID 		        		0x2155
-#define GC2145_SENSOR_ID 		        		0x2145
+#define SENSOR_DRVNAME_OV5650_RAW   	"ov5650raw"
 #define SENSOR_DRVNAME_OV3640_RAW   "ov3640"
 #define SENSOR_DRVNAME_OV3640_YUV    "ov3640yuv"
 #define SENSOR_DRVNAME_OV5642_RAW   "ov5642raw"
 #define SENSOR_DRVNAME_HI542_RAW   "hi542raw"
 #define SENSOR_DRVNAME_HI542MIPI_RAW   "hi542mipiraw"
-#define SENSOR_DRVNAME_OV8826_MIPI_RAW   "ov8825_darling"
-//#define SENSOR_DRVNAME_S5K3H7Y_MIPI_RAW    "s5k3h7ymipiraw"
-#define SENSOR_DRVNAME_LITEON3H7Y_MIPI_RAW "liteon3h7ymipiraw"
-#define SENSOR_DRVNAME_HI256_MIPI_YUV    	"hi256mipiyuv"
-#define SENSOR_DRVNAME_HI258_MIPI_YUV_CMK    	"hi258mipiyuv_cmk" 
-#define SENSOR_DRVNAME_HI258_MIPI_YUV_SW    	"hi258mipiyuv_sw"
-#define SENSOR_DRVNAME_OV5670_MIPI_RAW   "ov5670mipiraw"
 
 #define SENSOR_DRVNAME_OV5647MIPI_RAW   	"ov5647mipiraw"
 #define SENSOR_DRVNAME_HM3451_RAW				"hm3451raw"
-#define SENSOR_DRVNAME_SP2529_MIPI_YUV   "sp2529mipiyuv"
 
 #define SENSOR_DRVNAME_OV5647_RAW   	"ov5647"
 #define SENSOR_DRVNAME_OV5648_MIPI_RAW   	"ov5648mipi"
-#define SENSOR_DRVNAME_OV5648_MIPI_RAW_AF   	"ov5648mipi"
-#define SENSOR_DRVNAME_OV2722_MIPI_RAW  "ov2722mipiraw"
-#define SENSOR_DRVNAME_GC2155_MIPI_YUV   "gc2155mipiyuv"
-#define SENSOR_DRVNAME_GC2145_MIPI_YUV   "gc2145mipiyuv"
-#define SENSOR_DRVNAME_OV5670_MIPI_RAW   	"ov5670mipi"
 #define SENSOR_DRVNAME_OV5693_MIPI_RAW     "ov5693mipi"
 #define SENSOR_DRVNAME_OV5642_MIPI_YUV    "ov5642mipiyuv"
 #define SENSOR_DRVNAME_OV5642_MIPI_RGB    "ov5642mipirgb"
@@ -370,7 +360,6 @@
 #define SENSOR_DRVNAME_GC2235_RAW 			"gc2235_raw"
 #define SENSOR_DRVNAME_OV8865_MIPI_RAW   "ov8865mipiraw"
 #define SENSOR_DRVNAME_GC2355_MIPI_RAW   "gc2355mipiraw"
-#define SENSOR_DRVNAME_HI551_MIPI_RAW   "hi551mipiraw"
 
 #define SENSOR_DRVNAME_HI841_MIPI_RAW   "hi841mipiraw"
 #define SENSOR_DRVNAME_GC0310_MIPI_YUV   "gc0310mipiyuv"
@@ -385,6 +374,12 @@
 #define SENSOR_DRVNAME_HI544_MIPI_RAW  "hi544mipiraw"
 #define SENSOR_DRVNAME_HI707_YUV    	"hi707yuv"
 #define SENSOR_DRVNAME_MN34152_MIPI_RAW   "mn34152mipiraw"
+#define SENSOR_DRVNAME_T4K04_MIPI_RAW   "t4k04mipiraw"
+
+#define SENSOR_DRVNAME_GC0312_YUV		"gc0312yuv"
+#define SENSOR_DRVNAME_HI708_YUV		"hi708yuv"
+#define SENSOR_DRVNAME_HI551_MIPI_RAW		"hi551mipiraw"
+#define SENSOR_DRVNAME_OV5670_MIPI_RAW		"ov5670mipiraw"
 /*******************************************************************************
 *
 ********************************************************************************/

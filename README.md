@@ -6,7 +6,8 @@
   * Touchscreen Driver (FT5336)
   * Batery Table
   * Vibrator driver
-  * Frontal Camera
+  * Rear Camera
+  * Flashlight
   * Storage (emulated storage and sdcard working)
   * WIFI
   * Bluetooth
@@ -15,14 +16,13 @@
 
 * Bugs (not working):
 
-  * Rear Camera
-  * Flashlight
+  * Frontal Camera
   * APP_SWITCH button
   * Some sensors
     
     
 # Thanks to:
-   * @zormax for the project cm12/13
-   * @assusdan for the BIG help adapting the kernel source to our bq device
-   * BQ for relasing his sources
+   * @zormax
+   * @assusdan
+   * BQ for his sources
     

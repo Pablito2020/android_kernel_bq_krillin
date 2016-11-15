@@ -74,10 +74,9 @@ endif
 
 obj-y   +=  lcm/
 #obj-y	+=  hdmi/
+#obj-y	+=  imgsensor/
 obj-y	+=  camera/camera/
-obj-y	+=  imgsensor/ov5648_mipi_raw/
-obj-y	+=  imgsensor/sp2529_mipi_yuv/
-obj-y   +=  flashlight/constant_flashlight/
+#obj-y   +=  flashlight/constant_flashlight/
 obj-y	+=  vibrator/
 obj-y	+=  leds/
 obj-y	+=  keypad/
