@@ -18,6 +18,10 @@ ifeq ($(CONFIG_MTK_MPU6050GY_NEW),y)
 obj-y   +=  mpu6050gy-new/
 endif
 
+ifeq ($(CONFIG_MTK_L3GD20),y)
+obj-y   +=  l3gd20/
+endif
+
 ifeq ($(CONFIG_MTK_BMG160),y)
 obj-y   +=  bmg160/
 endif

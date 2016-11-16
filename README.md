@@ -16,14 +16,12 @@
   * Bluetooth
   * GPS
   * VPN
+  * Gyroscope sensor
 
 * Bugs (not working):
 
   * Frontal Camera
-  * APP_SWITCH button (button number 252)
-  * Orientation Sensor
-  * Gyroscope sensor
-    
+  * APP_SWITCH button (button number 252) 
     
 # Thanks to:
    * @zormax
