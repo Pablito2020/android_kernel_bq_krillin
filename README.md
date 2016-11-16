@@ -9,6 +9,9 @@
   * Rear Camera
   * Flashlight
   * Storage (emulated storage and sdcard working)
+  * Acceleremoter
+  * Light sensor
+  * Proximity sensor
   * WIFI
   * Bluetooth
   * GPS
@@ -17,8 +20,9 @@
 * Bugs (not working):
 
   * Frontal Camera
-  * APP_SWITCH button
-  * Some sensors
+  * APP_SWITCH button (button number 252)
+  * Orientation Sensor
+  * Gyroscope sensor
     
     
 # Thanks to:
