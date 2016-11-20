@@ -1,16 +1,16 @@
-export ARCH=arm CROSS_COMPILE=../android_toolchain/linaro-4.9/bin/arm-linux-androideabi-
-export KBUILD_BUILD_USER=assusdan
-export KBUILD_BUILD_HOST=SRT
+export ARCH=arm CROSS_COMPILE=../toolchain/ubertc-5.3/bin/arm-eabi-
+export KBUILD_BUILD_USER=pablito
+export KBUILD_BUILD_HOST=htcmania
 
     #For checking errors
 echo 'Remove kernel...'
 rm -rf arch/arm/boot/zImage
 
 
-echo 'Configure CM Zera S '
+echo 'Configure krillin.... '
 make alps_defconfig >/dev/null
 
-echo 'Building CM Zera S'
+echo 'Building CM for krillin....'
 make -j4 zImage >/dev/null 2>buildlog.log
 
     #check errors
@@ -19,7 +19,7 @@ then
     echo "BUID ERRORS!"
 else
  #if OK
-echo 'Moving CM Zera S'
+echo 'Moving CM krillin zimage'
 mv arch/arm/boot/zImage /var/www/compiled/CM-zImage-zeras
 fi
 
