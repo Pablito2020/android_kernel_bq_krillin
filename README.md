@@ -8,6 +8,7 @@
   * Vibrator driver
   * Rear Camera
   * Flashlight
+  * Frontal Camera
   * Storage (emulated storage and sdcard working)
   * Acceleremoter
   * Light sensor
@@ -20,11 +21,10 @@
 
 * Bugs (not working):
 
-  * Frontal Camera
   * APP_SWITCH button (button number 252) 
     
 # Thanks to:
-   * @zormax
-   * @assusdan
+   * @zormax for the cm12/13 project
+   * @assusdan for help me a lot with this kernel
    * BQ for his sources
     
