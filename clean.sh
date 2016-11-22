@@ -1,5 +1,5 @@
 #!/bin/bash
 
-export CROSS_COMPILE=../toolchain/linaro-4.9/bin/arm-linux-androideabi-
+export CROSS_COMPILE= ../arm-eabi-4.8/bin/arm-eabi-
 make clean
 make mrproper
