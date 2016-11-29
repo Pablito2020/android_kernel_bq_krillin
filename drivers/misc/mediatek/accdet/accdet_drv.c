@@ -178,3 +178,4 @@ module_param(debug_enable_drv, int, 0644);
 MODULE_DESCRIPTION("MTK MT6588 ACCDET driver");
 MODULE_AUTHOR("Anny <Anny.Hu@mediatek.com>");
 MODULE_LICENSE("GPL");
+

@@ -128,7 +128,7 @@ void Sound_Headset_Turnoff(void);
 void AudioAMPDevice_Suspend(void);
 void AudioAMPDevice_Resume(void);
 // used for AEE beep sound
-void AudioAMPDevice_SpeakerLouderOpen(void); //some times kernal need to force  speaker for notification
+void AudioAMPDevice_SpeakerLouderOpen(void); //some times kernel need to force  speaker for notification
 void AudioAMPDevice_SpeakerLouderClose(void);
 void AudioAMPDevice_mute(void);
 

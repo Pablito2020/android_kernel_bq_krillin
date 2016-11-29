@@ -3503,13 +3503,13 @@ static long AudDrv_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
             ret = adc_return;
             break;
         }
-        case AUDDRV_GET_EXT_AMP_SUPPORT:
+        /*case AUDDRV_GET_EXT_AMP_SUPPORT:
         {
 			int mtk_get_sound_return = 0;
             PRINTK_AUDDRV("Uses YUSU sound card");
 			ret = mtk_get_sound_return;
             break;
-        }
+        } Trying disabling it for fix the fucking sound in krillin :/ */
         case AUDDRV_AEE_IOCTL:
         {
             PRINTK_AUDDRV("AudDrv AUDDRV_AEE_IOCTL  arg = %lu", arg);
