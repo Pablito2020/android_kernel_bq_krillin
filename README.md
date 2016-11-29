@@ -22,6 +22,7 @@
 * Bugs (not working):
 
   * APP_SWITCH button (button number 252) 
+  * Sound in speakers is too low (Maybe lib file.....)
     
 
 # Compilation guide:
