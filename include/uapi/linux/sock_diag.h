@@ -1,4 +1,3 @@
-#define SOCK_DESTROY_BACKPORT 21
 #ifndef _UAPI__SOCK_DIAG_H__
 #define _UAPI__SOCK_DIAG_H__
 
