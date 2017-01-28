@@ -1,29 +1,26 @@
-export ARCH=arm CROSS_COMPILE=../android_toolchain/linaro-4.9/bin/arm-linux-androideabi-
-export KBUILD_BUILD_USER=assusdan
-export KBUILD_BUILD_HOST=SRT
+#!/bin/bash
 
-    #For checking errors
-echo 'Remove kernel...'
+#Set Color
+blue='\033[0;34m'
+cyan='\033[0;36m'
+yellow='\033[0;33m'
+red='\033[0;31m'
+nocol='\033[0m'
+
+export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
+export KBUILD_BUILD_USER=pablito
+export KBUILD_BUILD_HOST=htcmania
+
+#For checking errors
+echo "$cyan Remove kernel..."
 rm -rf arch/arm/boot/zImage
 
+echo "$cyan Configure krillin.... "
+make alps_defconfig
 
-echo 'Configure CM Zera S '
-make alps_defconfig >/dev/null
-
-echo 'Building CM Zera S'
-make -j4 zImage >/dev/null 2>buildlog.log
-
-    #check errors
-if [ ! -f arch/arm/boot/zImage ]
-then
-    echo "BUID ERRORS!"
-else
- #if OK
-echo 'Moving CM Zera S'
-mv arch/arm/boot/zImage /var/www/compiled/CM-zImage-zeras
-fi
+echo "$cyan Building CM for krillin...."
+make zImage
 
 
-#write worktime
-echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
-
+echo Kernel succesfully builded
+echo "#Pablito2020"

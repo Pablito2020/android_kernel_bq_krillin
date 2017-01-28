@@ -44,7 +44,7 @@
 unsigned short coordinate_x[150] = {0};
 unsigned short coordinate_y[150] = {0};
 //是否支持双击唤醒功能
-unsigned char GestrueEnable=0; //0-不支持 1-支持
+unsigned char GestrueEnable=1; //0-不支持 1-支持
 #endif
 
 #ifdef FTS_PRESSURE

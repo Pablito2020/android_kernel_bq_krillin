@@ -164,30 +164,7 @@ void Sound_Speaker_Turnon(int channel)
     if(gsk_on)
         return;
 	mt_set_gpio_dir(GPIO_SPEAKER_EN_PIN,GPIO_DIR_OUT); // output	
-	#ifdef  AW8736_MODE_CTRL
-    /* Since there is a SET_SPEAKER_VOL ioctl to let user to set the speaker volume, 
-     * so we just utilize it for aw8736 mode controlling. */
-    printk(KERN_ERR "lipeng debug|[%s] Speaker_Volume: %d", __func__, Speaker_Volume);
-    switch(Speaker_Volume) {
-        case 0:
-            AW8736_MODE3;
-            break;
-        case 1:
-            AW8736_MODE2;
-            break;
-        case 2:
-            AW8736_MODE1;
-            break;
-        case 3:
-            AW8736_MODE4;
-            break;
-        default:
-            AW8736_MODE1;
-            break;
-    }
-#else
     mt_set_gpio_out(GPIO_SPEAKER_EN_PIN,GPIO_OUT_ONE);
-#endif
 #if defined(ENABLE_2_IN_1_SPK)
 #if defined(AMP_CLASS_D)
 
