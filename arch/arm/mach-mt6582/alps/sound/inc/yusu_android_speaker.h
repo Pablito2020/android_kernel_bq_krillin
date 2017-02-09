@@ -64,7 +64,7 @@
 #include <linux/spinlock.h>
 #include <linux/semaphore.h>
 #include <mach/mt_typedefs.h>
-
+  
 #ifndef _YUSU_ANDROID_SPEAKER_H_
 #define _YUSU_ANDROID_SPEAKER_H_
 

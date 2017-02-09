@@ -8,6 +8,7 @@
   * Vibrator driver
   * Rear Camera
   * Flashlight
+  * Sound driver (thanks to vo-1)
   * Frontal Camera
   * Storage (emulated storage and sdcard working)
   * Acceleremoter
@@ -22,7 +23,6 @@
 * Bugs (not working):
 
   * APP_SWITCH button (button number 252) 
-  * Sound in speakers is too low (Maybe lib file.....)
     
 
 # Compilation guide:
