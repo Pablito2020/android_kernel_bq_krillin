@@ -124,11 +124,18 @@ inline static int getDW9718AFInfo(__user stDW9718AF_MotorInfo * pstMotorInfo)
 
     return 0;
 }
+void initdrv()
+{
+	char puSendCmd2[2] = { 0x01, 0x39 };
+	char puSendCmd3[2] = { 0x05, 0x65 };
+	i2c_master_send(g_pstDW9718AF_I2Cclient, puSendCmd2, 2);
+	i2c_master_send(g_pstDW9718AF_I2Cclient, puSendCmd3, 2);
+}
 
 inline static int moveDW9718AF(unsigned long a_u4Position)
 {
     int ret = 0;
-    
+ 
     if((a_u4Position > g_u4DW9718AF_MACRO) || (a_u4Position < g_u4DW9718AF_INF))
     {
         DW9718AFDB("[DW9718AF] out of range \n");
@@ -138,20 +145,25 @@ inline static int moveDW9718AF(unsigned long a_u4Position)
     if (g_s4DW9718AF_Opened == 1)
     {
         unsigned short InitPos;
+		initdrv();
         ret = s4DW9718AF_ReadReg(&InitPos);
 	    
-        spin_lock(&g_DW9718AF_SpinLock);
         if(ret == 0)
         {
             DW9718AFDB("[DW9718AF] Init Pos %6d \n", InitPos);
 			
+			spin_lock(&g_DW9718AF_SpinLock);
             g_u4CurrPosition = (unsigned long)InitPos;
+			spin_unlock(&g_DW9718AF_SpinLock);
         }
         else
         {		
+			spin_lock(&g_DW9718AF_SpinLock);
             g_u4CurrPosition = 0;
+			spin_unlock(&g_DW9718AF_SpinLock);
         }
 		
+		spin_lock(&g_DW9718AF_SpinLock);
         g_s4DW9718AF_Opened = 2;
         spin_unlock(&g_DW9718AF_SpinLock);
 		
@@ -259,30 +271,18 @@ unsigned long a_u4Param)
 //CAM_RESET
 static int DW9718AF_Open(struct inode * a_pstInode, struct file * a_pstFile)
 {
-    long i4RetValue = 0;
-	char puSendCmd2[2] = {0x01,0x39};
-	char puSendCmd3[2] = {0x05,0x65};
-	
     DW9718AFDB("[DW9718AF] DW9718AF_Open - Start\n");
 
-    spin_lock(&g_DW9718AF_SpinLock);
 
     if(g_s4DW9718AF_Opened)
     {
-        spin_unlock(&g_DW9718AF_SpinLock);
         DW9718AFDB("[DW9718AF] the device is opened \n");
         return -EBUSY;
     }
+    spin_lock(&g_DW9718AF_SpinLock);
     g_s4DW9718AF_Opened = 1;
     spin_unlock(&g_DW9718AF_SpinLock);
-
-    //puSendCmd2[2] = {(0x01),(0x39)};
-   	i4RetValue = i2c_master_send(g_pstDW9718AF_I2Cclient, puSendCmd2, 2);
-	//puSendCmd3[2] = {(char)(0x05),(char)(0x65)};
-   	i4RetValue = i2c_master_send(g_pstDW9718AF_I2Cclient, puSendCmd3, 2);
-	
     DW9718AFDB("[DW9718AF] DW9718AF_Open - End\n");
-
     return 0;
 }
 
@@ -299,11 +299,6 @@ static int DW9718AF_Release(struct inode * a_pstInode, struct file * a_pstFile)
     {
         DW9718AFDB("[DW9718AF] feee \n");
         g_sr = 5;
-	    s4DW9718AF_WriteReg(200);
-        msleep(10);
-	    s4DW9718AF_WriteReg(100);
-        msleep(10);
-            	            	    	    
         spin_lock(&g_DW9718AF_SpinLock);
         g_s4DW9718AF_Opened = 0;
         spin_unlock(&g_DW9718AF_SpinLock);

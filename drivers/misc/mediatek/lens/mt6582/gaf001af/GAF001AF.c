@@ -879,16 +879,10 @@ static int GAF001AF_Open(struct inode * a_pstInode, struct file * a_pstFile)
 static int GAF001AF_Release(struct inode * a_pstInode, struct file * a_pstFile)
 {
     GAF001AFDB("[GAF001AF] GAF001AF_Release - Start\n");
-
-    if (g_s4GAF001AF_Opened == 2)
-    {
-         s4AF_uninit();                          
-    }
-    
     if (g_s4GAF001AF_Opened)
     {
         GAF001AFDB("[GAF001AF] feee \n");
-                         
+         s4AF_uninit();                          
         spin_lock(&g_GAF001AF_SpinLock);
         g_s4GAF001AF_Opened = 0;
         spin_unlock(&g_GAF001AF_SpinLock);

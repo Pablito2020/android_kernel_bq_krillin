@@ -237,6 +237,11 @@ static int BU6424AF_Open(struct inode * a_pstInode, struct file * a_pstFile)
 {
     int  i4RetValue = 0;
     BU6424AFDB("[BU6424AF] BU6424AF_Open - Start\n");
+    BU6424AFDB("[BU6424AF] process:%s pid=%d \n",current->comm, current->pid);
+    if(strcmp(current->comm,"init")==0) //ckt liutao do not operate i2c when init
+    {
+        return 0;
+    }
     spin_lock(&g_BU6424AF_SpinLock);
 
     if(g_s4BU6424AF_Opened)
@@ -267,25 +272,25 @@ char puSendCmd4[2]={(char)(0x8C),(char)(0x5B)};//115Hz,Fastest mode
     if (i4RetValue < 0) 
     {
         BU6424AFDB("[BU6424AF] I2C send failed!! \n");
-        return -1;
+       return 0;
     }
  i4RetValue = i2c_master_send(g_pstBU6424AF_I2Cclient, puSendCmd2, 2);
     if (i4RetValue < 0) 
     {
         BU6424AFDB("[BU6424AF] I2C send failed!! \n");
-        return -1;
+       return 0;
     }
  i4RetValue = i2c_master_send(g_pstBU6424AF_I2Cclient, puSendCmd3, 2);
     if (i4RetValue < 0) 
     {
         BU6424AFDB("[BU6424AF] I2C send failed!! \n");
-        return -1;
+       return 0;
     }
  i4RetValue = i2c_master_send(g_pstBU6424AF_I2Cclient, puSendCmd4, 2);
     if (i4RetValue < 0) 
     {
         BU6424AFDB("[BU6424AF] I2C send failed!! \n");
-        return -1;
+        return 0;
     }
 #endif
     BU6424AFDB("[BU6424AF] BU6424AF_Open - End\n");
@@ -301,7 +306,10 @@ char puSendCmd4[2]={(char)(0x8C),(char)(0x5B)};//115Hz,Fastest mode
 static int BU6424AF_Release(struct inode * a_pstInode, struct file * a_pstFile)
 {
     BU6424AFDB("[BU6424AF] BU6424AF_Release - Start\n");
-
+    if(strcmp(current->comm,"init")==0) //ckt liutao do not operate i2c when init
+    {
+        return 0;
+    }
     if (g_s4BU6424AF_Opened)
     {
         BU6424AFDB("[BU6424AF] feee \n");
@@ -316,7 +324,6 @@ static int BU6424AF_Release(struct inode * a_pstInode, struct file * a_pstFile)
         spin_unlock(&g_BU6424AF_SpinLock);
 
     }
-    mt_set_gpio_out(GPIO133,0);
     BU6424AFDB("[BU6424AF] BU6424AF_Release - End\n");
 
     return 0;
@@ -371,7 +378,7 @@ inline static int Register_BU6424AF_CharDrv(void)
         return -EAGAIN;
     }
 
-    actuator_class = class_create(THIS_MODULE, "actuatordrv2");
+    actuator_class = class_create(THIS_MODULE, "actuatordrv1");
     if (IS_ERR(actuator_class)) {
         int ret = PTR_ERR(actuator_class);
         BU6424AFDB("Unable to create class, err = %d\n", ret);
@@ -484,7 +491,7 @@ static struct platform_driver g_stBU6424AF_Driver = {
     .suspend	= BU6424AF_suspend,
     .resume	= BU6424AF_resume,
     .driver		= {
-        .name	= "lens_actuator2",
+        .name	= "lens_actuator1",
         .owner	= THIS_MODULE,
     }
 };

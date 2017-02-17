@@ -299,21 +299,19 @@ static int DW9714AF_Release(struct inode *a_pstInode, struct file *a_pstFile)
 {
 	DW9714AFDB("[DW9714AF] DW9714AF_Release - Start\n");
 
-	if (g_s4DW9714AF_Opened == 2) {
+	if (g_s4DW9714AF_Opened) {
+		DW9714AFDB("[DW9714AF] feee\n");
 		g_sr = 5;
 		s4DW9714AF_WriteReg(200);
 		msleep(10);
 		s4DW9714AF_WriteReg(100);
 		msleep(10);
-	}
-
-	if (g_s4DW9714AF_Opened) {
-		DW9714AFDB("[DW9714AF] feee\n");
 
 		spin_lock(&g_DW9714AF_SpinLock);
 		g_s4DW9714AF_Opened = 0;
 		spin_unlock(&g_DW9714AF_SpinLock);
-	}    
+
+	}
 
 	DW9714AFDB("[DW9714AF] DW9714AF_Release - End\n");
 

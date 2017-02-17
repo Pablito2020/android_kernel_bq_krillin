@@ -714,12 +714,6 @@ static s16 GAF008AF_Open(struct inode * a_pstInode, struct file * a_pstFile)
 static s16 GAF008AF_Release(struct inode * a_pstInode, struct file * a_pstFile)
 {
     GAF008AFDB("[GAF008AF] GAF008AF_Release - Start\n");
-    
-    if (g_s4GAF008AF_Opened == 2)
-    {
-         s4AF_uninit();
-    }
-    
     if (g_s4GAF008AF_Opened)
     {
         GAF008AFDB("[GAF008AF] feee \n");
@@ -727,10 +721,9 @@ static s16 GAF008AF_Release(struct inode * a_pstInode, struct file * a_pstFile)
         spin_lock(&g_GAF008AF_SpinLock);
         g_s4GAF008AF_Opened = 0;
         spin_unlock(&g_GAF008AF_SpinLock);
-    }    
+    }
 
     GAF008AFDB("[GAF008AF] GAF008AF_Release - End\n");
-    
     return 0;
 }
 
