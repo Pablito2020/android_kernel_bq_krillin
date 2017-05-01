@@ -9,7 +9,7 @@ nocol='\033[0m'
 
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 export KBUILD_BUILD_USER=pablito
-export KBUILD_BUILD_HOST=htcmania
+export KBUILD_BUILD_HOST=developer
 
 #For checking errors
 echo "$cyan Remove kernel..."

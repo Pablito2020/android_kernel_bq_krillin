@@ -173,8 +173,8 @@ static unsigned int g_cur_cpufreq_volt;
 static unsigned int g_limited_max_ncpu;
 static unsigned int g_limited_max_freq;
 static unsigned int g_limited_min_freq;
-static unsigned int g_cpufreq_get_ptp_level = 0;
-static unsigned int g_max_freq_by_ptp = DVFS_F0; /* default 1.3GHz */
+static unsigned int g_cpufreq_get_ptp_level = 3;
+static unsigned int g_max_freq_by_ptp = DVFS_F0_2; /* default 1.5GHz */
 #if defined(CONFIG_THERMAL_LIMIT_TEST)
 static unsigned int g_limited_load_for_thermal_test = 0;
 static unsigned int g_limited_max_thermal_power;
@@ -189,7 +189,7 @@ static bool mt_cpufreq_ready = false;
 static bool mt_cpufreq_pause = false;
 static bool mt_cpufreq_ptpod_disable = false;
 static bool mt_cpufreq_ptpod_voltage_down = false;
-//static bool mt_cpufreq_max_freq_overdrive = false;
+static bool mt_cpufreq_max_freq_overdrive = true;
 static bool mt_cpufreq_limit_max_freq_early_suspend = false;
 static bool mt_cpufreq_earlysuspend_allow_deepidle_control_vproc = false;
 static bool mt_cpufreq_freq_table_allocated = false;
@@ -239,6 +239,7 @@ struct mt_cpu_power_info
 ****************************/
 #if defined(HQA_LV_1_09V)
 static struct mt_cpu_freq_info mt6582_freqs_e1[] = {
+	OP(DVFS_F0_2, DVFS_V0), 
     OP(DVFS_F0, DVFS_V0),
     OP(DVFS_F1, DVFS_V0),
     OP(DVFS_F2, DVFS_V1),
