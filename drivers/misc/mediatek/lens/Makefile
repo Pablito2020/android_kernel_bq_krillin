@@ -30,7 +30,6 @@ else
 	else 
 	    ifeq ($(CONFIG_ARCH_MT6752),y)
 	        obj-$(CONFIG_MTK_LENS_DUMMYLENS_SUPPORT) += mt6752/dummy_lens/
-	        obj-$(CONFIG_MTK_LENS_AD5820AF_SUPPORT) += mt6752/ad5820af/
 	        obj-$(CONFIG_MTK_LENS_AD5823AF_SUPPORT) += mt6752/ad5823/
 	        obj-$(CONFIG_MTK_LENS_AD5823AF_SUPPORT) += mt6752/ad5823af/
 	        obj-$(CONFIG_MTK_LENS_BU6424AF_SUPPORT) += mt6752/bu6424af/
@@ -47,7 +46,6 @@ else
 	
 	    else
 	        obj-$(CONFIG_MTK_LENS_DUMMYLENS_SUPPORT)   += mt6795/dummy_lens/
-	        obj-$(CONFIG_MTK_LENS_AD5820AF_SUPPORT)    += mt6795/ad5820af/
 	        obj-$(CONFIG_MTK_LENS_AD5823AF_SUPPORT)    += mt6795/ad5823/
 	        obj-$(CONFIG_MTK_LENS_AD5823AF_SUPPORT)    += mt6795/ad5823af/
 	        obj-$(CONFIG_MTK_LENS_BU6424AF_SUPPORT)    += mt6795/bu6424af/

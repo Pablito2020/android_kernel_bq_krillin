@@ -1721,9 +1721,9 @@ config MTK_LENS_AD5820AF_SUPPORT
 	bool "AD5820AF Lens Driver"
 	default n
 
-config MTK_LENS_AD5823_SUPPORT
-	bool "AD5823 Lens Driver"
-	default n
+#config MTK_LENS_AD5823_SUPPORT
+	#bool "AD5823 Lens Driver"
+	#default n
 
 config MTK_LENS_AD5823AF_SUPPORT
 	bool "AD5823AF Lens Driver"
