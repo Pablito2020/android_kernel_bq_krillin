@@ -27,29 +27,32 @@
 
 # Compilation guide:
   
-  * First, made a folder for cm kernel and enter to it:
+  * First, made a folder for the kernel and enter to it:
 
-        $ mkdir CM_KERNEL
+        $ mkdir kernel
 
-        $ cd CM_KERNEL
+        $ cd kernel
 
   * Then, clone the project: 
 
-        $ https://github.com/Pablito2020/cyanogenmod_kernel_bq_krillin.git
+        $ https://github.com/Pablito2020/android_kernel_mediatek_krillin.git
 
   * After that, clone the toolchain used in this build (in that case gcc 4.8): 
 
         $ git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
 
-  * And for compile do that:
+  * And for compile::
 
-        $ cd cyanogenmod_kernel_bq_krillin
+        $ cd android_kernel_mediatek_krillin
 
         $ . build.sh
 
+  * If you want to clean the source:
+
+        $ . clean.sh
 
 # Thanks to:
-   * @zormax for the cm12/13 project
+   * @zormax for the bring up LP/MM project
    * @assusdan for help me a lot with this kernel
    * BQ for his sources
     
