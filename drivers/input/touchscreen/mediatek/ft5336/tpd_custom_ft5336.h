@@ -1,7 +1,6 @@
 #ifndef TOUCHPANEL_H__
 #define TOUCHPANEL_H__
 
-/* Pre-defined definition */
 #define TPD_TYPE_CAPACITIVE
 #define TPD_TYPE_RESISTIVE
 #define TPD_I2C_NUMBER           0
@@ -19,11 +18,9 @@
 #define TPD_HAVE_BUTTON
 #define TPD_BUTTON_HEIGH        (100)
 #define TPD_KEY_COUNT           3
-#define TPD_KEYS                {KEY_MENU, KEY_HOMEPAGE, KEY_BACK}
+#define TPD_KEYS                {KEY_MENU, KEY_HOMEPAGE, KEY_BACK} //Key menu isn't necessary! We must put KEY_APP_SWITCH here, but don't know why it gaves compilation error
 #define TPD_KEYS_DIM            {{80,1020,100,100},{240,1020,100,100},{400,1020,100,100}}
 
-
-//#define FTS_GESTRUE
 #define FTS_PRESSURE
 #define LCM_NAME1 "hx8389_qhd_dsi_vdo_truly"
 #define LCM_NAME2 "hx8389b_qhd_dsi_vdo_tianma"
