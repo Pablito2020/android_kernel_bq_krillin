@@ -20,9 +20,10 @@
   * VPN
   * Gyroscope sensor
 
-* Bugs (not working):
+* Bugs (NOT WORKING):
 
-  * APP_SWITCH button (button number 252) 
+  * You tell me.... Everything seems to work
+
     
 
 # Compilation guide:
@@ -55,4 +56,5 @@
    * @zormax for the bring up LP/MM project
    * @assusdan for help me a lot with this kernel
    * BQ for his sources
+   * ANDR7E
     
