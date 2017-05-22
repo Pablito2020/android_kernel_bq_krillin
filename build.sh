@@ -22,7 +22,7 @@ echo -e "${cyan} Remove kernel..."
 rm -rf arch/arm/boot/zImage
 
 echo -e "${cyan} Configure krillin.... "
-make alps_defconfig
+make lineage_krillin_defconfig
 
 echo -e "${purple} Building DareDevil 6.0 for krillin...."
 make zImage
