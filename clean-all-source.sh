@@ -8,6 +8,6 @@ rm -rf arch/arm/boot/ramdisk.img
 rm -rf arch/arm/boot/ramdisk_android.img
 make clean
 make mrproper
-rm -rf pablito-scripts/DAREDEVIL-KERNEL-KRILLIN.zip
+rm -rf pablito-scripts/zip/DAREDEVIL-KERNEL-KRILLIN.zip
 
 
