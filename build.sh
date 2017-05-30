@@ -33,31 +33,6 @@ export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 export KBUILD_BUILD_USER=pablito
 export KBUILD_BUILD_HOST=developer
 
-
-# IF YOU HAVE BUILDED THE KERNEL, AND YOU WANT TO RECOMPILE IT, CLEAN THE SOURCE
-if test -e arch/arm/boot/kernel; then
-echo -e "${cyan} CLEAN THE SOURCE..."
-rm -rf arch/arm/boot/kernel
-rm -rf arch/arm/boot/ramdisk.img
-rm -rf arch/arm/boot/ramdisk_android.img
-make clean
-make mrproper
-fi
-
-
-# IF A OLD BOOT.IMG FILE EXISTS, DELETE IT.
-if test -e pablito-scripts/zip/boot.img; then
-echo -e "${cyan} DELETE OLD BOOT.IMG FILE..."
-rm -rf pablito-scripts/zip/boot.img
-fi
-
-# IF A OLD DAREDEVIL.ZIP FILE EXISTS, DELETE IT.
-if test -e pablito-scripts/DAREDEVIL-KERNEL-KRILLIN.zip; then
-echo -e "${cyan} DELETE OLD FLASHEABLE .ZIP KERNEL FILE..."
-rm -rf pablito-scripts/DAREDEVIL-KERNEL-KRILLIN.zip
-fi
-
-
 # READ THE DEFAULT DEFCONFIG
 echo -e "${cyan} CONFIGURE KRILLIN.."
 make lineage_krillin_defconfig
@@ -65,28 +40,12 @@ make lineage_krillin_defconfig
 
 # BUILD ZIMAGE
 echo -e "${purple} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make zImage 
-
-
-# GENERATE BOOT.IMG
-echo -e "${purple} BUILD BOOT.IMG FILE.."
-cd pablito-scripts
-. bootimg.sh
-
-
-# CREATE .ZIP FILE
-echo -e "${purple} CREATE A FLASHEABLE .ZIP FILE"
-mv arch/arm/boot/boot.img pablito-scripts/zip/boot.img
-cd pablito-scripts/zip
-zip -r -0 DAREDEVIL-KERNEL-KRILLIN.zip ./*
-
-# CHANGE DIRECTORY
-cd ..
-cd ..
+make zImage
 
 # SAY YES TO A SUCCESFULLY BUILD :)
 echo -e "${green} SUCCESSFULLY BUILDED DAREDEVIL KERNEL"
-echo -e "${green} FLASHEABLE KERNEL.ZIP IN pablito-scripts/zip folder"
+echo -e "${green} ZIMAGE IS IN ARCH/ARM/BOOT/ZIMAGE"
+echo -e "${green} MAKE BOOT.IMG WITH CARLIV IMAGE KITCHEN"
 echo -e "${green} HAVE FUN AND GIVE PROPER CREDITS!"
 echo -e $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds'
 
