@@ -34,7 +34,7 @@
 
   * Then, clone the project: 
 
-        $ https://github.com/Pablito2020/android_kernel_mediatek_krillin.git
+        $ https://github.com/Pablito2020/android_kernel_bq_krillin.git
 
   * After that, clone the toolchain used in this build (in that case gcc 4.8): 
 
