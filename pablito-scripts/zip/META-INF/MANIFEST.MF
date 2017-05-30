@@ -1,0 +1,72 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Android SignApk)
+
+Name: system/media/audio/notifications/Upsilon.ogg
+SHA1-Digest: 2gcfml4oQo+F5QGV89OKgofx5sU=
+
+Name: system/media/audio/alarms/Hassium.ogg
+SHA1-Digest: 50HYt4tDfIdFwTfIgq6koSsK/Ys=
+
+Name: system/app/SystemUI.apk
+SHA1-Digest: R8CE66qnRMHrUHsiEd9C49F1B0o=
+
+Name: system/media/audio/ringtones/Radiation.ogg
+SHA1-Digest: C8la9AtjuR9/gjIyge+zftS60zc=
+
+Name: system/media/audio/alarms/Plutonium.ogg
+SHA1-Digest: mwXUuYVPJEw/69HlFgF+CuAhYJA=
+
+Name: system/media/audio/alarms/Neptunium.ogg
+SHA1-Digest: aqTrk7s3j0Acyl9OSDoG+U8gAMI=
+
+Name: META-INF/com/google/android/update-binary
+SHA1-Digest: 8u4gD6CD+GoaR99J8sQxSlPWA1M=
+
+Name: system/media/audio/alarms/Nobelium.ogg
+SHA1-Digest: hDvoRLlStoSVMSNf0S8V9T5HsN8=
+
+Name: system/media/audio/notifications/Mira.ogg
+SHA1-Digest: /WbsclGFXNAs3T/I7S3bXwPryDE=
+
+Name: system/fonts/Clockopia.ttf
+SHA1-Digest: 5GSYX9RDpgtSSnLgS8lFWDRPA+c=
+
+Name: META-INF/com/google/android/updater-script
+SHA1-Digest: 241hvz5/HNV2s3vZIhMDntbbBSw=
+
+Name: system/media/audio/notifications/Hojus.ogg
+SHA1-Digest: no9mbmt+YqsLL8izNeSSi9vMqpE=
+
+Name: system/etc/security/cacerts.bks
+SHA1-Digest: W6QSx2Yd2RATAz6qVzFrD2oUXFU=
+
+Name: system/media/audio/alarms/Fermium.ogg
+SHA1-Digest: QIYOhcL1boyWF7PAGc/Yyf0hKvk=
+
+Name: system/media/audio/notifications/Altair.ogg
+SHA1-Digest: Y8WyJvyGwDxFfE6twm3R5jvGxHA=
+
+Name: system/app/DeskClock.apk
+SHA1-Digest: YMJIHcnugZlkfWP814eKXN+1GfY=
+
+Name: system/fonts/DroidSans-Bold.ttf
+SHA1-Digest: 5GSYX9RDpgtSSnLgS8lFWDRPA+c=
+
+Name: system/media/audio/ringtones/RadiationOrchestration.ogg
+SHA1-Digest: QaV4gUXN6Gw9v0W/N6FHzpsPI/g=
+
+Name: system/media/audio/notifications/Lalande.ogg
+SHA1-Digest: 668G08tsV5hkoMYTIFLVRxPRWqE=
+
+Name: system/fonts/DroidSans.ttf
+SHA1-Digest: 5GSYX9RDpgtSSnLgS8lFWDRPA+c=
+
+Name: system/media/audio/alarms/Cesium.ogg
+SHA1-Digest: M/oughu1jB0A7eSq9CDhaeWZWy0=
+
+Name: system/media/bootanimation.zip
+SHA1-Digest: Ldo/HQ+hn+USFD8d+R4HrSFGS6w=
+
+Name: system/media/audio/notifications/Proxima.ogg
+SHA1-Digest: hPBVi5WarvD9XgSd5TqA3yqXROM=
+

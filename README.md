@@ -1,4 +1,4 @@
-# ALPS Kernel for krillin
+# LINEAGE OS KERNEL FOR BQ AQUARIS E4.5, AKA KRILLIN
 
 * Working:
 
@@ -24,8 +24,6 @@
 
   * You tell me.... Everything seems to work
 
-    
-
 # Compilation guide:
   
   * First, made a folder for the kernel and enter to it:
@@ -42,19 +40,28 @@
 
         $ git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
 
-  * And for compile::
+  * And for compile:
 
-        $ cd android_kernel_mediatek_krillin
+        $ mv android_kernel_mediatek_krillin kernel
+
+        $ cd kernel
 
         $ . build.sh
 
-  * If you want to clean the source:
+  * Flasheable .zip file will be in the principal kernel directory with the name DAREDEVIL-KERNEL-KRILLIN.zip
 
-        $ . clean.sh
+# If you want to clean all the source without compiling execute this comand on the principal kernel diretory:
 
-# Thanks to:
-   * @zormax for the bring up LP/MM project
-   * @assusdan for help me a lot with this kernel
-   * BQ for his sources
-   * ANDR7E
+        $ . clean-all-source.sh
+
+# Developer:
+
+   * Pablito2020
+
+# Thanks to (In alphabetical order) :
+
+   * ANDR7E ( help with kpd buttons + device info app for mtk devices) ---- XDA, 4PDA, GITHUB
+   * @assusdan help me with drivers and develop the kernel. ---- 4PDA, GITHUB
+   * BQ for his sources (LCM DRVIERS, TOUCH DRIVERS, ETC) ---- GITHUB
+   * @zormax for the bring up LP/MM project ---- 4PDA
     

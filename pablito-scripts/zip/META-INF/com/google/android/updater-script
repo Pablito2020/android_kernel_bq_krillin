@@ -1,0 +1,27 @@
+ui_print("#######################################################");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("##               DAREDEVIL FLASHEABLE ZIP            ##");
+ui_print("##                  PABLITO2020 2017                 ##");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("#######################################################");
+mount("ext4", "EMMC", "/dev/block/mmcblk0p5", "/system");
+show_progress(0.100000, 40);
+show_progress(0.100000, 40);
+package_extract_file("boot.img", "/dev/bootimg");
+unmount("/system");
+ui_print("#######################################################");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("##            DAREDEVIL KERNEL INSTALLED!            ##");
+ui_print("##   HAVE FUN :) AND IF YOU LIKE IT, BUY ME A BEER!  ##");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("##                                                   ##");
+ui_print("#######################################################");
+show_progress(1.000000, 10);
+
