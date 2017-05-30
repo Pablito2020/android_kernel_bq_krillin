@@ -42,7 +42,7 @@
 
   * And for compile:
 
-        $ mv android_kernel_mediatek_krillin kernel
+        $ mv android_kernel_bq_krillin kernel
 
         $ cd kernel
 
