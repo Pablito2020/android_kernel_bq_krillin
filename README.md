@@ -19,6 +19,7 @@
   * GPS
   * VPN
   * Gyroscope sensor
+  * Sweep2Wake + Doubletap2Wake
 
 * Bugs (NOT WORKING):
 
@@ -48,11 +49,11 @@
 
         $ . build.sh
 
-  * Flasheable .zip file will be in the principal kernel directory with the name DAREDEVIL-KERNEL-KRILLIN.zip
+  * The kernel file (called zImage, will be found in arch/arm/boot folder)
 
 # If you want to clean all the source without compiling execute this comand on the principal kernel diretory:
 
-        $ . clean-all-source.sh
+        $ . clean.sh
 
 # Developer:
 
@@ -63,5 +64,6 @@
    * ANDR7E ( help with kpd buttons + device info app for mtk devices) ---- XDA, 4PDA, GITHUB
    * @assusdan help me with drivers and develop the kernel. ---- 4PDA, GITHUB
    * BQ for his sources (LCM DRVIERS, TOUCH DRIVERS, ETC) ---- GITHUB
+   * Vineeth Raj for his dt2wake and sweep2wake commits for sprout. ---- GITHUB
    * @zormax for the bring up LP/MM project ---- 4PDA
     
