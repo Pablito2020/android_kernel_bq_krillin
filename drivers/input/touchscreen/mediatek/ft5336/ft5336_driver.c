@@ -9,53 +9,14 @@
 #include <linux/time.h>
 #include <linux/delay.h>
 #include <linux/dma-mapping.h>
-//#include "tpd_custom_ft5316.h"
+
 #include "tpd_custom_ft5336.h"
 #include <mach/mt_pm_ldo.h>
 #include <mach/mt_typedefs.h>
 #include <mach/mt_boot.h>
-//#include <hardware_legacy/vibrator.h>
+
 #include <cust_vibrator.h>
 #include "cust_gpio_usage.h"
-#define FTS_GESTRUE
-#ifdef FTS_GESTRUE
-#define GESTURE_LEFT		0x20
-#define GESTURE_RIGHT		0x21
-#define GESTURE_UP		    0x22
-#define GESTURE_DOWN		0x23
-#define GESTURE_DOUBLECLICK	0x24
-#define GESTURE_O		    0x30
-#define GESTURE_W		    0x31
-#define GESTURE_M		    0x32
-#define GESTURE_E		    0x33
-#define GESTURE_C		    0x34
-#define GESTURE_S		    0x46
-#define GESTURE_V		    0x54
-#define GESTURE_Z		    0x41
-
-#define FTS_GESTRUE_POINTS 255
-#define FTS_GESTRUE_POINTS_ONETIME  62
-#define FTS_GESTRUE_POINTS_HEADER 8
-#define FTS_GESTURE_OUTPUT_ADRESS 0xD3
-#define FTS_GESTURE_OUTPUT_UNIT_LENGTH 4
-
-//suspend_state_t get_suspend_state(void);
-
-unsigned short coordinate_x[150] = {0};
-unsigned short coordinate_y[150] = {0};
-//ÊÇ·ñÖ§³ÖË«»÷»½ĞÑ¹¦ÄÜ
-unsigned char GestrueEnable=1; //0-²»Ö§³Ö 1-Ö§³Ö
-#endif
-
-#ifdef FTS_PRESSURE
-//#define FT_TOUCH_WEIGHT         7  //ERIC ADD
-//#define FT_TOUCH_AREA           8//ERIC ADD
-
-#define PRESS_MAX	0xFF
-#define FT_PRESS	0x08
-#endif
-
-//#define FTS_CTL_IIC
 
 #ifdef FTS_CTL_IIC
 #include "focaltech_ctl.h"
@@ -172,7 +133,7 @@ static int tpd_def_calmat_local[8] = TPD_CALIBRATION_MATRIX;
 #define TPD_SET_ENABLE_GESTRUE _IO(TOUCH_IOC_MAGIC,4)
 
 
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 13:39:55
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 13:39:55
 #define TPD_UPGRADE_CKT _IO(TOUCH_IOC_MAGIC,2)
 static unsigned char CtpFwUpgradeForIOCTRL(unsigned char* pbt_buf, unsigned int dw_lenth);
 static DEFINE_MUTEX(fwupgrade_mutex);
@@ -180,12 +141,12 @@ atomic_t    upgrading;
 #endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
 
 //************* add for doubletap + psensor ************//
-#ifdef CONFIG_MTK_TMD2772_AUTO
+/*#ifdef CONFIG_MTK_TMD2772_AUTO
 unsigned short ps_data;
 extern long TMD2772_enable_ps_tp(int value);
 extern long TMD2772_read_ps_tp(u16 *pvalue);
 extern int TMD2772_get_ps_value_tp(u16 value);
-#endif
+#endif*/
 //************* add for doubletap + psensor ************//
 
 int g_v_magnify_x =TPD_VELOCITY_CUSTOM_X;
@@ -270,35 +231,8 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 				break;
 			}				 
 			break;
-			
-		#ifdef FTS_GESTRUE
-		case TPD_GET_ENABLE_GESTRUE:
-			data = (void __user *) arg;
-			if(data == NULL)
-			{
-				err = -EINVAL;
-				break;	  
-			}			
-			
-			if(copy_to_user(data, &GestrueEnable, sizeof(GestrueEnable)))
-			{
-				err = -EFAULT;
-				break;
-			}	
-			break;
 
-		case TPD_SET_ENABLE_GESTRUE:
-			data = (void __user *) arg;
-			
-			if(copy_from_user(GestrueEnable, &data, sizeof(GestrueEnable)))
-			{
-				err = -EFAULT;
-				break;
-			}		
-			break;
-		#endif
-
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 13:39:46
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 13:39:46
 		case TPD_UPGRADE_CKT:
 			data = (void __user *) arg;
 			if(data == NULL)
@@ -778,7 +712,7 @@ FTS_BOOL byte_read(FTS_BYTE* pbt_buf, FTS_BYTE bt_len)
 */
 
 
-// ËÕ ÓÂ 2014Äê01ÔÂ15ÈÕ 16:59:19#define    FTS_PACKET_LENGTH        2
+// è‹ å‹‡ 2014å¹´01æœˆ15æ—¥ 16:59:19#define    FTS_PACKET_LENGTH        2
 #define    FTS_PACKET_LENGTH        128
 
 
@@ -841,17 +775,17 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 	}
     //printk("[TSP] is_5336_fwsize_30=%d 0x%x\n",is_5336_fwsize_30,pbt_buf[fw_filenth-12]);
 	printk("<suyong> <%d>,%s(),is_5336_fwsize_30=%d\n",__LINE__,__func__,is_5336_fwsize_30 );
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10	mt_set_gpio_mode(GPIO_CTP_RST_PIN, GPIO_CTP_RST_PIN_M_GPIO);
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    mt_set_gpio_dir(GPIO_CTP_RST_PIN, GPIO_DIR_OUT);
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ZERO);  
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    msleep(50);  
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    mt_set_gpio_mode(GPIO_CTP_RST_PIN, GPIO_CTP_RST_PIN_M_GPIO);
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    mt_set_gpio_dir(GPIO_CTP_RST_PIN, GPIO_DIR_OUT);
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ONE);
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    //printk("[TSP] Step 1: Reset CTPM test\n");
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10   
-// ËÕ ÓÂ 2014Äê03ÔÂ18ÈÕ 11:10:10    delay_qt_ms(500); 
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10	mt_set_gpio_mode(GPIO_CTP_RST_PIN, GPIO_CTP_RST_PIN_M_GPIO);
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    mt_set_gpio_dir(GPIO_CTP_RST_PIN, GPIO_DIR_OUT);
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ZERO);  
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    msleep(50);  
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    mt_set_gpio_mode(GPIO_CTP_RST_PIN, GPIO_CTP_RST_PIN_M_GPIO);
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    mt_set_gpio_dir(GPIO_CTP_RST_PIN, GPIO_DIR_OUT);
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ONE);
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    //printk("[TSP] Step 1: Reset CTPM test\n");
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10   
+// è‹ å‹‡ 2014å¹´03æœˆ18æ—¥ 11:10:10    delay_qt_ms(500); 
 	
 		/*write 0xaa to register 0xfc*/
 	   	ft5x0x_write_reg(0xfc, 0xaa);
@@ -935,13 +869,13 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 //	if (0)
 	{
 		auc_i2c_write_buf[0] = 0x61;
-// ËÕ ÓÂ 2014Äê01ÔÂ15ÈÕ 14:15:43		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
+// è‹ å‹‡ 2014å¹´01æœˆ15æ—¥ 14:15:43		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
 		cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
 
 		delay_qt_ms(4000);
 
 		auc_i2c_write_buf[0] = 0x63;
-// ËÕ ÓÂ 2014Äê01ÔÂ15ÈÕ 14:15:48		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
+// è‹ å‹‡ 2014å¹´01æœˆ15æ—¥ 14:15:48		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
 		cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
 
 		msleep(50);
@@ -949,7 +883,7 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 	else
 	{
 		auc_i2c_write_buf[0] = 0x61;
-// ËÕ ÓÂ 2014Äê01ÔÂ15ÈÕ 14:15:55		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
+// è‹ å‹‡ 2014å¹´01æœˆ15æ—¥ 14:15:55		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
 		cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
 		delay_qt_ms(4000);
 
@@ -1124,7 +1058,7 @@ ERR:
     return ret;
 }
 
-#if (0)  //Ê¹ÓÃĞÂµÄÉı¼¶º¯Êı,Ö÷ÒªÊÇĞÂº¯ÊıÅĞ¶ÏÁËÉı¼¶µÄÀàĞÍºÍµØÖ·µÈ ËÕ ÓÂ 2014Äê01ÔÂ15ÈÕ 17:47:38
+#if (0)  //ä½¿ç”¨æ–°çš„å‡çº§å‡½æ•°,ä¸»è¦æ˜¯æ–°å‡½æ•°åˆ¤æ–­äº†å‡çº§çš„ç±»å‹å’Œåœ°å€ç­‰ è‹ å‹‡ 2014å¹´01æœˆ15æ—¥ 17:47:38
 E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 {
     FTS_BYTE reg_val[2] = {0};
@@ -1189,7 +1123,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 		ret =-1;
 		goto ERR;
 	}
-// ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 20:15:34	printk("<suyong> <%d>,%s(),CTPM ID,ID1 = 0x%x,ID2 = 0x%x\n",__LINE__,__func__,reg_val[0],reg_val[1] );
+// è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 20:15:34	printk("<suyong> <%d>,%s(),CTPM ID,ID1 = 0x%x,ID2 = 0x%x\n",__LINE__,__func__,reg_val[0],reg_val[1] );
         //printk("[TSP] Step 2: CTPM ID,ID1 = 0x%x,ID2 = 0x%x\n",reg_val[0],reg_val[1]);
 #if 0 /*zhouwl, temp disable this line???*/
     if (reg_val[0] == 0x79 && reg_val[1] == 0x3)
@@ -1207,7 +1141,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 
 	if(ret <0)
 	{
-// ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 20:15:38		printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
+// è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 20:15:38		printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 		goto ERR;
 	}
    
@@ -1239,7 +1173,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         ret=CTPDMA_i2c_write(0x70, &packet_buf[0],FTS_PACKET_LENGTH + 6);
 		if(ret <0)
 		{
-// ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 20:15:41			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
+// è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 20:15:41			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 			goto ERR;
 		}
               //printk("[TSP] 111 ret 0x%x \n", ret);
@@ -1269,7 +1203,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         ret = CTPDMA_i2c_write(0x70, &packet_buf[0],temp+6);
 		if(ret <0)
 		{
-// ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 20:15:44			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
+// è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 20:15:44			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 			goto ERR;
 		}
               //printk("[TSP] 222 ret 0x%x \n", ret);
@@ -1290,7 +1224,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         ret =CTPDMA_i2c_write(0x70,&packet_buf[0],7);  
 		if(ret <0)
 		{
-// ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 20:15:48			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
+// è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 20:15:48			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 			goto ERR;
 		}
 
@@ -1302,7 +1236,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
     //cmd_write(0xcc,0x00,0x00,0x00,1);
     //byte_read(reg_val,1);
 i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0xcc, 1, &(reg_val[0]));
-// ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 20:15:52	printk("<suyong> <%d>,%s(),ecc read 0x%x, new firmware 0x%x\n",__LINE__,__func__ ,reg_val[0], bt_ecc);
+// è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 20:15:52	printk("<suyong> <%d>,%s(),ecc read 0x%x, new firmware 0x%x\n",__LINE__,__func__ ,reg_val[0], bt_ecc);
     //printk("[TSP] Step 6:  ecc read 0x%x, new firmware 0x%x. \n", reg_val[0], bt_ecc);
     if(reg_val[0] != bt_ecc)
     {
@@ -1439,7 +1373,7 @@ static unsigned char CtpFwUpgradeForIOCTRL(unsigned char* pbt_buf, unsigned int 
 {
 	int ret=0;
 	
-	tpd_resume((struct early_suspend *)0); // Éı¼¶µÄÊ±ºò»½ĞÑ,ÎªÁË¼òµ¥Ö±½Óµ÷ÓÃ»½ĞÑº¯Êı ËÕ ÓÂ 2014Äê01ÔÂ14ÈÕ 17:01:17
+	tpd_resume((struct early_suspend *)0); // å‡çº§çš„æ—¶å€™å”¤é†’,ä¸ºäº†ç®€å•ç›´æ¥è°ƒç”¨å”¤é†’å‡½æ•° è‹ å‹‡ 2014å¹´01æœˆ14æ—¥ 17:01:17
 	ret=fts_ctpm_fw_upgrade(pbt_buf,dw_lenth);
 
 	msleep(200);  
@@ -1507,9 +1441,6 @@ static void ESD_read_id_workqueue(struct work_struct *work)
 	}
 	if(tpd_halt) 
 	{
-		#ifndef FTS_GESTRUE
-		mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM); 
-		#endif
 	}
 	else 
 		queue_delayed_work(ctp_read_id_workqueue, &ctp_read_id_work,400); //schedule a work for the first detection					
@@ -1584,7 +1515,7 @@ static  void tpd_up(int x, int y,int *count) {
  {
 
 	int i = 0;
-	char data[(3+6*(TPD_MAX_PONIT-1)+3+1+7)/8*8] = {0}; // 3+6*(TPD_MAX_PONIT-1)+3+1 ±£´æ×îºóÒ»¸öµãµÄlow_byteËùĞèÒªµÄ¿Õ¼ä ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 19:21:13
+	char data[(3+6*(TPD_MAX_PONIT-1)+3+1+7)/8*8] = {0}; // 3+6*(TPD_MAX_PONIT-1)+3+1 ä¿å­˜æœ€åä¸€ä¸ªç‚¹çš„low_byteæ‰€éœ€è¦çš„ç©ºé—´ è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 19:21:13
 
     u16 high_byte,low_byte;
 	u8 report_rate =0;
@@ -1614,10 +1545,10 @@ static  void tpd_up(int x, int y,int *count) {
 	}
 	//i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0xa6, 1, &version);
 
-// ËÕ ÓÂ 2012Äê08ÔÂ23ÈÕ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x00, 8, &(data[0]));
-// ËÕ ÓÂ 2012Äê08ÔÂ23ÈÕ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x08, 8, &(data[8]));
-// ËÕ ÓÂ 2012Äê08ÔÂ23ÈÕ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x10, 8, &(data[16]));
-// ËÕ ÓÂ 2012Äê08ÔÂ23ÈÕ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0xa6, 1, &(data[24]));
+// è‹ å‹‡ 2012å¹´08æœˆ23æ—¥ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x00, 8, &(data[0]));
+// è‹ å‹‡ 2012å¹´08æœˆ23æ—¥ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x08, 8, &(data[8]));
+// è‹ å‹‡ 2012å¹´08æœˆ23æ—¥ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x10, 8, &(data[16]));
+// è‹ å‹‡ 2012å¹´08æœˆ23æ—¥ 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0xa6, 1, &(data[24]));
 
 	//i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0x88, 1, &report_rate);
 	//TPD_DEBUG("FW version=%x\n",version);
@@ -1689,197 +1620,11 @@ static  void tpd_up(int x, int y,int *count) {
 
  };
 
-#ifdef FTS_GESTRUE
-//extern int fetch_object_sample(unsigned char *buf,short pointnum);
-//extern void init_para(int x_pixel,int y_pixel,int time_slot,int cut_x_pixel,int cut_y_pixel);
-
-static void check_gesture(int gesture_id)
-{
-	
-    printk("[ft5336_dc]kaka gesture_id==%d\n ",gesture_id);
-    
-	switch(gesture_id)
-	{
-		case GESTURE_LEFT:
-		      input_report_key(tpd->dev, KEY_LEFT, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_LEFT, 0);
-			    input_sync(tpd->dev);
-			break;
-		case GESTURE_RIGHT:
-		       input_report_key(tpd->dev, KEY_RIGHT, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_RIGHT, 0);
-			    input_sync(tpd->dev);
-			    
-			break;
-		case GESTURE_UP:
-			input_report_key(tpd->dev, KEY_UP, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_UP, 0);
-			    input_sync(tpd->dev);
-			    
-			break;
-		case GESTURE_DOWN:
-			input_report_key(tpd->dev, KEY_DOWN, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_DOWN, 0);
-			    input_sync(tpd->dev);
-			    
-			break;
-		case GESTURE_DOUBLECLICK:
-			if(GestrueEnable)
-			{
-			#ifdef CONFIG_MTK_TMD2772_AUTO
-				TMD2772_enable_ps_tp(1);
-				msleep(10);
-				TMD2772_read_ps_tp(&ps_data);                    
-				printk("======== TMD2772: ps_data=%d ========\n",ps_data);
-                   
-				if (ps_data <= 500) {
-					 printk("======== 2. T-T ps open ========\n");	
-					input_report_key(tpd->dev, KEY_POWER, 1);
-					input_sync(tpd->dev);
-					input_report_key(tpd->dev, KEY_POWER, 0);
-					input_sync(tpd->dev);
-					custom_vibration_enable(50);
-				} else {
-					printk("======== 1. T-T ps close ========\n");
-				}
-				TMD2772_enable_ps_tp(0);
-			#else
-				input_report_key(tpd->dev, KEY_POWER, 1);
-				input_sync(tpd->dev);
-				input_report_key(tpd->dev, KEY_POWER, 0);
-				input_sync(tpd->dev);
-			#endif
-			}
-			break;
-		case GESTURE_O:
-			input_report_key(tpd->dev, KEY_O, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_O, 0);
-			    input_sync(tpd->dev);
-			break;
-		case GESTURE_W:
-			input_report_key(tpd->dev, KEY_W, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_W, 0);
-			    input_sync(tpd->dev);
-			    
-			break;
-		case GESTURE_M:
-		input_report_key(tpd->dev, KEY_M, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_M, 0);
-			    input_sync(tpd->dev);
-			    
-			break;
-		case GESTURE_E:
-			input_report_key(tpd->dev, KEY_E, 1);
-			    input_sync(tpd->dev);
-			     input_report_key(tpd->dev, KEY_E, 0);
-			    input_sync(tpd->dev);
-			    
-			break;
-		case GESTURE_C:
-			input_report_key(tpd->dev, KEY_C, 1);
-			 input_sync(tpd->dev);
-			 input_report_key(tpd->dev, KEY_C, 0);
-			 input_sync(tpd->dev);
-			break;
-
-		case GESTURE_S:
-		input_report_key(tpd->dev, KEY_S, 1);
-		 input_sync(tpd->dev);
-		 input_report_key(tpd->dev, KEY_S, 0);
-		 input_sync(tpd->dev);
-		break;
-
-		case GESTURE_V:
-		input_report_key(tpd->dev, KEY_V, 1);
-		 input_sync(tpd->dev);
-		 input_report_key(tpd->dev, KEY_V, 0);
-		 input_sync(tpd->dev);
-		break;
-
-		case GESTURE_Z:
-		input_report_key(tpd->dev, KEY_Z, 1);
-		 input_sync(tpd->dev);
-		 input_report_key(tpd->dev, KEY_Z, 0);
-		 input_sync(tpd->dev);
-			break;
-		default:
-		
-			break;
-	}
-
-}
-
-static int ft5x0x_read_Touchdata(void)
-{
-    unsigned char buf[FTS_GESTRUE_POINTS * 2] = { 0 };
-    int ret = -1;
-    int i = 0;
-    buf[0] = 0xd3;
-    int gestrue_id = 0;
-    short pointnum = 0;
-    u8 report_rate =0;
-	
-    //ret = fts_i2c_Read(ft5336_i2c_client, buf, 1, buf, FTS_GESTRUE_POINTS_HEADER);
-    ret = i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0xd3, FTS_GESTRUE_POINTS_HEADER, buf);
-	
-    if (ret < 0)
-    {
-        printk( "[ft5336_dc]%s read touchdata failed.\n", __func__);
-        return ret;
-    }
-	printk("[ft5336_dc][%s:%d]buf=0x%x,0x%x\n",__func__,__LINE__,buf[0],buf[1]);
-    /* FW ?¡À?¨®??3?¨º?¨º? */
-    if (0x24 == buf[0])
-    {
-        gestrue_id = 0x24;
-        check_gesture(gestrue_id);
-        return -1;
-    }
-/*
-    pointnum = (short)(buf[1]) & 0xff;
-    buf[0] = 0xd3;
-
-    ret = fts_i2c_Read(ft5336_i2c_client, buf, 1, buf, (pointnum * 4 + 2));
-    if (ret < 0)
-    {
-        printk( "[ft5336_dc]%s read touchdata failed.\n", __func__);
-        return ret;
-    }
-
-   gestrue_id = fetch_object_sample(buf, pointnum);
-   
-    for(i = 0;i < pointnum;i++)
-    {
-    	printk("[ft5336_dc][%s:%d]buf[%d,%d,%d,%d]=[0x%x,0x%x,0x%x,0x%x]\n",__func__,__LINE__,
-			0 + (4 * i),1 + (4 * i),2 + (4 * i),3 + (4 * i),
-			buf[0 + (4 * i)],buf[1 + (4 * i)],buf[2 + (4 * i)],buf[3 + (4 * i)]);
-        coordinate_x[i] =  (((s16) buf[0 + (4 * i)]) & 0x0F) <<
-            8 | (((s16) buf[1 + (4 * i)])& 0xFF);
-        coordinate_y[i] = (((s16) buf[2 + (4 * i)]) & 0x0F) <<
-            8 | (((s16) buf[3 + (4 * i)]) & 0xFF);
-    }
-	check_gesture(gestrue_id);
-*/
-    return -1;
-}
-#endif
-
-
  static int touch_event_handler(void *unused)
  {
   
     struct touch_info cinfo, pinfo;
 	 int i=0;
-	#ifdef FTS_GESTRUE
-	 u8 state;
-	#endif
 
 	 struct sched_param param = { .sched_priority = 91 };
 	 sched_setscheduler(current, SCHED_RR, &param);
@@ -1892,19 +1637,6 @@ static int ft5x0x_read_Touchdata(void)
 			 tpd_flag = 0;
 			 
 		 set_current_state(TASK_RUNNING);
-
-		 #ifdef FTS_GESTRUE
-		i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0xd0, 1, &state);
-		// if((get_suspend_state() == PM_SUSPEND_MEM) && (state ==1))
-		//printk("[ft5336_dc][%s:%d]state=%d\n",__func__,__LINE__,state);
-		 if(state ==1)
-		     {
-		        ft5x0x_read_Touchdata();
-		        continue;
-		    }
-		#endif
-
-		 
 
 		  if (tpd_touchinfo(&cinfo, &pinfo)) 
 		  {
@@ -1925,12 +1657,12 @@ static int ft5x0x_read_Touchdata(void)
 					#endif
 		     	}
 			 
-// ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 18:37:41                tpd_down(cinfo.x[0], cinfo.y[0], 1);
-// ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 18:37:41                if(point_num>1)
-// ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 18:37:41             	{
-// ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 18:37:41			 	   tpd_down(cinfo.x[1], cinfo.y[1], 2);
-// ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 18:37:41			       if(point_num >2) tpd_down(cinfo.x[2], cinfo.y[2], 3);
-// ËÕ ÓÂ 2012Äê08ÔÂ22ÈÕ 18:37:41             	}
+// è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 18:37:41                tpd_down(cinfo.x[0], cinfo.y[0], 1);
+// è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 18:37:41                if(point_num>1)
+// è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 18:37:41             	{
+// è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 18:37:41			 	   tpd_down(cinfo.x[1], cinfo.y[1], 2);
+// è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 18:37:41			       if(point_num >2) tpd_down(cinfo.x[2], cinfo.y[2], 3);
+// è‹ å‹‡ 2012å¹´08æœˆ22æ—¥ 18:37:41             	}
                 input_sync(tpd->dev);
 				//TPD_DEBUG("press --->\n");
 				
@@ -2050,16 +1782,6 @@ reset_proc:
 
 	tpd_load_status = 1;
 
-	#ifdef FTS_GESTRUE
-	//init_para(720,1280,60,0,0);
-	input_set_capability(tpd->dev, EV_KEY, KEY_POWER);
-	//fts_write_reg(i2c_client, 0xd0, 0x01);
-        #endif
-        #ifdef FTS_PRESSURE
-        input_set_abs_params(tpd->dev, ABS_MT_PRESSURE, 0, PRESS_MAX, 0, 0);
-        input_set_abs_params(tpd->dev, ABS_MT_TOUCH_MAJOR, 0, PRESS_MAX, 0, 0);
-        #endif
-
 	#ifdef VELOCITY_CUSTOM_FT5206
 	if((err = misc_register(&tpd_misc_device)))
 
@@ -2111,7 +1833,7 @@ reset_proc:
 
 	TPD_DMESG("ft5336 Touch Panel Device Probe %s\n", (retval < TPD_OK) ? "FAIL" : "PASS");
 
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 19:48:27
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 19:48:27
 	atomic_set(&upgrading, 0);
 #endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
    return 0;
@@ -2198,14 +1920,14 @@ EXPORT_SYMBOL(tp_write_reg1);
   char data;
  
    TPD_DMESG("TPD wake up\n");
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 19:53:21
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 19:53:21
    	if(1 == atomic_read(&upgrading))
 	{
 		return;
 	}
 #endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
 
- #ifdef FTS_GESTRUE
+ /*#ifdef FTS_GESTRUE
  #if 0
             fts_write_reg(ft5336_i2c_client,0xD0,0x00);
 	    fts_write_reg(ft5336_i2c_client,0xD1,0x00);
@@ -2214,9 +1936,9 @@ EXPORT_SYMBOL(tp_write_reg1);
 	ft5x0x_write_reg(0xD0,0x00);
 	ft5x0x_write_reg(0xD1,0x00);
 	ft5x0x_write_reg(0xD2,0x00);
-#endif
+#endif*/
 	   // return;
-#else
+//#else
 
 #ifdef TPD_CLOSE_POWER_IN_SLEEP	
 	hwPowerOn(TPD_POWER_SOURCE,VOL_3300,"TP"); 
@@ -2241,7 +1963,7 @@ EXPORT_SYMBOL(tp_write_reg1);
 	msleep(200);//add this line 
    mt_eint_unmask(CUST_EINT_TOUCH_PANEL_NUM);  
 
-#endif
+//#endif
 
 #ifdef ESD_CHECK	
     	msleep(1);  
@@ -2269,7 +1991,7 @@ EXPORT_SYMBOL(tp_write_reg1);
  {
 	// int retval = TPD_OK;
 	 static char data = 0x3;
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // ËÕ ÓÂ 2013Äê11ÔÂ19ÈÕ 19:53:30
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // è‹ å‹‡ 2013å¹´11æœˆ19æ—¥ 19:53:30
 	if(1 == atomic_read(&upgrading))
 	{
 		return;
@@ -2282,7 +2004,7 @@ EXPORT_SYMBOL(tp_write_reg1);
 
 	tpd_halt = 1; //add this line 
 
-#ifdef FTS_GESTRUE
+/*#ifdef FTS_GESTRUE
 #if 0
          fts_write_reg(ft5336_i2c_client, 0xd0, 0x01);
         fts_write_reg(ft5336_i2c_client, 0xd1, 0x1f);
@@ -2291,9 +2013,9 @@ EXPORT_SYMBOL(tp_write_reg1);
 	ft5x0x_write_reg(0xd0, 0x01);
 	ft5x0x_write_reg(0xd1, 0x1f);
 	ft5x0x_write_reg(0xd2, 0x1f);
-#endif
+#endif*/
         return;
-#endif
+//#endif
 
 	 mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
 #ifdef TPD_CLOSE_POWER_IN_SLEEP	
@@ -2348,66 +2070,17 @@ static ssize_t show_chipinfo(struct device *dev,struct device_attribute *attr, c
 	#endif
 	ver=ft5x0x_read_fw_ver();
 	doubleclick = ft5x0x_read_doubleclick_flag();
-	// ÎªÁËÅäºÏºóĞøµÄ´¦Àí,°æ±¾ĞÅÏ¢µÄÓ¦¸Ã°´ÕÕid: ver: ic: vendor:½øĞĞ´¦Àí,Çë¶¼ÓÃĞ¡Ğ´ ËÕ ÓÂ 2013Äê11ÔÂ07ÈÕ 09:08:34
+	// ä¸ºäº†é…åˆåç»­çš„å¤„ç†,ç‰ˆæœ¬ä¿¡æ¯çš„åº”è¯¥æŒ‰ç…§id: ver: ic: vendor:è¿›è¡Œå¤„ç†,è¯·éƒ½ç”¨å°å†™ è‹ å‹‡ 2013å¹´11æœˆ07æ—¥ 09:08:34
 	switch (id)
 	{
-		case 0x5a: // ĞÅÀû ËÕ ÓÂ 2013Äê11ÔÂ13ÈÕ 09:48:12
-			#ifdef FTS_GESTRUE
-			return sprintf(buf,"ID:0x%x VER:0x%x IC:ft5336 VENDOR:truely%s\n",id, ver, doubleclickstr[doubleclick]);	
-			#else
-			return sprintf(buf,"ID:0x%x VER:0x%x IC:ft5336 VENDOR:truely\n",id, ver);
-			#endif
-			break;
-		case 0x55: // tianma 20140529 phil added
-			#ifdef FTS_GESTRUE
-			return sprintf(buf,"ID:0x%x VER:0x%x IC:ft5336 VENDOR:tianma%s\n",id, ver, doubleclickstr[doubleclick]);	
-			#else
-			return sprintf(buf,"ID:0x%x VER:0x%x IC:ft5336 VENDOR:tianma\n",id, ver);
-			#endif
-			break;
-		default:
-			#ifdef FTS_GESTRUE
-			return sprintf(buf,"ID:0x%x VER:0x%x IC:ft5336 VENDOR:ckt%s\n",id, ver, doubleclickstr[doubleclick]);	
-			#else
-			return sprintf(buf,"ID:0x%x VER:0x%x IC:ft5336 VENDOR:ckt\n",id, ver);
-			#endif
-			break;
 	}
 
 }
 
 static DEVICE_ATTR(chipinfo, 0664, show_chipinfo, NULL);	//Modify by EminHuang 20120613   0444 -> 0664 [CTS Test]				android.permission.cts.FileSystemPermissionTest#testAllFilesInSysAreNotWritable FAIL
 
-
-#ifdef FTS_GESTRUE
-static ssize_t show_control_double_tap(struct device *dev,struct device_attribute *attr, char *buf)
-{
-	struct i2c_client *client =ft5336_i2c_client;
-	
-	return sprintf(buf, "gestrue state:%s \n",GestrueEnable==0?"Disable":"Enable");
-}
-
-static ssize_t store_control_double_tap(struct device *dev,struct device_attribute *attr, const char *buf, size_t size)
-{
-    char *pvalue = NULL;
-    if(buf != NULL && size != 0)
-    {
-        printk("[ft5336]store_control_double_tap buf is %s and size is %d \n",buf,size);
-        GestrueEnable = simple_strtoul(buf,&pvalue,16);
-        printk("[ft5336] store_control_double_tap : %s \n",GestrueEnable==0?"Disable":"Enable");        
-    }        
-    return size;
-}
-
-
-static DEVICE_ATTR(control_double_tap, 0664, show_control_double_tap, store_control_double_tap);
-#endif
-
 static const struct device_attribute * const ctp_attributes[] = {
 	&dev_attr_chipinfo
-#ifdef FTS_GESTRUE
-	,&dev_attr_control_double_tap
-#endif
 };
 
 
@@ -2418,12 +2091,7 @@ static struct tpd_driver_t tpd_device_driver = {
 		 .resume = tpd_resume,
 		 .attrs=
 		 {
-			.attr=ctp_attributes,
-			#ifdef FTS_GESTRUE
-			.num=2
-			#else
-			.num=1
-			#endif
+			.attr=ctp_attributes//,*/
 		 },
 #ifdef TPD_HAVE_BUTTON
 		 .tpd_have_button = 1,
