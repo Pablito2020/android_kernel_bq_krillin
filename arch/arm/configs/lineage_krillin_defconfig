@@ -2685,6 +2685,7 @@ CONFIG_MISC_FILESYSTEMS=y
 # CONFIG_HFS_FS is not set
 # CONFIG_HFSPLUS_FS is not set
 # CONFIG_BEFS_FS is not set
+CONFIG_DYNAMIC_FSYNC=y
 # CONFIG_BFS_FS is not set
 # CONFIG_EFS_FS is not set
 # CONFIG_JFFS2_FS is not set
