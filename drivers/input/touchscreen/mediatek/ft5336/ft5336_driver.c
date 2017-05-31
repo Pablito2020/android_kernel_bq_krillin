@@ -1,3 +1,11 @@
+/* *****************************************************
+*                                                      *
+*        FT5336 MEDIATEK TOUCHSCREEN DRIVER            *
+* UPLOADED BY BQ FOR THE BQ AQUARIS E4.5, AKA KRILLIN. *
+*          MODIFIED BY PABLITO2020 IN 2017             *
+*                                                      *
+****************************************************** */
+
 #include "tpd.h"
 #include <linux/interrupt.h>
 #include <cust_eint.h>
@@ -23,8 +31,7 @@
 #endif
 
 
-//lenovo_sw liaohj merged from putaoya 2012-09-12
- #define TPD_MAX_PONIT       5 
+#define TPD_MAX_PONIT       5 
 extern void custom_vibration_enable(int);
 extern kal_bool check_charger_exist(void); 
 
@@ -57,10 +64,8 @@ static int point_num = 0;
 static int p_point_num = 0;
 static bool discard_resume_first_eint = KAL_FALSE;
 static int tpd_state = 0;
-//#define TPD_CLOSE_POWER_IN_SLEEP
 
 #define TPD_OK 0
-//register define
 
 #define DEVICE_MODE 0x00
 #define GEST_ID 0x01
@@ -81,11 +86,7 @@ static int tpd_state = 0;
 #define TOUCH3_YH 0x11
 #define TOUCH3_YL 0x12
 
-/*add for portugal evt*/
-/* Lenovo-sw yexm1 modify, 2012-10-18, open the FW upgrade fun */
 #define CONFIG_SUPPORT_FTS_CTP_UPG
-
-//#define ESD_CHECK
 
 #define TPD_RESET_ISSUE_WORKAROUND
 
@@ -133,52 +134,28 @@ static int tpd_def_calmat_local[8] = TPD_CALIBRATION_MATRIX;
 #define TPD_SET_ENABLE_GESTRUE _IO(TOUCH_IOC_MAGIC,4)
 
 
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // 苏 勇 2013年11月19日 13:39:55
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)
 #define TPD_UPGRADE_CKT _IO(TOUCH_IOC_MAGIC,2)
 static unsigned char CtpFwUpgradeForIOCTRL(unsigned char* pbt_buf, unsigned int dw_lenth);
 static DEFINE_MUTEX(fwupgrade_mutex);
 atomic_t    upgrading;
-#endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
-
-//************* add for doubletap + psensor ************//
-/*#ifdef CONFIG_MTK_TMD2772_AUTO
-unsigned short ps_data;
-extern long TMD2772_enable_ps_tp(int value);
-extern long TMD2772_read_ps_tp(u16 *pvalue);
-extern int TMD2772_get_ps_value_tp(u16 value);
-#endif*/
-//************* add for doubletap + psensor ************//
+#endif
 
 int g_v_magnify_x =TPD_VELOCITY_CUSTOM_X;
 int g_v_magnify_y =TPD_VELOCITY_CUSTOM_Y;
 static int tpd_misc_open(struct inode *inode, struct file *file)
 {
-/*
-	file->private_data = adxl345_i2c_client;
-
-	if(file->private_data == NULL)
-	{
-		printk("tpd: null pointer!!\n");
-		return -EINVAL;
-	}
-	*/
 	return nonseekable_open(inode, file);
 }
 /*----------------------------------------------------------------------------*/
 static int tpd_misc_release(struct inode *inode, struct file *file)
 {
-	//file->private_data = NULL;
 	return 0;
 }
 /*----------------------------------------------------------------------------*/
-//static int adxl345_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
-//       unsigned long arg)
 static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
        unsigned long arg)
 {
-	//struct i2c_client *client = (struct i2c_client*)file->private_data;
-	//struct adxl345_i2c_data *obj = (struct adxl345_i2c_data*)i2c_get_clientdata(client);	
-	//char strbuf[256];
 	void __user *data;
 	
 	long err = 0;
@@ -232,7 +209,7 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 			}				 
 			break;
 
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // 苏 勇 2013年11月19日 13:39:46
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)
 		case TPD_UPGRADE_CKT:
 			data = (void __user *) arg;
 			if(data == NULL)
@@ -261,7 +238,7 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 			err=CtpFwUpgradeForIOCTRL(ctpdata, size);
  			kfree(ctpdata);
 			break;
-#endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
+#endif
 		default:
 			printk("tpd: unknown IOCTL: 0x%08x\n", cmd);
 			err = -ENOIOCTLCMD;
@@ -274,7 +251,6 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 
 
 static struct file_operations tpd_fops = {
-//	.owner = THIS_MODULE,
 	.open = tpd_misc_open,
 	.release = tpd_misc_release,
 	.unlocked_ioctl = tpd_unlocked_ioctl,
@@ -302,22 +278,17 @@ struct touch_info {
 };
  
  static const struct i2c_device_id ft5336_tpd_id[] = {{"ft5336",0},{}};
- //unsigned short force[] = {0,0x70,I2C_CLIENT_END,I2C_CLIENT_END}; 
- //static const unsigned short * const forces[] = { force, NULL };
- //static struct i2c_client_address_data addr_data = { .forces = forces, };
  static struct i2c_board_info __initdata ft5336_i2c_tpd={ I2C_BOARD_INFO("ft5336", (0x70>>1))};
  
  
  static struct i2c_driver tpd_i2c_driver = {
   .driver = {
-	 .name = "ft5336",//.name = TPD_DEVICE,
-//	 .owner = THIS_MODULE,
+	 .name = "ft5336",
   },
   .probe = tpd_probe,
   .remove = tpd_remove,
   .id_table = ft5336_tpd_id,
   .detect = tpd_detect,
-//  .address_data = &addr_data,
  };
  #ifdef CONFIG_SUPPORT_FTS_CTP_UPG
 static u8 *CTPI2CDMABuf_va = NULL;
