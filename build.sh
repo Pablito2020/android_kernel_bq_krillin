@@ -24,7 +24,6 @@ echo -e "${orange}#                VERSION: STABLE                   #"
 echo -e "${orange}####################################################"
 echo -e "${orange}#                  SCRIPT INFO:                    #"
 echo -e "${orange}#             DEVELOPER: PABLITO2020               #"
-echo -e "${orange}#           CONTRIBUTORS: HYPERION70               #"
 echo -e "${orange}####################################################"
 
 
