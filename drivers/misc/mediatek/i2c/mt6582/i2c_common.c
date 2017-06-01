@@ -210,7 +210,7 @@ static ssize_t set_config(struct device *dev, struct device_attribute *attr, con
   unsigned char tmpbuffer[128];
   printk("%s\n", buf);
   //if ( sscanf(buf, "%d %d %d %d %d %d %d %d %d %d %d %d %s", &bus_id, &address, &operation, &trans_mode, &trans_stop, &speed_mode, &pushpull_mode, &query_mode, &timing, &trans_num, &trans_auxlen,&dir, data_buffer) ) {
-  if ( sscanf(buf, "%d %x %d %d %d %d %d %d %d %d %d %1023s", &bus_id, &address, &operation, &trans_mode, &trans_stop, &speed_mode, &pushpull_mode, &query_mode, &timing, &trans_num, &trans_auxlen,data_buffer) ) {
+  if ( sscanf(buf, "%d %x %d %d %d %d %d %d %d %d %d %s", &bus_id, &address, &operation, &trans_mode, &trans_stop, &speed_mode, &pushpull_mode, &query_mode, &timing, &trans_num, &trans_auxlen,data_buffer) ) {
       if((address != 0)&&(operation<=2)){
         length = strlen(data_buffer);
       if (operation == 0){

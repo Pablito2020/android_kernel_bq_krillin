@@ -822,14 +822,8 @@ static int ion_debug_client_show(struct seq_file *s, void *unused)
 			names[id] = buffer->heap->name;
 		sizes[id] += buffer->size;
 
-<<<<<<< HEAD
 		seq_printf(s, "%16.s %3d %8zu %3d %p %p\n", buffer->heap->name,
 					client->pid, buffer->size, buffer->handle_count, handle, buffer);
-=======
-	        struct ion_buffer *buffer = handle->buffer;
-		seq_printf(s, "%16.s %3d %8zu %3d %pK %pK.\n", buffer->heap->name,
-                               client->pid, buffer->size, buffer->handle_count, handle, buffer);
->>>>>>> 54e40336c... Patched up to December
 	}
 	mutex_unlock(&client->lock);
 
@@ -1151,7 +1145,7 @@ static void ion_vm_open(struct vm_area_struct *vma)
 	mutex_lock(&buffer->lock);
 	list_add(&vma_list->list, &buffer->vmas);
 	mutex_unlock(&buffer->lock);
-	pr_debug("%s: adding %pK\n", __func__, vma);
+	pr_debug("%s: adding %p\n", __func__, vma);
 }
 
 static void ion_vm_close(struct vm_area_struct *vma)
@@ -1166,7 +1160,7 @@ static void ion_vm_close(struct vm_area_struct *vma)
 			continue;
 		list_del(&vma_list->list);
 		kfree(vma_list);
-		pr_debug("%s: deleting %pK\n", __func__, vma);
+		pr_debug("%s: deleting %p\n", __func__, vma);
 		break;
 	}
 	mutex_unlock(&buffer->lock);
