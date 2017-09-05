@@ -1,6 +1,12 @@
 #!/bin/bash
-# BASH FILE FOR CLEAN ALL THE SOURCE WITHOUT COMPILE ALL THE KERNEL AGAIN AND AGAIN
-# PABLITO2020 2017
+# Script for clean the kernel source
+
+echo '################################# '
+echo '#                               # '
+echo '#  CLEANING THE KERNEL SOURCE   # '
+echo '#                               # '
+echo '################################# '
+
 make clean
 make mrproper
 
