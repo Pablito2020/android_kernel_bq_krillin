@@ -1,4 +1,4 @@
-# LINEAGE OS KERNEL FOR BQ AQUARIS E4.5, AKA KRILLIN
+# 3.10 CUSTOM KERNEL FOR BQ AQUARIS E4.5, AKA KRILLIN
 
 * Working:
 
@@ -37,9 +37,9 @@
 
         $ https://github.com/Pablito2020/android_kernel_bq_krillin.git
 
-  * After that, clone the toolchain used in this build (in that case gcc 4.8): 
+  * After that, clone the toolchain used in this build (in that case linaro 4.9): 
 
-        $ git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
+        $ git clone https://github.com/Pablito2020/Toolchain.git
 
   * And for compile:
 
@@ -62,6 +62,7 @@
 # Thanks to (In alphabetical order) :
 
    * ANDR7E ( help with kpd buttons + device info app for mtk devices) ---- XDA, 4PDA, GITHUB
+   * ArchiDroid (Linaro toolchain)
    * @assusdan help me with drivers and develop the kernel. ---- 4PDA, GITHUB
    * BQ for his sources (LCM DRVIERS, TOUCH DRIVERS, ETC) ---- GITHUB
    * Vineeth Raj for his dt2wake and sweep2wake commits for sprout. ---- GITHUB
