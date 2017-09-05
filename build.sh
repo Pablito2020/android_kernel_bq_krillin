@@ -21,6 +21,7 @@ echo -e "${orange}#          LINUX KERNEL VERSION: 3.10.49           #"
 echo -e "${orange}####################################################"
 echo -e "${orange}#                  SCRIPT INFO:                    #"
 echo -e "${orange}#             DEVELOPER: PABLITO2020               #"
+echo -e "${orange}#       THANKS TO: ASSUSDAN, AND GUYS OF 4PDA      #"
 echo -e "${orange}####################################################"
 
 # EXPORT TOOLCHAIN
@@ -38,10 +39,23 @@ make lineage_krillin_defconfig
 echo -e "${purple} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
 make zImage
 
-# SAY YES TO A SUCCESFULLY BUILD :)
-echo -e "${green} SUCCESSFULLY BUILDED DAREDEVIL KERNEL"
-echo -e "${green} ZIMAGE IS IN ARCH/ARM/BOOT/ZIMAGE"
-echo -e "${green} MAKE BOOT.IMG WITH CARLIV IMAGE KITCHEN"
-echo -e "${green} HAVE FUN AND GIVE PROPER CREDITS!"
-echo -e $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds'
+# COMPROBE IF THERE ARE COMPILATION ERRORS
+if [ ! -f arch/arm/boot/zImage ]
+then
+    echo -e "${red}############################"
+    echo -e "${red}#        BUILD ERROR!      #"
+    echo -e "${red}############################"
+else
+
+# IF THE KERNEL COMPILES SUCCESFULLY
+echo -e "${green} ########################################################"
+echo -e "${green} #          SUCCESSFULLY BUILDED DAREDEVIL KERNEL       #"
+echo -e "${green} #           ZIMAGE IS IN ARCH/ARM/BOOT/ZIMAGE          #"
+echo -e "${green} #         MAKE BOOT.IMG WITH CARLIV IMAGE KITCHEN      #"
+echo -e "${green} #           HAVE FUN AND GIVE PROPER CREDITS!          #"
+echo -e "${green} ########################################################"
+fi
+
+# BUILD WORKTIME
+echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
 
