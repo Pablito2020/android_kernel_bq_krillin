@@ -65,5 +65,6 @@
    * @assusdan help me with drivers and develop the kernel. ---- 4PDA, GITHUB
    * BQ for his sources (LCM DRVIERS, TOUCH DRIVERS, ETC) ---- GITHUB
    * Vineeth Raj for his dt2wake and sweep2wake commits for sprout. ---- GITHUB
+   * Varun Chitre for his "thunder" drivers for sprout. ---- GITHUB
    * @zormax for the bring up LP/MM project ---- 4PDA
     
