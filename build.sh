@@ -24,10 +24,8 @@ echo -e "${orange}#             DEVELOPER: PABLITO2020               #"
 echo -e "${orange}#       THANKS TO: ASSUSDAN, AND GUYS OF 4PDA      #"
 echo -e "${orange}####################################################"
 
-# EXPORT LINARO 4.9 TOOLCHAIN
-# FOR CLONE THE TOOLCHAIN YOU HAVE TO DO THIS GIT CLONE COMAND:
-# git clone https://github.com/ArchiDroid/Toolchain.git -b linaro-4.9
-export ARCH=arm CROSS_COMPILE=../Toolchain/bin/arm-linux-androideabi-
+# EXPORT GOOGLE GCC TOOLCHAIN
+export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 
 # User and Build Host
 export KBUILD_BUILD_USER=Pablito2020
