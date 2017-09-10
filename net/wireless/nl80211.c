@@ -8437,6 +8437,9 @@ int cfg80211_vendor_cmd_reply(struct sk_buff *skb)
 		return -EINVAL;
 	}
 
+	/* clear CB data for netlink core to own from now on */
+	memset(skb->cb, 0, sizeof(skb->cb));
+
 	nla_nest_end(skb, data);
 	genlmsg_end(skb, hdr);
 	return genlmsg_reply(skb, rdev->cur_cmd_info);
