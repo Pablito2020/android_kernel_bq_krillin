@@ -35,9 +35,10 @@ export KBUILD_BUILD_HOST=Daredevil
 echo -e "${cyan} CONFIGURE KRILLIN.."
 make lineage_krillin_defconfig
 
-# BUILD ZIMAGE
+# BUILD ZIMAGE ( I ADD -J4 BECAUSE IS MY PC CORES.... CHANGE THIS NUMBER FOR YOUR PC NUMBER OF CORES )
+# For check the pc cores open a terminal and write: grep -c ^processor /proc/cpuinfo
 echo -e "${purple} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make zImage
+make -j4 zImage
 
 # COMPROBE IF THERE ARE COMPILATION ERRORS
 if [ ! -f arch/arm/boot/zImage ]
