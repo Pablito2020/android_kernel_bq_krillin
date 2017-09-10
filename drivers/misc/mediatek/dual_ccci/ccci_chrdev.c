@@ -34,6 +34,59 @@ static unsigned int md_sbp_code = 0;
 static unsigned int md_sbp_code_default = 0;
 #endif //CONFIG_MTK_MD_SBP_CUSTOM_VALUE
 
+#ifndef CONFIG_MODEM_FIRMWARE_CIP_PATH
+#define CONFIG_MODEM_FIRMWARE_CIP_PATH  "/custom/etc/firmware/"
+#endif
+
+#ifndef CONFIG_MODEM_FIRMWARE_PATH
+#define CONFIG_MODEM_FIRMWARE_PATH "/etc/firmware/"
+#endif
+
+static char * type_str[] = {    [modem_invalid]="invalid", 
+                [modem_2g]="2g", 
+                [modem_3g]="3g",
+                [modem_wg]="wg",
+                [modem_tg]="tg",
+                };
+
+int scan_image_list(int md_id, char fmt[], int out_img_list[], int img_list_size)
+{
+    int i;
+    int img_num = 0;
+    char full_path[64] = {0};
+    char img_name[32] = {0};
+    struct file *filp = NULL;
+
+    for(i=0; i<(sizeof(type_str)/sizeof(char*)); i++) {
+        snprintf(img_name, 32, fmt, md_id+1, type_str[i]);
+        // Find at CIP first
+        snprintf(full_path, 64, "%s%s", CONFIG_MODEM_FIRMWARE_CIP_PATH, img_name);
+        CCCI_MSG_INF(md_id, "chr", "Find:%s\n" ,full_path);
+        filp = filp_open(full_path, O_RDONLY, 0644);
+        if (IS_ERR(filp)) {
+            // Find at default
+            snprintf(full_path, 64, "%s%s", CONFIG_MODEM_FIRMWARE_PATH, img_name);
+            CCCI_MSG_INF(md_id, "chr", "Find:%s\n" ,full_path);
+            filp = filp_open(full_path, O_RDONLY, 0644);
+            if (IS_ERR(filp)) {
+                CCCI_MSG_INF(md_id, "chr", "%s not found(%d,%d)\n" ,full_path, img_num, i);
+                continue;
+            }
+        }
+        // Run here means open image success
+        filp_close(filp, NULL);
+        CCCI_MSG_INF(md_id, "chr", "Image:%s found\n", full_path);
+        if(img_num<img_list_size)
+            out_img_list[img_num] = i;
+        img_num++;
+    }
+    if (img_num < 1) {
+        CCCI_ERR_INF(md_id, "chr", "Error! - No Image found\n");
+    }
+    return img_num;	
+}
+
+
 unsigned int __weak get_sim_switch_type(void)
 {
     CCCI_MSG("%s is not implement!!! line:%d\n", __FUNCTION__, __LINE__);;
@@ -905,6 +958,7 @@ static long ccci_vir_chr_ioctl( struct file *file, unsigned int cmd, unsigned lo
     unsigned int        sim_slot_cfg[3];
     int                    ccci_cfg_setting[2];
     int                    setting_num;
+    int                    scaned_num = -1;
 
     switch (cmd) 
     {
@@ -1094,16 +1148,26 @@ static long ccci_vir_chr_ioctl( struct file *file, unsigned int cmd, unsigned lo
             break;
 
         case CCCI_IOC_SET_MD_IMG_EXIST:
+#if 0
             if(copy_from_user(&md_img_exist, (void __user *)arg, sizeof(md_img_exist))) {
                 CCCI_MSG_INF(md_id, "chr", "CCCI_IOC_ENABLE_GET_SIM_TYPE: copy_from_user fail!\n");
                 ret = -EFAULT;
             }
+#endif
+            CCCI_MSG_INF(md_id, "chr", "CCCI_IOC_ENABLE_GET_SIM_TYPE: need not set!\n");
             break;
 
         case CCCI_IOC_GET_MD_IMG_EXIST:
-            if (copy_to_user((void __user *)arg, &md_img_exist, sizeof(md_img_exist))) {
-                CCCI_MSG_INF(md_id, "chr", "CCCI_IOC_GET_MD_IMG_EXIST: copy_to_user fail\n");
+            memset(md_img_exist, 0, sizeof(md_img_exist));
+            scaned_num = scan_image_list(md_id, "modem_%d_%s_n.img", &md_img_exist, MD_IMG_MAX_CNT);
+            if (scaned_num < 1) {
+                CCCI_MSG_INF(md_id, "chr", "CCCI_IOC_GET_MD_IMG_EXIST: scan md imfage fail!\n");
                 ret= -EFAULT;
+            } else {
+                if (copy_to_user((void __user *)arg, &md_img_exist, sizeof(md_img_exist))) {
+                    CCCI_MSG_INF(md_id, "chr", "CCCI_IOC_GET_MD_IMG_EXIST: copy_to_user fail!\n");
+                    ret= -EFAULT;
+                }
             }
             break;
 
