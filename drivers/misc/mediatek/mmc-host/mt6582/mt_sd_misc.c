@@ -18,7 +18,7 @@
 #include <linux/mmc/sd.h>
 #include <linux/mmc/sdio.h>
 #include <linux/dma-mapping.h>
-#include <linux/genhd.h>
+
 #include <mach/dma.h>
 #include <mach/board.h> /* FIXME */
 #include <mach/mt_reg_base.h>
@@ -134,9 +134,9 @@ static int simple_sd_ioctl_single_rw(struct msdc_ioctl* msdc_ctl)
     struct msdc_host *host_ctl;
     int  ret = 0;  
 
-    if(msdc_ctl->total_size <= 0)
-        return -EINVAL;
-
+    if(!msdc_ctl)
+        return -EINVAL; 
+		
     host_ctl = mtk_msdc_host[msdc_ctl->host_num];
     BUG_ON(!host_ctl);
     BUG_ON(!host_ctl->mmc);
@@ -258,9 +258,6 @@ static int simple_sd_ioctl_single_rw(struct msdc_ioctl* msdc_ctl)
         }
     }
 
-    /* clear the global buffer of R/W IOCTL */
-    memset(sg_msdc_multi_buffer, 0 , 512);
-
     if (msdc_ctl->partition){
         ret = mmc_send_ext_csd(host_ctl->mmc->card,l_buf);
         if (ret) {
@@ -310,9 +307,9 @@ static int simple_sd_ioctl_multi_rw(struct msdc_ioctl* msdc_ctl)
     struct msdc_host *host_ctl;
     int ret = 0;
 
-    if(msdc_ctl->total_size <= 0)
-        return -EINVAL;
-
+    if(!msdc_ctl)
+        return -EINVAL; 
+		
     host_ctl = mtk_msdc_host[msdc_ctl->host_num];
     BUG_ON(!host_ctl);
     BUG_ON(!host_ctl->mmc);
@@ -446,9 +443,6 @@ static int simple_sd_ioctl_multi_rw(struct msdc_ioctl* msdc_ctl)
             memcpy(msdc_ctl->buffer, sg_msdc_multi_buffer, msdc_ctl->total_size);
         }
     }
-
-    /* clear the global buffer of R/W IOCTL */
-    memset(sg_msdc_multi_buffer, 0 , msdc_ctl->total_size);
 
     if (msdc_ctl->partition){
         ret = mmc_send_ext_csd(host_ctl->mmc->card,l_buf);
@@ -1249,17 +1243,21 @@ static int simple_mmc_get_disk_info(struct mbr_part_info* mpi, unsigned char* na
         for (i = 0; i < PART_NUM; i++) {
             if (PartInfo[i].partition_idx != 0 && PartInfo[i].partition_idx == part->partno) {
 #if DEBUG_MMC_IOCTL
-        printk("part_name = %s    name = %s\n", part->info->volname, name);
-#endif
-        if (!strncmp(part->info->volname, name, PARTITION_META_INFO_VOLNAMELTH)){
-            mpi->start_sector = part->start_sect;
-            mpi->nr_sects = part->nr_sects;
-            mpi->part_no = part->partno;
-            if (part->info){
-                mpi->part_name = part->info->volname;
-            } else {
-                mpi->part_name = no_partition_name;
-            }
+                printk("part_name = %s    name = %s\n", PartInfo[i].name, name);
+#endif                
+                if (!strncmp(PartInfo[i].name, name, PARTITION_NAME_LENGTH)){
+                    mpi->start_sector = part->start_sect;           
+                    mpi->nr_sects = part->nr_sects;           
+                    mpi->part_no = part->partno; 
+                    if (i < PART_NUM){
+                        mpi->part_name = PartInfo[i].name;
+                    } else {
+                        mpi->part_name = no_partition_name;
+                    }
+
+                    disk_part_iter_exit(&piter);
+                    return 0;
+                }
 
                 break;
             }
@@ -1288,7 +1286,7 @@ static int simple_mmc_erase_func(unsigned int start, unsigned int size)
     {
         arg = __MMC_DISCARD_ARG; 
     }else if (host->mmc->card->ext_csd.sec_feature_support & EXT_CSD_SEC_GB_CL_EN){
-        /* for Hynix eMMC chip\A3\ACdo trim even if it is  MMC_QUIRK_TRIM_UNSTABLE */
+        /* for Hynix eMMC chip£¬do trim even if it is  MMC_QUIRK_TRIM_UNSTABLE */
         arg = __MMC_TRIM_ARG; 
     }else if(mmc_can_erase(host->mmc->card)){
         /* mmc_erase() will remove the erase group un-aligned part, 
@@ -1345,10 +1343,7 @@ static int simple_mmc_erase_partition(unsigned char* name)
 
 static int simple_mmc_erase_partition_wrap(struct msdc_ioctl* msdc_ctl)
 {
-    unsigned char name[PARTITION_META_INFO_VOLNAMELTH];
-
-    if(msdc_ctl->total_size > PARTITION_META_INFO_VOLNAMELTH)
-        return -EFAULT;
+    unsigned char name[PARTITION_NAME_LENGTH];
 
     if(!msdc_ctl)
         return -EINVAL; 
@@ -1363,67 +1358,66 @@ static int simple_mmc_erase_partition_wrap(struct msdc_ioctl* msdc_ctl)
 
 static long simple_sd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
-    struct msdc_ioctl msdc_ctl;
-    int ret;
-
-    if((struct msdc_ioctl*)arg == NULL){
-        switch(cmd){
-            case MSDC_REINIT_SDCARD:
-                ret = sd_ioctl_reinit(NULL);
-                break;
-            default:
-                printk("mt_sd_ioctl:this opcode value is illegal!!\n");
-                return -EINVAL;
-        }
-        return ret;
+    struct msdc_ioctl *msdc_ctl = (struct msdc_ioctl *)arg;
+	int ret;
+	if(msdc_ctl == NULL){
+		switch(cmd){
+			case MSDC_REINIT_SDCARD:
+				ret = sd_ioctl_reinit(msdc_ctl);
+				break;
+        	default:
+            printk("mt_sd_ioctl:this opcode value is illegal!!\n");
+            return -EINVAL;
+			}
+		return ret;		
+	}
+	else{	
+    switch (msdc_ctl->opcode){
+        case MSDC_SINGLE_READ_WRITE:
+            msdc_ctl->result = simple_sd_ioctl_single_rw(msdc_ctl);
+            break;
+        case MSDC_MULTIPLE_READ_WRITE:
+            msdc_ctl->result = simple_sd_ioctl_multi_rw(msdc_ctl);
+            break;
+        case MSDC_GET_CID:
+            msdc_ctl->result = simple_sd_ioctl_get_cid(msdc_ctl);
+            break;
+        case MSDC_GET_CSD:
+            msdc_ctl->result = simple_sd_ioctl_get_csd(msdc_ctl);
+            break;
+        case MSDC_GET_EXCSD:
+            msdc_ctl->result = simple_sd_ioctl_get_excsd(msdc_ctl);
+            break;
+        case MSDC_DRIVING_SETTING:
+            printk("in ioctl to change driving\n");
+            if (1 == msdc_ctl->iswrite){
+                msdc_ctl->result = simple_sd_ioctl_set_driving(msdc_ctl);
+            } else {
+                msdc_ctl->result = simple_sd_ioctl_get_driving(msdc_ctl);
+            }
+            break;
+        case MSDC_ERASE_PARTITION:
+            msdc_ctl->result = simple_mmc_erase_partition_wrap(msdc_ctl);
+            break;
+        case MSDC_SD30_MODE_SWITCH:
+            msdc_ctl->result = simple_sd_ioctl_sd30_mode_switch(msdc_ctl);
+            break;
+			  case MSDC_GET_BOOTPART:
+            msdc_ctl->result = simple_sd_ioctl_get_bootpart(msdc_ctl);
+            break;
+        case MSDC_SET_BOOTPART:
+            msdc_ctl->result = simple_sd_ioctl_set_bootpart(msdc_ctl);
+            break;
+        case MSDC_GET_PARTSIZE:
+            msdc_ctl->result = simple_sd_ioctl_get_partition_size(msdc_ctl);
+			break;
+        default:
+            printk("simple_sd_ioctl:this opcode value is illegal!! %d\n",msdc_ctl->opcode);
+            return -EINVAL;
     }
-    else{
-        if (copy_from_user(&msdc_ctl, (struct msdc_ioctl*)arg, sizeof(struct msdc_ioctl))){
-            return -EFAULT;
-        }
 
-        if (msdc_ctl.host_num >= HOST_MAX_NUM || msdc_ctl.host_num < 0)
-            return -EFAULT;
-
-        switch (msdc_ctl.opcode){
-            case MSDC_SINGLE_READ_WRITE:
-                msdc_ctl.result = simple_sd_ioctl_single_rw(&msdc_ctl);
-                break;
-            case MSDC_MULTIPLE_READ_WRITE:
-                msdc_ctl.result = simple_sd_ioctl_multi_rw(&msdc_ctl);
-                break;
-            case MSDC_GET_CID:
-                msdc_ctl.result = simple_sd_ioctl_get_cid(&msdc_ctl);
-                break;
-            case MSDC_GET_CSD:
-                msdc_ctl.result = simple_sd_ioctl_get_csd(&msdc_ctl);
-                break;
-            case MSDC_GET_EXCSD:
-                msdc_ctl.result = simple_sd_ioctl_get_excsd(&msdc_ctl);
-                break;
-            case MSDC_DRIVING_SETTING:
-                printk("in ioctl to change driving\n");
-                if (1 == msdc_ctl.iswrite){
-                    msdc_ctl.result = simple_sd_ioctl_set_driving(&msdc_ctl);
-                } else {
-                    msdc_ctl.result = simple_sd_ioctl_get_driving(&msdc_ctl);
-                }
-                break;
-            case MSDC_ERASE_PARTITION:
-                msdc_ctl.result = simple_mmc_erase_partition_wrap(&msdc_ctl);
-                break;
-            case MSDC_SD30_MODE_SWITCH:
-                msdc_ctl.result = simple_sd_ioctl_sd30_mode_switch(&msdc_ctl);
-                break;
-            default:
-                printk("simple_sd_ioctl:this opcode value is illegal!!\n");
-                return -EINVAL;
-        }
-        if (copy_to_user((struct msdc_ioctl*)arg, &msdc_ctl, sizeof(struct msdc_ioctl))) {
-            return -EFAULT;
-        }
-        return msdc_ctl.result;
-    }
+    return msdc_ctl->result;
+}
 }
 
 static struct file_operations simple_msdc_em_fops = {
