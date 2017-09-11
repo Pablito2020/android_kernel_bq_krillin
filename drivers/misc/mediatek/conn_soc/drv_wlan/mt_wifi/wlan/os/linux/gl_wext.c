@@ -462,7 +462,7 @@ const long channel_freq[] = {
 #define NUM_CHANNELS (sizeof(channel_freq) / sizeof(channel_freq[0]))
 
 #define MAX_SSID_LEN    32
-#define COUNTRY_CODE_LEN    10	/*country code length */
+
 
 /*******************************************************************************
 *                             D A T A   T Y P E S
@@ -3914,7 +3914,7 @@ wext_set_country (
     P_GLUE_INFO_T   prGlueInfo;
     WLAN_STATUS     rStatus;
     UINT_32         u4BufLen;
-    UINT_8          aucCountry[COUNTRY_CODE_LEN];
+    UINT_8          aucCountry[2];
 
     ASSERT(prNetDev);
 
@@ -3922,18 +3922,17 @@ wext_set_country (
      * and "COUNTRY JP"
      */
     if (FALSE == GLUE_CHK_PR2(prNetDev, iwr) ||
-        !iwr->u.data.pointer || iwr->u.data.length != COUNTRY_CODE_LEN) {
+        !iwr->u.data.pointer || iwr->u.data.length < 10) {
         return -EINVAL;
     }
     prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
 
-    if (copy_from_user(aucCountry, iwr->u.data.pointer, COUNTRY_CODE_LEN)) {
-        return -EFAULT;
-    }
+    aucCountry[0] = *((PUINT_8)iwr->u.data.pointer + 8);
+    aucCountry[1] = *((PUINT_8)iwr->u.data.pointer + 9);
 
     rStatus = kalIoctl(prGlueInfo,
         wlanoidSetCountryCode,
-        &aucCountry[COUNTRY_CODE_LEN - 2],
+        &aucCountry[0],
         2,
         FALSE,
         FALSE,
