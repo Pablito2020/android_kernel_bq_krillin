@@ -1,6 +1,16 @@
 #ifndef TOUCHPANEL_H__
 #define TOUCHPANEL_H__
 
+/*
+################################################################################
+# In the original BQ Kernel source for krillin, this function was declared in: #
+#                        include/uapi/linux/input.h                            #
+#  for a cleaner kernel source, I will add this function in the FT5336 driver  #
+#                                Pablito2020 2017                              #
+################################################################################
+*/
+#define KEY_APP_SWITCH 580
+
 #define TPD_TYPE_CAPACITIVE
 #define TPD_TYPE_RESISTIVE
 #define TPD_I2C_NUMBER           0
