@@ -15,21 +15,26 @@ purple='\033[0;35m'
 echo -e "${orange}####################################################"
 echo -e "${orange}#      INFO ABOUT THE KERNEL AND THE SCRIPT        #"
 echo -e "${orange}####################################################"
+echo -e "${orange}#                                                  #"
 echo -e "${orange}#                  KERNEL INFO:                    #"
 echo -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
+echo -e "${orange}#               DEVICE AKA: krillin                #"
 echo -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
+echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
+echo -e "${orange}#                                                  #"
 echo -e "${orange}#                  SCRIPT INFO:                    #"
 echo -e "${orange}#             DEVELOPER: PABLITO2020               #"
 echo -e "${orange}#       THANKS TO: ASSUSDAN, AND GUYS OF 4PDA      #"
+echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 
 # EXPORT GOOGLE GCC TOOLCHAIN
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 
 # User and Build Host
-export KBUILD_BUILD_USER=Pablito2020
-export KBUILD_BUILD_HOST=Daredevil
+export KBUILD_BUILD_USER=pablito
+export KBUILD_BUILD_HOST=linuxmachine
 
 # READ THE Lineage/AOSP DEFCONFIG
 echo -e "${cyan} CONFIGURE KRILLIN.."
