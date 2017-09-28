@@ -1,4 +1,4 @@
-# 3.10 CUSTOM KERNEL FOR BQ AQUARIS E4.5, AKA KRILLIN
+# 3.10.107 CUSTOM KERNEL FOR KRILLIN
 
 * Working:
 
@@ -20,10 +20,6 @@
   * VPN
   * Gyroscope sensor
   * Sweep2Wake + Doubletap2Wake
-
-* Bugs (NOT WORKING):
-
-  * You tell me.... Everything seems to work
 
 # Compilation guide:
   
@@ -59,7 +55,7 @@
 
    * Pablito2020
 
-# Thanks to (In alphabetical order) :
+# Thanks to (this people are persons who help me to adapt the kernel source to my device "krillin") There's why I put them here, because they don't have any specific commit,so.. They are here! :) :
 
    * ANDR7E ( help with kpd buttons + device info app for mtk devices) ---- XDA, 4PDA, GITHUB
    * @assusdan help me with drivers and develop the kernel. ---- 4PDA, GITHUB
@@ -76,4 +72,10 @@
    *F2FS
    *FUSE
    *SDCARDFS
-    
+
+# UPDATED DRIVERS (from the google source common kernel):
+
+  * Android Binder
+  * LZ4 Compression Driver 
+  * SDCardFS
+  * EXT4
