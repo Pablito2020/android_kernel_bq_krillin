@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SET COLORS! (SOME OF THEM ARE NOT USED, BUT IF YOU LIKE, YOU CAN ADD IT IN THE ECHO LINES)
+# Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
 blue='\033[0;34m'
 cyan='\033[0;36m'
 yellow='\033[0;33m'
@@ -11,7 +11,7 @@ orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
 
-# SAY INFO ABOUT THE KERNEL AND THE SCRIPT
+# Say info about the kernel and the script in terminal
 echo -e "${orange}####################################################"
 echo -e "${orange}#      INFO ABOUT THE KERNEL AND THE SCRIPT        #"
 echo -e "${orange}####################################################"
@@ -29,22 +29,22 @@ echo -e "${orange}#       THANKS TO: ASSUSDAN, AND GUYS OF 4PDA      #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 
-# EXPORT GOOGLE GCC TOOLCHAIN
+# Export google 4.8 toolchain
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 
 # User and Build Host
 export KBUILD_BUILD_USER=pablito
 export KBUILD_BUILD_HOST=linuxmachine
 
-# READ THE Lineage/AOSP DEFCONFIG
+# Read the lineage/AOSP DEFCONFIG
 echo -e "${cyan} CONFIGURE KRILLIN.."
 make lineage_krillin_defconfig
 
-# BUILD ZIMAGE (Thanks to Joel for the all command)
+# Build zImage (Thanks to Joel for the all command)
 echo -e "${purple} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
 make -j all zImage
 
-# COMPROBE IF THERE ARE COMPILATION ERRORS
+# Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]
 then
     echo -e "${red}############################"
@@ -52,15 +52,15 @@ then
     echo -e "${red}############################"
 else
 
-# IF THE KERNEL COMPILES SUCCESFULLY
+# If the kernel compiles succesfully
 echo -e "${green} ########################################################"
+echo -e "${green} #                                                      #"
 echo -e "${green} #          SUCCESSFULLY BUILDED DAREDEVIL KERNEL       #"
-echo -e "${green} #           ZIMAGE IS IN ARCH/ARM/BOOT/ZIMAGE          #"
-echo -e "${green} #         MAKE BOOT.IMG WITH CARLIV IMAGE KITCHEN      #"
-echo -e "${green} #           HAVE FUN AND GIVE PROPER CREDITS!          #"
+echo                 $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
+echo -e "${green} #                                                      #"
 echo -e "${green} ########################################################"
 fi
 
-# BUILD WORKTIME
-echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
+# Build worktime ( added in line 59 for now.)
+# echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
 
