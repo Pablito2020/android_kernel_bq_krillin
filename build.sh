@@ -49,7 +49,7 @@ echo -e "${orange}####################################################"
 
 # If the google toolchain 4.8 doesn't exist, clone it. 
 # If exists, export the toolchain path
-if [ ! -f ../arm-eabi-4.8/bin/arm-eabi- ]
+if [ ! -f ../arm-eabi-4.8/bin/arm-eabi-addr2line ]
 then
     echo -e "####################################"
     echo -e "#   GOOGLE TOOLCHAIN NOT FOUND!    #"
