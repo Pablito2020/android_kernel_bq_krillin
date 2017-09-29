@@ -27,7 +27,7 @@
 #endif
 
 #ifdef CONFIG_ZRAM
-#include <linux/zram_drv.h>
+#include <zram_drv.h>
 #endif
 
 /* for collecting ion total memory usage*/
