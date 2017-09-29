@@ -2,12 +2,8 @@
 #define TOUCHPANEL_H__
 
 /*
-################################################################################
-# In the original BQ Kernel source for krillin, this function was declared in: #
-#                        include/uapi/linux/input.h                            #
-#  for a cleaner kernel source, I will add this function in the FT5336 driver  #
-#                                Pablito2020 2017                              #
-################################################################################
+In the stock kernel source provided by bq, the definition of APP_SWITCH was on include/uapi/linux/input.h 
+I moved it here for a "compact" touch driver
 */
 #define KEY_APP_SWITCH 580
 
