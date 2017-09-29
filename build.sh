@@ -42,7 +42,7 @@ make lineage_krillin_defconfig
 
 # Build zImage (Thanks to Joel for the all command)
 echo -e "${purple} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make -j all zImage
+make -j all zImage > build-log.txt
 
 # Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]
@@ -56,7 +56,7 @@ else
 echo -e "${green} ########################################################"
 echo -e "${green} #                                                      #"
 echo -e "${green} #          SUCCESSFULLY BUILDED DAREDEVIL KERNEL       #"
-echo                 $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
+                  echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
 echo -e "${green} #                                                      #"
 echo -e "${green} ########################################################"
 fi
