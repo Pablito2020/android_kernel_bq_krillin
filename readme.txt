@@ -79,3 +79,16 @@
   * LZ4 Compression Driver 
   * SDCardFS
   * EXT4
+
+# Cleaned drivers (added by bq and then cleaned by me, Pablo Fraile Alonso)
+
+  * Focaltech FT5336 (touchscreen driver)
+  * Fan5405 (Power driver --- charger driver)
+  * Yusu Android Speaker (Writted by VO-1 and edited for krillin by me)
+  
+# Added drivers ( Drivers that are created from scratch by a great developers and are added to my kernel)
+
+  * ThunderCharge (driver for optimize battery charge on mtk devices) by Varun Chitre
+  * ThunderPlug (driver that Enable plugging down/up of cores based on load per core) by Varun Chitre
+  * ThunderSonic ( Sound driver ) by Varun Chitre
+  * SDCardFS (new sdcard read driver by google)
