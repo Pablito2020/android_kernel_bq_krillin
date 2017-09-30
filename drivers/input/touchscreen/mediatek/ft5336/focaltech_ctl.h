@@ -2,7 +2,7 @@
 #define __FOCALTECH_CTL_H__
 
 #define  FT_RW_IIC_DRV  "ft_rw_iic_drv"
-#define FT_RW_IIC_DRV_MAJOR 210    /*预设的ft_rw_iic_drv的主设备号*/
+#define FT_RW_IIC_DRV_MAJOR 210
 
 #define FT_I2C_RDWR_MAX_QUEUE 	36
 #define FT_I2C_SLAVEADDR   			11
