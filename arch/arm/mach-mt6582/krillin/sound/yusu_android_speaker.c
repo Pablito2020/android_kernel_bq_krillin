@@ -41,7 +41,7 @@
 ******************************************************************************
 */
 
-#define SPK_WARM_UP_TIME        (10) //unit is ms
+#define SPK_WARM_UP_TIME        (40) //unit is ms
 /*****************************************************************************
 *                         D A T A      T Y P E S
 ******************************************************************************
@@ -222,7 +222,6 @@ kal_int32 Sound_ExtFunction(const char* name, void* param, int param_size)
 	    default:
 	    	 break;
 	}
-
 	return 1;
 }
 
