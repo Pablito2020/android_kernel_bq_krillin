@@ -1,10 +1,8 @@
-/* *****************************************************
-*                                                      *
-*        FT5336 MEDIATEK TOUCHSCREEN DRIVER            *
-* UPLOADED BY BQ FOR THE BQ AQUARIS E4.5, AKA KRILLIN. *
-*          MODIFIED BY PABLITO2020 IN 2017             *
-*                                                      *
-****************************************************** */
+/* 
+Mediatek Focaltech FT5336 Driver
+Published by bq on 2015
+Edited by Pablito2020 on 2016/2017
+*/
 
 #include "tpd.h"
 #include <linux/interrupt.h>
@@ -118,7 +116,6 @@ static int tpd_def_calmat_local[8] = TPD_CALIBRATION_MATRIX;
 #include <asm/uaccess.h>
 
 // for magnify velocity********************************************
-
 #ifndef TPD_VELOCITY_CUSTOM_X
 #define TPD_VELOCITY_CUSTOM_X 10
 #endif
@@ -132,7 +129,6 @@ static int tpd_def_calmat_local[8] = TPD_CALIBRATION_MATRIX;
 #define TPD_GET_VELOCITY_CUSTOM_Y _IO(TOUCH_IOC_MAGIC,1)
 #define TPD_GET_ENABLE_GESTRUE _IO(TOUCH_IOC_MAGIC,3)
 #define TPD_SET_ENABLE_GESTRUE _IO(TOUCH_IOC_MAGIC,4)
-
 
 #if defined (CONFIG_SUPPORT_FTS_CTP_UPG)
 #define TPD_UPGRADE_CKT _IO(TOUCH_IOC_MAGIC,2)
@@ -173,7 +169,8 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 
 	if(err)
 	{
-		printk("tpd: access error: %08X, (%2d, %2d)\n", cmd, _IOC_DIR(cmd), _IOC_SIZE(cmd));
+		// Delete logspam on Touch Driver Pablito2020
+		//printk("tpd: access error: %08X, (%2d, %2d)\n", cmd, _IOC_DIR(cmd), _IOC_SIZE(cmd));
 		return -EFAULT;
 	}
 
@@ -240,7 +237,8 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd,
 			break;
 #endif
 		default:
-			printk("tpd: unknown IOCTL: 0x%08x\n", cmd);
+			//Delete logspam on touchscreen driver, Pablito2020
+			//printk("tpd: unknown IOCTL: 0x%08x\n", cmd);
 			err = -ENOIOCTLCMD;
 			break;
 			
@@ -319,14 +317,10 @@ typedef unsigned char         FTS_BOOL;    //8 bit
 
 /***********************************************************************************************
 Name	:	ft5x0x_i2c_rxdata 
-
 Input	:	*rxdata
                      *length
-
 Output	:	ret
-
 function	:	
-
 ***********************************************************************************************/
 static int ft5x0x_i2c_rxdata(char *rxdata, int length)
 {
@@ -356,14 +350,9 @@ static int ft5x0x_i2c_rxdata(char *rxdata, int length)
 }
 /***********************************************************************************************
 Name	:	 
-
 Input	:	
-                     
-
 Output	:	
-
 function	:	
-
 ***********************************************************************************************/
 static int ft5x0x_i2c_txdata(char *txdata, int length)
 {
@@ -387,14 +376,10 @@ static int ft5x0x_i2c_txdata(char *txdata, int length)
 }
 /***********************************************************************************************
 Name	:	 ft5x0x_write_reg
-
 Input	:	addr -- address
                      para -- parameter
-
 Output	:	
-
 function	:	write register of ft5x0x
-
 ***********************************************************************************************/
 static int ft5x0x_write_reg(u8 addr, u8 para)
 {
@@ -408,21 +393,16 @@ static int ft5x0x_write_reg(u8 addr, u8 para)
         pr_err("write reg failed! %#x ret: %d", buf[0], ret);
         return -1;
     }
-    
+  
     return 0;
 }
 
-
 /***********************************************************************************************
 Name	:	ft5x0x_read_reg 
-
 Input	:	addr
                      pdata
-
 Output	:	
-
 function	:	read register of ft5x0x
-
 ***********************************************************************************************/
 static int ft5x0x_read_reg(u8 addr, u8 *pdata)
 {
@@ -454,7 +434,6 @@ static int ft5x0x_read_reg(u8 addr, u8 *pdata)
 	return ret;
   
 }
-
 
 /***********************************************************************************************
 Name	:	 ft5x0x_read_fw_ver
@@ -501,7 +480,6 @@ static void delay_qt_ms(unsigned long  w_ms)
     }
 }
 
-
 /*
 [function]: 
     callback: read data from ctpm by i2c interface,implemented by special user;
@@ -521,7 +499,8 @@ FTS_BOOL i2c_read_interface(FTS_BYTE bt_ctpm_addr, FTS_BYTE* pbt_buf, FTS_DWRD d
 
     if(ret<=0)
     {
-        printk("[TSP]i2c_read_interface error\n");
+	// Disable touchscreen logspam, Pablito2020
+        //printk("[TSP]i2c_read_interface error\n");
         return FTS_FALSE;
     }
   
@@ -545,7 +524,8 @@ FTS_BOOL i2c_write_interface(FTS_BYTE bt_ctpm_addr, FTS_BYTE* pbt_buf, FTS_DWRD 
     ret=i2c_master_send(ft5336_i2c_client, pbt_buf, dw_lenth);
     if(ret<=0)
     {
-        printk("[TSP]i2c_write_interface error line = %d, ret = %d\n", __LINE__, ret);
+	    // Disable touchscreen logspam, Pablito2020
+        //printk("[TSP]i2c_write_interface error line = %d, ret = %d\n", __LINE__, ret);
         return FTS_FALSE;
     }
 
@@ -591,7 +571,6 @@ FTS_BOOL byte_write(FTS_BYTE* pbt_buf, FTS_DWRD dw_len)
     
     return i2c_write_interface(I2C_CTPM_ADDRESS, pbt_buf, dw_len);
 }
-
 
 static int CTPDMA_i2c_write(FTS_BYTE slave,FTS_BYTE* pbt_buf, FTS_DWRD dw_len)
 {
@@ -649,7 +628,6 @@ static int CTPDMA_i2c_read(FTS_BYTE slave, FTS_BYTE *buf, FTS_DWRD len)
 	}
 }
 
-
 /*
 [function]: 
     read out data from ctpm,the destination address is 0.
@@ -664,7 +642,6 @@ FTS_BOOL byte_read(FTS_BYTE* pbt_buf, FTS_BYTE bt_len)
 {
     return i2c_read_interface(I2C_CTPM_ADDRESS, pbt_buf, bt_len);
 }
-
 
 /*
 [function]: 
@@ -682,10 +659,7 @@ FTS_BOOL byte_read(FTS_BYTE* pbt_buf, FTS_BYTE bt_len)
     ERR_ECC        :ecc error.
 */
 
-
-// 苏 勇 2014年01月15日 16:59:19#define    FTS_PACKET_LENGTH        2
 #define    FTS_PACKET_LENGTH        128
-
 
 // the macro below is defined for dual tp vendor hw firmware upgrade  compatible
 #define FTS_DUAL_VENDOR_COMPAT
@@ -693,7 +667,6 @@ FTS_BOOL byte_read(FTS_BYTE* pbt_buf, FTS_BYTE bt_len)
 #if defined(FTS_DUAL_VENDOR_COMPAT) // phil added 20140529 for truly & tianma compatible
 // the macro below is defined for dual tp vendor distinct by lcm name
 #define FTS_VENDOR_DISTINCT_BY_LCM
-
 
 static int compat_fw_ver = 0xff;
 #if defined(FTS_VENDOR_DISTINCT_BY_LCM)
@@ -746,17 +719,6 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 	}
     //printk("[TSP] is_5336_fwsize_30=%d 0x%x\n",is_5336_fwsize_30,pbt_buf[fw_filenth-12]);
 	printk("<suyong> <%d>,%s(),is_5336_fwsize_30=%d\n",__LINE__,__func__,is_5336_fwsize_30 );
-// 苏 勇 2014年03月18日 11:10:10
-// 苏 勇 2014年03月18日 11:10:10	mt_set_gpio_mode(GPIO_CTP_RST_PIN, GPIO_CTP_RST_PIN_M_GPIO);
-// 苏 勇 2014年03月18日 11:10:10    mt_set_gpio_dir(GPIO_CTP_RST_PIN, GPIO_DIR_OUT);
-// 苏 勇 2014年03月18日 11:10:10    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ZERO);  
-// 苏 勇 2014年03月18日 11:10:10    msleep(50);  
-// 苏 勇 2014年03月18日 11:10:10    mt_set_gpio_mode(GPIO_CTP_RST_PIN, GPIO_CTP_RST_PIN_M_GPIO);
-// 苏 勇 2014年03月18日 11:10:10    mt_set_gpio_dir(GPIO_CTP_RST_PIN, GPIO_DIR_OUT);
-// 苏 勇 2014年03月18日 11:10:10    mt_set_gpio_out(GPIO_CTP_RST_PIN, GPIO_OUT_ONE);
-// 苏 勇 2014年03月18日 11:10:10    //printk("[TSP] Step 1: Reset CTPM test\n");
-// 苏 勇 2014年03月18日 11:10:10   
-// 苏 勇 2014年03月18日 11:10:10    delay_qt_ms(500); 
 	
 		/*write 0xaa to register 0xfc*/
 	   	ft5x0x_write_reg(0xfc, 0xaa);
@@ -765,8 +727,6 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 		 /*write 0x55 to register 0xfc*/
 		ft5x0x_write_reg(0xfc, 0x55);   
 		msleep(30);   
-
-
 
 	printk("<suyong> <%d>,%s(),Step 1: Reset CTPM test\n",__LINE__,__func__ );
 
@@ -810,10 +770,7 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 	cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
 	byte_read(reg_val,1);
 
-
-
 //   ft5206_i2c_Read(i2c_client, auc_i2c_write_buf, 1, reg_val, 1);
-
 	/*********0705 mshl ********************/
 	/*if (reg_val[0] > 4)
 		is_5336_new_bootloader = 1;*/
@@ -833,28 +790,21 @@ static E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_le
 	printk("<suyong> <%d>,%s(),Step 3:check READ-ID\n",__LINE__,__func__ );
 
 //	printk("<TSP> <%d>,%s(),is_5336_new_bootloader=%d  0x%x\n",__LINE__,__func__ ,is_5336_new_bootloader,reg_val[0]);
-
      /*********Step 4:erase app*******************************/
 	 /*********Step 4:erase app and panel paramenter area ********************/
 	if(is_5336_fwsize_30)
 //	if (0)
 	{
 		auc_i2c_write_buf[0] = 0x61;
-// 苏 勇 2014年01月15日 14:15:43		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
 		cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
-
 		delay_qt_ms(4000);
-
 		auc_i2c_write_buf[0] = 0x63;
-// 苏 勇 2014年01月15日 14:15:48		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
 		cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
-
 		msleep(50);
 	}
 	else
 	{
 		auc_i2c_write_buf[0] = 0x61;
-// 苏 勇 2014年01月15日 14:15:55		i2c_master_send(i2c_client, auc_i2c_write_buf, 1); /*erase app area*/	
 		cmd_write(auc_i2c_write_buf[0],0x00,0x00,0x00,1);
 		delay_qt_ms(4000);
 
@@ -1144,7 +1094,6 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         ret=CTPDMA_i2c_write(0x70, &packet_buf[0],FTS_PACKET_LENGTH + 6);
 		if(ret <0)
 		{
-// 苏 勇 2013年11月19日 20:15:41			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 			goto ERR;
 		}
               //printk("[TSP] 111 ret 0x%x \n", ret);
@@ -1174,10 +1123,8 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         ret = CTPDMA_i2c_write(0x70, &packet_buf[0],temp+6);
 		if(ret <0)
 		{
-// 苏 勇 2013年11月19日 20:15:44			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 			goto ERR;
 		}
-              //printk("[TSP] 222 ret 0x%x \n", ret);
         delay_qt_ms(20);
     }
 
@@ -1195,7 +1142,6 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         ret =CTPDMA_i2c_write(0x70,&packet_buf[0],7);  
 		if(ret <0)
 		{
-// 苏 勇 2013年11月19日 20:15:48			printk("<suyong> <%d>,%s(),ret=%d\n",__LINE__,__func__,ret );
 			goto ERR;
 		}
 
@@ -1207,8 +1153,6 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
     //cmd_write(0xcc,0x00,0x00,0x00,1);
     //byte_read(reg_val,1);
 i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0xcc, 1, &(reg_val[0]));
-// 苏 勇 2013年11月19日 20:15:52	printk("<suyong> <%d>,%s(),ecc read 0x%x, new firmware 0x%x\n",__LINE__,__func__ ,reg_val[0], bt_ecc);
-    //printk("[TSP] Step 6:  ecc read 0x%x, new firmware 0x%x. \n", reg_val[0], bt_ecc);
     if(reg_val[0] != bt_ecc)
     {
         //return ERR_ECC;
@@ -1233,7 +1177,6 @@ ERR:
     return ret;
 }
 #endif /* 0 */
-
 
 static int fts_ctpm_fw_upgrade_with_i_file(void)
 {
@@ -1344,7 +1287,7 @@ static unsigned char CtpFwUpgradeForIOCTRL(unsigned char* pbt_buf, unsigned int 
 {
 	int ret=0;
 	
-	tpd_resume((struct early_suspend *)0); // 升级的时候唤醒,为了简单直接调用唤醒函数 苏 勇 2014年01月14日 17:01:17
+	tpd_resume((struct early_suspend *)0);
 	ret=fts_ctpm_fw_upgrade(pbt_buf,dw_lenth);
 
 	msleep(200);  
@@ -1378,8 +1321,6 @@ static void ESD_read_id_workqueue(struct work_struct *work)
 		 }
 		msleep(5);  
 	
-//#ifdef MT6575
-		    //power on, need confirm with SA
 #ifdef TPD_POWER_SOURCE_CUSTOM
     		hwPowerDown(TPD_POWER_SOURCE_CUSTOM,  "TP");
 #else
@@ -1486,7 +1427,7 @@ static  void tpd_up(int x, int y,int *count) {
  {
 
 	int i = 0;
-	char data[(3+6*(TPD_MAX_PONIT-1)+3+1+7)/8*8] = {0}; // 3+6*(TPD_MAX_PONIT-1)+3+1 保存最后一个点的low_byte所需要的空间 苏 勇 2012年08月22日 19:21:13
+	char data[(3+6*(TPD_MAX_PONIT-1)+3+1+7)/8*8] = {0};
 
     u16 high_byte,low_byte;
 	u8 report_rate =0;
@@ -1501,10 +1442,10 @@ static  void tpd_up(int x, int y,int *count) {
 	/*get the number of the touch points*/
 	point_num= data[2] & 0x0f;
 
-
 	if(point_num>TPD_MAX_PONIT)
 	{
-	    printk("error ft5336 point_num(%d)>TPD_MAX_PONIT(%d)\n",point_num,TPD_MAX_PONIT);
+		// Delete touchscreen logspam, Pablito2020
+	    //printk("error ft5336 point_num(%d)>TPD_MAX_PONIT(%d)\n",point_num,TPD_MAX_PONIT);
 		point_num=TPD_MAX_PONIT;
 	}
 
@@ -1513,44 +1454,7 @@ static  void tpd_up(int x, int y,int *count) {
 
 	{
 		i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0x03+i*8, 8, &(data[3+i*8]));
-	}
-	//i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0xa6, 1, &version);
-
-// 苏 勇 2012年08月23日 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x00, 8, &(data[0]));
-// 苏 勇 2012年08月23日 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x08, 8, &(data[8]));
-// 苏 勇 2012年08月23日 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0x10, 8, &(data[16]));
-// 苏 勇 2012年08月23日 09:17:04	i2c_smbus_read_i2c_block_data(i2c_client, 0xa6, 1, &(data[24]));
-
-	//i2c_smbus_read_i2c_block_data(ft5336_i2c_client, 0x88, 1, &report_rate);
-	//TPD_DEBUG("FW version=%x\n",version);
-	
-	//TPD_DEBUG("received raw data from touch panel as following:\n");
-	//TPD_DEBUG("[data[0]=%x,data[1]= %x ,data[2]=%x ,data[3]=%x ,data[4]=%x ,data[5]=%x,data[6]=%x]\n",data[0],data[1],data[2],data[3],data[4],data[5],data[6]);	//TPD_DEBUG("[data[9]=%x,data[10]= %x ,data[11]=%x ,data[12]=%x]\n",data[9],data[10],data[11],data[12]);
-	//TPD_DEBUG("[data[9]=%x,data[10]= %x ,data[11]=%x ,data[12]=%x]\n",data[9],data[10],data[11],data[12]);
-	//TPD_DEBUG("[data[15]=%x,data[16]= %x ,data[17]=%x ,data[18]=%x]\n",data[15],data[16],data[17],data[18]);
-
-
-    //    
-	 //we have  to re update report rate
-    // TPD_DMESG("report rate =%x\n",report_rate);
-	 //if(report_rate < 8)
-	// {
-	//   report_rate = 0x8;
-	//   if((i2c_smbus_write_i2c_block_data(ft5336_i2c_client, 0x88, 1, &report_rate))< 0)
-	//   {
-	//	   TPD_DMESG("I2C read report rate error, line: %d\n", __LINE__);
-	//   }
-	// }
-	 
-	
-
-	//TPD_DEBUG("point_num =%d\n",point_num);
-	
-//	if(point_num == 0) return false;
-
-	   //TPD_DEBUG("Procss raw data...\n");
-
-		
+	}		
 		for(i = 0; i < point_num; i++)
 		{
 			cinfo->p[i] = data[3+6*i] >> 6; //event flag 
@@ -1627,16 +1531,7 @@ static  void tpd_up(int x, int y,int *count) {
 					tpd_down(cinfo.x[i], cinfo.y[i], cinfo.id[i]);
 					#endif
 		     	}
-			 
-// 苏 勇 2012年08月22日 18:37:41                tpd_down(cinfo.x[0], cinfo.y[0], 1);
-// 苏 勇 2012年08月22日 18:37:41                if(point_num>1)
-// 苏 勇 2012年08月22日 18:37:41             	{
-// 苏 勇 2012年08月22日 18:37:41			 	   tpd_down(cinfo.x[1], cinfo.y[1], 2);
-// 苏 勇 2012年08月22日 18:37:41			       if(point_num >2) tpd_down(cinfo.x[2], cinfo.y[2], 3);
-// 苏 勇 2012年08月22日 18:37:41             	}
-                input_sync(tpd->dev);
-				//TPD_DEBUG("press --->\n");
-				
+                input_sync(tpd->dev);				
             } 
 			else  
             {
@@ -1757,17 +1652,8 @@ reset_proc:
 	if((err = misc_register(&tpd_misc_device)))
 
 	{
-		printk("mtk_tpd: tpd_misc_device register failed\n");
-	// printk("luosen_ctp the 0xA8=%d\n",data2);
-	//ft5x02_read_reg(client,TOUCH_FMV_ID,&ver);
-	//if((i2c_smbus_read_i2c_block_data(i2c_client, TOUCH_FMV_ID, 1, &ver))< 0)
-	//	{
-	//	TPD_DMESG("I2C transfer error, line: %d\n", __LINE__);
-		//return -1;
-		//}
-	
-		//Err Handling
-		//return -1;
+		// Delete touchscreen logspam, Pablito2020
+		//printk("mtk_tpd: tpd_misc_device register failed\n");
 	}
 	#endif
  #if 0//def CONFIG_SUPPORT_FTS_CTP_UPG
@@ -1804,7 +1690,7 @@ reset_proc:
 
 	TPD_DMESG("ft5336 Touch Panel Device Probe %s\n", (retval < TPD_OK) ? "FAIL" : "PASS");
 
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // 苏 勇 2013年11月19日 19:48:27
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)
 	atomic_set(&upgrading, 0);
 #endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
    return 0;
@@ -1891,25 +1777,12 @@ EXPORT_SYMBOL(tp_write_reg1);
   char data;
  
    TPD_DMESG("TPD wake up\n");
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // 苏 勇 2013年11月19日 19:53:21
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)
    	if(1 == atomic_read(&upgrading))
 	{
 		return;
 	}
 #endif /* CONFIG_SUPPORT_FTS_CTP_UPG */
-
- /*#ifdef FTS_GESTRUE
- #if 0
-            fts_write_reg(ft5336_i2c_client,0xD0,0x00);
-	    fts_write_reg(ft5336_i2c_client,0xD1,0x00);
-	    fts_write_reg(ft5336_i2c_client,0xD2,0x00);
-#else
-	ft5x0x_write_reg(0xD0,0x00);
-	ft5x0x_write_reg(0xD1,0x00);
-	ft5x0x_write_reg(0xD2,0x00);
-#endif*/
-	   // return;
-//#else
 
 #ifdef TPD_CLOSE_POWER_IN_SLEEP	
 	hwPowerOn(TPD_POWER_SOURCE,VOL_3300,"TP"); 
@@ -1962,7 +1835,7 @@ EXPORT_SYMBOL(tp_write_reg1);
  {
 	// int retval = TPD_OK;
 	 static char data = 0x3;
-#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)  // 苏 勇 2013年11月19日 19:53:30
+#if defined (CONFIG_SUPPORT_FTS_CTP_UPG)
 	if(1 == atomic_read(&upgrading))
 	{
 		return;
@@ -1974,20 +1847,7 @@ EXPORT_SYMBOL(tp_write_reg1);
 	 TPD_DMESG("TPD enter sleep\n");
 
 	tpd_halt = 1; //add this line 
-
-/*#ifdef FTS_GESTRUE
-#if 0
-         fts_write_reg(ft5336_i2c_client, 0xd0, 0x01);
-        fts_write_reg(ft5336_i2c_client, 0xd1, 0x1f);
-        fts_write_reg(ft5336_i2c_client, 0xd2, 0x1f);
-#else
-	ft5x0x_write_reg(0xd0, 0x01);
-	ft5x0x_write_reg(0xd1, 0x1f);
-	ft5x0x_write_reg(0xd2, 0x1f);
-#endif*/
         return;
-//#endif
-
 	 mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
 #ifdef TPD_CLOSE_POWER_IN_SLEEP	
 	hwPowerDown(TPD_POWER_SOURCE,"TP");
@@ -2041,7 +1901,6 @@ static ssize_t show_chipinfo(struct device *dev,struct device_attribute *attr, c
 	#endif
 	ver=ft5x0x_read_fw_ver();
 	doubleclick = ft5x0x_read_doubleclick_flag();
-	// 为了配合后续的处理,版本信息的应该按照id: ver: ic: vendor:进行处理,请都用小写 苏 勇 2013年11月07日 09:08:34
 	switch (id)
 	{
 	}
@@ -2134,5 +1993,3 @@ static struct bin_attribute tp_mode_attr = {
 
  module_init(tpd_driver_init);
  module_exit(tpd_driver_exit);
-
-
