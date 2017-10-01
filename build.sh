@@ -2,7 +2,7 @@
 #
 # Daredevil Kernel compilation script
 #
-# Copyright (C) 2017 Pablo Fraile Alonso (Pablito2020)
+# Copyright (C) 2017 Pablo Fraile Alonso (Github aka: Pablito2020)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,13 +31,15 @@ purple='\033[0;35m'
 
 # Say info about the kernel and the script in terminal
 echo -e "${orange}####################################################"
-echo -e "${orange}#      INFO ABOUT THE KERNEL AND THE SCRIPT        #"
+echo -e "${orange}#      INFO ABOUT THE DAREDEVIL KERNEL SCRIPT      #"
 echo -e "${orange}####################################################"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}#                  KERNEL INFO:                    #"
+echo -e "${orange}#                                                  #"
 echo -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
 echo -e "${orange}#               DEVICE AKA: krillin                #"
 echo -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
+echo -e "${orange}#                DAREDEVIL VERSION: N              #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 echo -e "${orange}#                                                  #"
