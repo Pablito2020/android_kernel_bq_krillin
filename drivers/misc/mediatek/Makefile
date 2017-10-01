@@ -2,15 +2,6 @@
 
 include $(srctree)/drivers/misc/mediatek/Makefile.custom
 
-# For MT6795 FPGA bring-up
-ifeq ($(CONFIG_ARCH_MT6795),y)
-include $(srctree)/drivers/misc/mediatek/Makefile.mt6795
-else
-
-ifneq (,$(filter $(CONFIG_ARCH_MT6735) $(CONFIG_ARCH_MT6735M) $(CONFIG_ARCH_MT6753), y))
-include $(srctree)/drivers/misc/mediatek/Makefile.mt6735
-else
-
 ifeq ($(CONFIG_MTK_L2C_SHARE),y)
 obj-y   += l2c_share/
 endif
@@ -152,16 +143,10 @@ obj-$(CONFIG_MTK_NFC) += nfc/
 obj-$(CONFIG_ZRAM)	+= mlog/
 
 #obj-y	+= cam_cal/dummy_eeprom/
-obj-$(CONFIG_MTK_CAM_CAL_GT24C32A_SUPPORT)	+= cam_cal/GT24c32a_eeprom/
-obj-$(CONFIG_MTK_CAM_CAL_BRCC064GWZ_3_SUPPORT) += cam_cal/BRCC064GWZ_3_eeprom/
-obj-$(CONFIG_MTK_CAM_CAL_BRCB032GWZ_3_SUPPORT) += cam_cal/BRCB032GWZ_3_eeprom/
 obj-y	+= lens/
 obj-y	+= imgsensor/src/
 
-#exclude mt6735
-
 obj-y	+=  flashlight/src/
-
 
 obj-y	+= sync/
 
@@ -272,6 +257,3 @@ obj-$(CONFIG_MTK_IN_HOUSE_TEE_SUPPORT) += trustzone/
 
 #power-loss-test
 obj-$(CONFIG_PWR_LOSS_MTK_TEST) += power-loss-test/
-
-endif           # end of CONFIG_ARCH_MT6735
-endif		# end of CONFIG_ARCH_MT6795
