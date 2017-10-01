@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Daredevil Kernel compilation script
+# Daredevil Kernel compilation script for ubertc compilation
 #
 # Copyright (C) 2017 Pablo Fraile Alonso (Github aka: Pablito2020)
 #
@@ -40,30 +40,30 @@ echo -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
 echo -e "${orange}#               DEVICE AKA: krillin                #"
 echo -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
 echo -e "${orange}#                DAREDEVIL VERSION: N              #"
+echo -e "${orange}#           KERNEL TOOLCHAIN: LINARO 7.X           #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}#                  SCRIPT INFO:                    #"
 echo -e "${orange}#             DEVELOPER: PABLITO2020               #"
-echo -e "${orange}#       THANKS TO: ASSUSDAN, AND GUYS OF 4PDA      #"
+echo -e "${orange}#         THANKS TO: ASSUSDAN AND ARIAFAN          #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 
-# If the google toolchain 4.8 doesn't exist, clone it. 
+# If the ubertc toolchain 6.0 doesn't exist, clone it. 
 # If exists, export the toolchain path
-if [ ! -f ../arm-eabi-4.8/bin/arm-eabi-addr2line ]
+if [ ! -f ../arm-linaro-linux-androideabi/bin/arm-linaro-linux-androideabi-addr2line ]
 then
     echo -e "####################################"
-    echo -e "#   GOOGLE TOOLCHAIN NOT FOUND!    #"
+    echo -e "#   LINARO TOOLCHAIN NOT FOUND!    #"
     echo -e "####################################"
 cd ..
-git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
-# Rename the folder android_kernel_bq_krillin (git project) to Daredevil-Kernel and enter to it
-mv android_kernel_bq_krillin Daredevil-Kernel
-cd Daredevil-Kernel
-export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
+git clone https://github.com/Pablito2020/linaro-7.x.git
+mv android_kernel_bq_krillin Daredevil
+cd Daredevil
+export ARCH=arm CROSS_COMPILE=../arm-linaro-linux-androideabi-addr2line/bin/arm-linaro-linux-androideabi-
 else
-export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
+export ARCH=arm CROSS_COMPILE=../arm-linaro-linux-androideabi/bin/arm-linaro-linux-androideabi-
 fi
 
 # User and Build Host
@@ -76,7 +76,7 @@ make lineage_krillin_defconfig
 
 # Build zImage (Thanks to Joel for the all command)
 echo -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make -j all zImage > build-log.txt
+make -j4
 
 # Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]
