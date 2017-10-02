@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Daredevil Kernel compilation script for ubertc compilation
+# Daredevil Kernel compiler script for gcc 4.8 toolchain
 #
 # Copyright (C) 2017 Pablo Fraile Alonso (Github aka: Pablito2020)
 #
@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+# Since we have the script in the Daredevil-Scripts folder that is needed:
+cd ..
 
 # Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
 blue='\033[0;34m'
@@ -29,9 +31,7 @@ orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
 
-# Say info about the kernel and the script in terminal
-echo -e "${orange}####################################################"
-echo -e "${orange}#      INFO ABOUT THE DAREDEVIL KERNEL SCRIPT      #"
+# Say info about the kernel
 echo -e "${orange}####################################################"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}#                  KERNEL INFO:                    #"
@@ -40,30 +40,25 @@ echo -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
 echo -e "${orange}#               DEVICE AKA: krillin                #"
 echo -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
 echo -e "${orange}#                DAREDEVIL VERSION: N              #"
-echo -e "${orange}#           KERNEL TOOLCHAIN: LINARO 7.X           #"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}####################################################"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}#                  SCRIPT INFO:                    #"
-echo -e "${orange}#             DEVELOPER: PABLITO2020               #"
-echo -e "${orange}#         THANKS TO: ASSUSDAN AND ARIAFAN          #"
+echo -e "${orange}#            KERNEL TOOLCHAIN: GCC 4.8             #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 
-# If the ubertc toolchain 6.0 doesn't exist, clone it. 
+# If the google toolchain 4.8 doesn't exist, clone it. 
 # If exists, export the toolchain path
-if [ ! -f ../arm-linaro-linux-androideabi/bin/arm-linaro-linux-androideabi-addr2line ]
+if [ ! -f ../arm-eabi-4.8/bin/arm-eabi-addr2line ]
 then
     echo -e "####################################"
-    echo -e "#   LINARO TOOLCHAIN NOT FOUND!    #"
+    echo -e "#   GOOGLE TOOLCHAIN NOT FOUND!    #"
     echo -e "####################################"
 cd ..
-git clone https://github.com/Pablito2020/linaro-7.x.git
-mv android_kernel_bq_krillin Daredevil
-cd Daredevil
-export ARCH=arm CROSS_COMPILE=../arm-linaro-linux-androideabi-addr2line/bin/arm-linaro-linux-androideabi-
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
+# Rename the folder android_kernel_bq_krillin (git project) to Daredevil-Kernel and enter to it
+mv android_kernel_bq_krillin Daredevil-Kernel
+cd Daredevil-Kernel
+export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 else
-export ARCH=arm CROSS_COMPILE=../arm-linaro-linux-androideabi/bin/arm-linaro-linux-androideabi-
+export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 fi
 
 # User and Build Host
@@ -76,7 +71,7 @@ make lineage_krillin_defconfig
 
 # Build zImage (Thanks to Joel for the all command)
 echo -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make -j4
+make -j all zImage > build-log.txt
 
 # Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]
@@ -94,7 +89,3 @@ echo -e "${green} #        $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds'
 echo -e "${green} #                                       #"
 echo -e "${green} #########################################"
 fi
-
-# Build worktime ( added in line 59 for now.)
-# echo $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds' 
-

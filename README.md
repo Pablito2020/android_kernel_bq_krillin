@@ -38,19 +38,14 @@
 
   * And for compile:
 
-        $ mv android_kernel_bq_krillin kernel
+        $ Enter to the Daredevil kernel directory 
 
-        $ cd kernel
-
-        $ . build.sh
+        $ . daredevil.sh
 
   * The kernel file (called zImage, will be found in arch/arm/boot folder)
 
-# If you want to clean all the source without compiling execute this comand on the principal kernel diretory:
 
-        $ . clean.sh
-
-# Thanks to (this people are persons who help me to adapt the kernel source to my device "krillin") There's why I put them here, because they don't have any specific commit,so.. They are here! :) :
+# Thanks to (In alphabetical order):
 
    * ANDR7E ( help with kpd buttons + device info app for mtk devices) ---- XDA, 4PDA, GITHUB
    * @assusdan help me with drivers and develop the kernel. ---- 4PDA, GITHUB
@@ -68,7 +63,7 @@
    *FUSE
    *SDCARDFS
 
-# UPDATED DRIVERS (from the google source common kernel):
+# Updated drivers (from the google source common kernel):
 
   * Android Binder
   * LZ4 Compression Driver 

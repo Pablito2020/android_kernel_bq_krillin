@@ -17,6 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+# This is needed since we have the script on the Daredevil-Script folder
+cd ..
+
+# Say info
 echo '################################# '
 echo '#                               # '
 echo '#  CLEANING THE KERNEL SOURCE   # '
@@ -35,5 +39,3 @@ rm -rf build-log.txt
 fi
 # Now clear the terminal log.
 clear
-
-
