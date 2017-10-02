@@ -1,4 +1,6 @@
-# 3.10.107 CUSTOM KERNEL FOR KRILLIN
+# Daredevil Project for Krillin
+
+![Daredevil](http://s24.postimg.org/snrt08gut/image.png "Daredevil Kernel logo")
 
 * Working:
 
@@ -33,9 +35,6 @@
 
         $ https://github.com/Pablito2020/android_kernel_bq_krillin.git
 
-  * After that, clone the toolchain used in this build (in that case linaro 4.9): 
-
-        $ git clone https://github.com/Pablito2020/Toolchain.git
 
   * And for compile:
 
@@ -50,10 +49,6 @@
 # If you want to clean all the source without compiling execute this comand on the principal kernel diretory:
 
         $ . clean.sh
-
-# Developer:
-
-   * Pablito2020
 
 # Thanks to (this people are persons who help me to adapt the kernel source to my device "krillin") There's why I put them here, because they don't have any specific commit,so.. They are here! :) :
 
@@ -77,10 +72,9 @@
 
   * Android Binder
   * LZ4 Compression Driver 
-  * SDCardFS
   * EXT4
 
-# Cleaned drivers (added by bq and then cleaned by me, Pablo Fraile Alonso)
+# Cleaned drivers (added by bq and then cleaned by me)
 
   * Focaltech FT5336 (touchscreen driver)
   * Fan5405 (Power driver --- charger driver)
@@ -91,4 +85,4 @@
   * ThunderCharge (driver for optimize battery charge on mtk devices) by Varun Chitre
   * ThunderPlug (driver that Enable plugging down/up of cores based on load per core) by Varun Chitre
   * ThunderSonic ( Sound driver ) by Varun Chitre
-  * SDCardFS (new sdcard read driver by google)
+  * SDCardFS (new sdcard read driver by google) -- This driver is added and updated
