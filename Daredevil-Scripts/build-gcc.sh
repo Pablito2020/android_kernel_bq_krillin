@@ -53,9 +53,13 @@ then
     echo -e "####################################"
 cd ..
 git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
-# Rename the folder android_kernel_bq_krillin (git project) to Daredevil-Kernel and enter to it
-mv android_kernel_bq_krillin Daredevil-Kernel
-cd Daredevil-Kernel
+if [ ! -f Daredevil-Kernel/daredevil.sh ]
+then
+    mv android_kernel_bq_krillin Daredevil-Kernel
+    cd Daredevil-Kernel
+else
+    cd Daredevil-Kernel
+fi
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 else
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
