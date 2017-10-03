@@ -2,26 +2,11 @@
 
 ![Daredevil](http://s24.postimg.org/snrt08gut/image.png "Daredevil Kernel logo")
 
-* Working:
+# Kernel compatible roms:
 
-  * LCM Drivers (hx8389b_qhd_dsi_vdo_tianma, hx8389_qhd_dsi_vdo_truly)
-  * Touchscreen Driver (FT5336)
-  * Batery Table
-  * Vibrator driver
-  * Rear Camera
-  * Flashlight
-  * Sound driver (thanks to vo-1)
-  * Frontal Camera
-  * Storage (emulated storage and sdcard working)
-  * Acceleremoter
-  * Light sensor
-  * Proximity sensor
-  * WIFI
-  * Bluetooth
-  * GPS
-  * VPN
-  * Gyroscope sensor
-  * Sweep2Wake + Doubletap2Wake
+  * Lineage OS 13.0 Unofficial
+  
+  * Lineage OS 14.1 Unofficial
 
 # Compilation guide:
   
