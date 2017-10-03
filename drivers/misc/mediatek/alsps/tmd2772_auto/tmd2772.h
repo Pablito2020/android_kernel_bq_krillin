@@ -9,10 +9,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- */
-/*
  * Definitions for tmd2772 als/ps sensor chip.
  */
+
 #ifndef __TMD2772_H__
 #define __TMD2772_H__
 
@@ -54,6 +53,5 @@ extern int TMD2772_CMM_CONTROL_VALUE;
 #define TMD2772_ERR_SETUP_FAILURE				-4
 #define TMD2772_ERR_GETGSENSORDATA			-5
 #define TMD2772_ERR_IDENTIFICATION			-6
-
 
 #endif

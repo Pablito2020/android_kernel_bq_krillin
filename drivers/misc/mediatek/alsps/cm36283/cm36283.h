@@ -8,10 +8,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- */
-/*
  * Definitions for CM36283 als/ps sensor chip.
  */
+
 #ifndef __CM36283_H__
 #define __CM36283_H__
 
@@ -38,6 +37,4 @@
 #define CM36283_ERR_GETGSENSORDATA			-5
 #define CM36283_ERR_IDENTIFICATION			-6
 
-
 #endif
-

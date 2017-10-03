@@ -369,7 +369,7 @@ int cm36283_enable_ps(struct i2c_client *client, int enable)
 		res = cm36283_disable_eint(client);
 		if(res!=0)
 		{
-			APS_ERR("disable eint fail: %d\n", res);
+			//APS_ERR("disable eint fail: %d\n", res);
 			return res;
 		}
 		}
@@ -456,8 +456,6 @@ long cm36283_read_ps(struct i2c_client *client, u8 *data)
 		APS_ERR("i2c_master_send function err\n");
 		goto READ_PS_EXIT_ERR;
 	}
-	
-	//APS_LOG("CM36283_REG_PS_DATA value value_low = %x, value_high = %x\n",databuf[0],databuf[1]);
 
 	if(databuf[0] < obj->ps_cali)
 		*data = 0;
@@ -482,8 +480,6 @@ long cm36283_read_als(struct i2c_client *client, u16 *data)
 		APS_ERR("i2c_master_send function err\n");
 		goto READ_ALS_EXIT_ERR;
 	}
-	
-	//APS_LOG("CM36283_REG_ALS_DATA value value_low = %x, value_high = %x\n",databuf[0],databuf[1]);
 
 	*data = ((databuf[1]<<8)|databuf[0]);
 	return 0;
@@ -572,7 +568,7 @@ static int cm36283_get_als_value(struct cm36283_priv *obj, u16 als)
 		}
 		if(idx >= obj->als_value_num)
 		{
-			APS_ERR("exceed range\n"); 
+			//APS_ERR("exceed range\n"); 
 			idx = obj->als_value_num - 1;
 		}
 		
@@ -639,7 +635,7 @@ static ssize_t cm36283_show_config(struct device_driver *ddri, char *buf)
 	
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	
@@ -691,7 +687,7 @@ static ssize_t cm36283_store_trace(struct device_driver *ddri, const char *buf, 
     int trace;
     if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	
@@ -730,7 +726,7 @@ static ssize_t cm36283_show_ps(struct device_driver *ddri, char *buf)
 	ssize_t res;
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm3623_obj is null!!\n");
+		//APS_ERR("cm3623_obj is null!!\n");
 		return 0;
 	}
 	
@@ -748,7 +744,7 @@ static ssize_t cm36283_show_reg(struct device_driver *ddri, char *buf)
 {
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	
@@ -768,12 +764,12 @@ static ssize_t cm36283_store_send(struct device_driver *ddri, const char *buf, s
 
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	else if(2 != sscanf(buf, "%x %x", &addr, &cmd))
 	{
-		APS_ERR("invalid format: '%s'\n", buf);
+		//APS_ERR("invalid format: '%s'\n", buf);
 		return 0;
 	}
 
@@ -793,12 +789,12 @@ static ssize_t cm36283_store_recv(struct device_driver *ddri, const char *buf, s
 	//u8 dat;
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	else if(1 != sscanf(buf, "%x", &addr))
 	{
-		APS_ERR("invalid format: '%s'\n", buf);
+		//APS_ERR("invalid format: '%s'\n", buf);
 		return 0;
 	}
 
@@ -870,7 +866,7 @@ static ssize_t cm36283_show_alslv(struct device_driver *ddri, char *buf)
 	int idx;
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	
@@ -886,7 +882,7 @@ static ssize_t cm36283_store_alslv(struct device_driver *ddri, const char *buf, 
 {
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	else if(!strcmp(buf, "def"))
@@ -907,7 +903,7 @@ static ssize_t cm36283_show_alsval(struct device_driver *ddri, char *buf)
 	int idx;
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	
@@ -923,7 +919,7 @@ static ssize_t cm36283_store_alsval(struct device_driver *ddri, const char *buf,
 {
 	if(!cm36283_obj)
 	{
-		APS_ERR("cm36283_obj is null!!\n");
+		//APS_ERR("cm36283_obj is null!!\n");
 		return 0;
 	}
 	else if(!strcmp(buf, "def"))
@@ -1135,7 +1131,7 @@ static int cm36283_open(struct inode *inode, struct file *file)
 
 	if (!file->private_data)
 	{
-		APS_ERR("null pointer!!\n");
+		//APS_ERR("null pointer!!\n");
 		return -EINVAL;
 	}
 	return nonseekable_open(inode, file);
@@ -1443,7 +1439,7 @@ static void cm36283_late_resume(struct early_suspend *h)
 		APS_FUN();
 		if(!obj)
 		{
-			APS_ERR("null pointer!!\n");
+			//APS_ERR("null pointer!!\n");
 			return;
 		}
 	
@@ -1658,7 +1654,6 @@ int cm36283_als_operate(void* self, uint32_t command, void* buff_in, int size_in
 		switch (command)
 		{
 			case SENSOR_DELAY:
-				//APS_ERR("cm36283 als delay command!\n");
 				if((buff_in == NULL) || (size_in < sizeof(int)))
 				{
 					APS_ERR("Set delay parameter error!\n");
@@ -1667,7 +1662,6 @@ int cm36283_als_operate(void* self, uint32_t command, void* buff_in, int size_in
 				break;
 	
 			case SENSOR_ENABLE:
-				//APS_ERR("cm36283 als enable command!\n");
 				if((buff_in == NULL) || (size_in < sizeof(int)))
 				{
 					APS_ERR("Enable sensor parameter error!\n");
@@ -1699,7 +1693,6 @@ int cm36283_als_operate(void* self, uint32_t command, void* buff_in, int size_in
 				break;
 	
 			case SENSOR_GET_DATA:
-				//APS_ERR("cm36283 als get data command!\n");
 				if((buff_out == NULL) || (size_out< sizeof(hwm_sensor_data)))
 				{
 					APS_ERR("get sensor data parameter error!\n");
@@ -1922,15 +1915,6 @@ static int cm36283_remove(struct platform_device *pdev)
 
 
 /*----------------------------------------------------------------------------*/
-#if 0
-static struct platform_driver cm36283_alsps_driver = {
-	.probe      = cm36283_probe,
-	.remove     = cm36283_remove,    
-	.driver     = {
-		.name  = "als_ps",
-	}
-};
-#endif
 
 #ifdef CONFIG_OF
 static const struct of_device_id alsps_of_match[] = {
@@ -1980,4 +1964,3 @@ module_exit(cm36283_exit);
 MODULE_AUTHOR("yucong xiong");
 MODULE_DESCRIPTION("cm36283 driver");
 MODULE_LICENSE("GPL");
-

@@ -260,7 +260,3 @@ int alsps_factory_device_init()
     }	
 	return error;
 }
-
-
-
-

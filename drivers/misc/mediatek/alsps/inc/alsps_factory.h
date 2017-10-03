@@ -42,4 +42,3 @@ extern struct alsps_context *alsps_context_obj;
 int alsps_factory_device_init();
 
 #endif
-

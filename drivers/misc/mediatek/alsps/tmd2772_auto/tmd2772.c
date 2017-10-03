@@ -232,7 +232,7 @@ int TMD2772_i2c_master_operate(struct i2c_client *client, const char *buf, int c
 	client->addr &=I2C_MASK_FLAG;
 	break;
 	default:
-	APS_LOG("TMD2772_i2c_master_operate i2c_flag command not support!\n");
+	//APS_LOG("TMD2772_i2c_master_operate i2c_flag command not support!\n");
 	break;
 	}
 	if(res < 0)
@@ -262,13 +262,11 @@ static void TMD2772_power(struct alsps_hw *hw, unsigned int on)
 {
 	static unsigned int power_on = 0;
 
-	//APS_LOG("power %s\n", on ? "on" : "off");
-
 	if(hw->power_id != POWER_NONE_MACRO)
 	{
 		if(power_on == on)
 		{
-			APS_LOG("ignore power control: %d\n", on);
+			//APS_LOG("ignore power control: %d\n", on);
 		}
 		else if(on)
 		{
@@ -300,13 +298,13 @@ static long TMD2772_enable_als(struct i2c_client *client, int enable)
 	{
 		goto EXIT_ERR;
 	}
-	APS_LOG("TMD2772_CMM_ENABLE als value = %x\n",databuf[0]);
+	//APS_LOG("TMD2772_CMM_ENABLE als value = %x\n",databuf[0]);
 	
 	if(enable)
 		{
 			databuf[1] = databuf[0]|0x03;
 			databuf[0] = TMD2772_CMM_ENABLE;
-			APS_LOG("TMD2772_CMM_ENABLE enable als value = %x\n",databuf[1]);
+			//APS_LOG("TMD2772_CMM_ENABLE enable als value = %x\n",databuf[1]);
 			res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 			if(res < 0)
 			{
@@ -322,7 +320,7 @@ static long TMD2772_enable_als(struct i2c_client *client, int enable)
 			databuf[1] = databuf[0]&0xF8;
 		
 			databuf[0] = TMD2772_CMM_ENABLE;
-			APS_LOG("TMD2772_CMM_ENABLE disable als value = %x\n",databuf[1]);
+			//APS_LOG("TMD2772_CMM_ENABLE disable als value = %x\n",databuf[1]);
 			res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 			if(res < 0)
 			{
@@ -350,13 +348,13 @@ static long TMD2772_enable_ps(struct i2c_client *client, int enable)
 		goto EXIT_ERR;
 	}
 	
-	APS_LOG("TMD2772_CMM_ENABLE ps value = %x\n",databuf[0]);
+	//APS_LOG("TMD2772_CMM_ENABLE ps value = %x\n",databuf[0]);
 	
 	if(enable)
 		{
 			databuf[1] = databuf[0]|0x05;
 			databuf[0] = TMD2772_CMM_ENABLE;
-			APS_LOG("TMD2772_CMM_ENABLE enable ps value = %x\n",databuf[1]);	
+			//APS_LOG("TMD2772_CMM_ENABLE enable ps value = %x\n",databuf[1]);	
 			res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 			if(res < 0)
 			{
@@ -372,7 +370,7 @@ static long TMD2772_enable_ps(struct i2c_client *client, int enable)
 			databuf[1] = databuf[0]&0xF8;
 		
 			databuf[0] = TMD2772_CMM_ENABLE;
-			APS_LOG("TMD2772_CMM_ENABLE disable ps value = %x\n",databuf[1]);	
+			//APS_LOG("TMD2772_CMM_ENABLE disable ps value = %x\n",databuf[1]);	
 			res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 			if(res < 0)
 			{
@@ -771,12 +769,12 @@ static int TMD2772_init_client(struct i2c_client *client)
 	struct TMD2772_priv *obj = i2c_get_clientdata(client);
 	u8 databuf[2];    
 	int res = 0;
-	APS_LOG("TMD2771_init_client int top half time = %lld\n", int_top_time);
+	//APS_LOG("TMD2771_init_client int top half time = %lld\n", int_top_time);
 	databuf[0] = (TAOS_TRITON_CMD_REG|TAOS_TRITON_CMD_SPL_FN|0x00);
 	res = TMD2772_i2c_master_operate(client, databuf, 0x1, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" TMD2771_init_client function 1 err!\n");
+		//APS_LOG(" TMD2771_init_client function 1 err!\n");
 		goto EXIT_ERR;
 	}
 	
@@ -798,7 +796,7 @@ static int TMD2772_init_client(struct i2c_client *client)
 	res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" TMD2771_init_client function 2 err!\n");		
+		//APS_LOG(" TMD2771_init_client function 2 err!\n");		
 		goto EXIT_ERR;
 	}
 	
@@ -807,7 +805,7 @@ static int TMD2772_init_client(struct i2c_client *client)
 	res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" TMD2771_init_client function 3 err!\n");
+		//APS_LOG(" TMD2771_init_client function 3 err!\n");
 		goto EXIT_ERR;
 	}
 
@@ -985,7 +983,6 @@ int TMD2772_read_als2(struct i2c_client *client, u16 *data)
 	
 	c0_value = buffer[0] | (buffer[1]<<8);
 	c0_nf = obj->als_modulus*c0_value;
-	//APS_LOG("c0_value=%d, c0_nf=%d, als_modulus=%d\n", c0_value, c0_nf, obj->als_modulus);
 
 	buffer[0]=TMD2772_CMM_C1DATA_L;
 	res = TMD2772_i2c_master_operate(client, buffer, 0x201, I2C_FLAG_READ);
@@ -996,7 +993,6 @@ int TMD2772_read_als2(struct i2c_client *client, u16 *data)
 	
 	c1_value = buffer[0] | (buffer[1]<<8);
 	c1_nf = obj->als_modulus*c1_value;	
-	//APS_LOG("c1_value=%d, c1_nf=%d, als_modulus=%d\n", c1_value, c1_nf, obj->als_modulus);
 
 
 
@@ -1005,7 +1001,7 @@ int TMD2772_read_als2(struct i2c_client *client, u16 *data)
 		res = TMD2772_i2c_master_operate(client, buffer, 0x101, I2C_FLAG_READ);
 		if(res < 0)
 		{
-			APS_LOG(" TMD2771_init_client function 3 err!\n");
+			//APS_LOG(" TMD2771_init_client function 3 err!\n");
 			goto EXIT_ERR;
 		}
 		int atime=(0x100-buffer[0])*273;
@@ -1014,11 +1010,10 @@ int TMD2772_read_als2(struct i2c_client *client, u16 *data)
 		res = TMD2772_i2c_master_operate(client, buffer, 0x101, I2C_FLAG_READ);
 		if(res < 0)
 		{
-			APS_LOG(" TMD2771_init_client function 3 err!\n");
+			//APS_LOG(" TMD2771_init_client function 3 err!\n");
 			goto EXIT_ERR;
 		}
 		int again=buffer[0]&0x3;
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 20:14:45	printk("<suyong> <%d>,%s(),again=%d,buffer=%d\n",__LINE__,__func__,again,buffer[0] );
 		switch (again)
 		{
 			case 0:
@@ -1034,8 +1029,6 @@ int TMD2772_read_als2(struct i2c_client *client, u16 *data)
 				again=120;
 				break;
 		}
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 20:14:57	printk("<suyong> <%d>,%s(),c0_value=%d c1_value=%d atime=%d again=%d\n",__LINE__,__func__ ,
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 20:14:57		c0_value,c1_value,atime,again);
 		
 		int lux1=100*20*(100*c0_value-175*c1_value)/atime/again/15;
 		int lux2=100*20*(63*c0_value-100*c1_value)/atime/again/70;
@@ -1046,9 +1039,6 @@ int TMD2772_read_als2(struct i2c_client *client, u16 *data)
 			temp=65535;
 		}
 		*data=(U16)(temp>0?temp:0);
-
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 20:15:00			printk("<suyong> <%d>,%s(),lux1=%d lux2=%d tmp=%d *data=%d\n",__LINE__,__func__ ,
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 20:15:00				lux1,lux2,temp,*data);
 	}
 	return 0;	 
 
@@ -1086,7 +1076,6 @@ int TMD2772_read_als(struct i2c_client *client, u16 *data)
 	
 	c0_value = buffer[0] | (buffer[1]<<8);
 	c0_nf = obj->als_modulus*c0_value;
-	//APS_LOG("c0_value=%d, c0_nf=%d, als_modulus=%d\n", c0_value, c0_nf, obj->als_modulus);
 
 	buffer[0]=TMD2772_CMM_C1DATA_L;
 	res = TMD2772_i2c_master_operate(client, buffer, 0x201, I2C_FLAG_READ);
@@ -1097,13 +1086,11 @@ int TMD2772_read_als(struct i2c_client *client, u16 *data)
 	
 	c1_value = buffer[0] | (buffer[1]<<8);
 	c1_nf = obj->als_modulus*c1_value;	
-	//APS_LOG("c1_value=%d, c1_nf=%d, als_modulus=%d\n", c1_value, c1_nf, obj->als_modulus);
 	
 	if((c0_value > c1_value) &&(c0_value < 50000))
 	{  	/*Lenovo-sw chenlj2 add 2011-06-03,add {*/
 		atio = (c1_nf*100)/c0_nf;
 
-	//APS_LOG("atio = %d\n", atio);
 	if(atio<30)
 	{
 		*data = (13*c0_nf - 24*c1_nf)/10000;
@@ -1138,7 +1125,6 @@ int TMD2772_read_als(struct i2c_client *client, u16 *data)
 		return -1;
 	}	
 
-	//APS_LOG("TMD2772_read_als als_value_lux = %d\n", *data);
 	return 0;	 
 
 	
@@ -1169,7 +1155,6 @@ int TMD2772_read_als_ch0(struct i2c_client *client, u16 *data)
 	}
 	c0_value = buffer[0] | (buffer[1]<<8);
 	*data = c0_value;
-	//APS_LOG("c0_value=%d\n", c0_value);
 	return 0;	 
 
 	
@@ -1214,9 +1199,6 @@ static int TMD2772_get_als_value(struct TMD2772_priv *obj, u16 als)
 
 	if(!invalid)
 	{
-		//APS_ERR("ALS: %05d => %05d\n", als, obj->hw->als_value[idx]);	
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C207\C8\D5 14:04:49		return obj->hw->als_value[idx];
-// \CB\D5 \D3\C2 2014\C4\EA03\D4\C228\C8\D5 11:23:19		#if defined(MTK_AAL_SUPPORT)
         int level_high = obj->hw->als_level[idx];
     	int level_low = (idx > 0) ? obj->hw->als_level[idx-1] : 0;
         int level_diff = level_high - level_low;
@@ -1230,15 +1212,11 @@ static int TMD2772_get_als_value(struct TMD2772_priv *obj, u16 als)
         else
             value = 2*(level_diff * value_low + (als - level_low) * value_diff ) / level_diff;
 
-		//APS_DBG("ALS: %d [%d, %d] => %d [%d, %d] \n", als, level_low, level_high, value, value_low, value_high);
 		return value;
-// \CB\D5 \D3\C2 2014\C4\EA03\D4\C228\C8\D5 11:23:27		#endif
-        //APS_DBG("ALS: %05d => %05d\n", als, obj->hw->als_value[idx]);
         return 2*obj->hw->als_value[idx];
 	}
 	else
 	{
-		//APS_ERR("ALS: %05d => %05d (-1)\n", als, obj->hw->als_value[idx]);    
 		return -1;
 	}
 }
@@ -1295,8 +1273,6 @@ static int TMD2772_get_ps_value(struct TMD2772_priv *obj, u16 ps)
 			}
 			else
 				val = val_temp;
-
-			APS_LOG("TMD2772_get_ps_value val  = %d",val);
 	}
 	else
 		#endif
@@ -1374,13 +1350,8 @@ static void TMD2772_eint_work(struct work_struct *work)
 		//get raw data
 		TMD2772_read_ps(obj->client, &obj->ps);
 		TMD2772_read_als_ch0(obj->client, &obj->als);
-		APS_LOG("TMD2772_eint_work rawdata ps=%d als_ch0=%d!\n",obj->ps,obj->als);
+		//APS_LOG("TMD2772_eint_work rawdata ps=%d als_ch0=%d!\n",obj->ps,obj->als);
 		
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 18:35:24		if(obj->als > 40000)
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 18:35:24			{
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 18:35:24			APS_LOG("TMD2772_eint_work ALS too large may under lighting als_ch0=%d!\n",obj->als);
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 18:35:24			return;
-// \CB\D5 \D3\C2 2014\C4\EA01\D4\C206\C8\D5 18:35:24			}
 		sensor_data.values[0] = TMD2772_get_ps_value(obj, obj->ps);
 		sensor_data.value_divide = 1;
 		sensor_data.status = SENSOR_STATUS_ACCURACY_MEDIUM;	
@@ -1392,7 +1363,7 @@ static void TMD2772_eint_work(struct work_struct *work)
 		{
 			goto EXIT_ERR;
 		}
-		APS_LOG("TMD2772_eint_work TMD2772_CMM_ENABLE ps value = %x\n",databuf[0]);
+		//APS_LOG("TMD2772_eint_work TMD2772_CMM_ENABLE ps value = %x\n",databuf[0]);
 		
 		databuf[0] = TMD2772_CMM_INT_LOW_THD_LOW;
 		res = TMD2772_i2c_master_operate(obj->client, databuf, 0x201, I2C_FLAG_READ);
@@ -1400,7 +1371,7 @@ static void TMD2772_eint_work(struct work_struct *work)
 		{
 			goto EXIT_ERR;
 		}
-		APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_LOW_THD_LOW before databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
+		//APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_LOW_THD_LOW before databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
 
 		databuf[0] = TMD2772_CMM_INT_HIGH_THD_LOW;
 		res = TMD2772_i2c_master_operate(obj->client, databuf, 0x201, I2C_FLAG_READ);
@@ -1408,7 +1379,7 @@ static void TMD2772_eint_work(struct work_struct *work)
 		{
 			goto EXIT_ERR;
 		}
-		APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_HIGH_THD_LOW before databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
+		//APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_HIGH_THD_LOW before databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
 #endif
 /*singal interrupt function add*/
 		if(intr_flag_value){
@@ -1486,7 +1457,7 @@ static void TMD2772_eint_work(struct work_struct *work)
 		{
 			goto EXIT_ERR;
 		}
-		APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_LOW_THD_LOW after databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
+		//APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_LOW_THD_LOW after databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
 
 		databuf[0] = TMD2772_CMM_INT_HIGH_THD_LOW;
 		res = TMD2772_i2c_master_operate(obj->client, databuf, 0x201, I2C_FLAG_READ);
@@ -1494,7 +1465,7 @@ static void TMD2772_eint_work(struct work_struct *work)
 		{
 			goto EXIT_ERR;
 		}
-		APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_HIGH_THD_LOW after databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
+		//APS_LOG("TMD2772_eint_work TMD2772_CMM_INT_HIGH_THD_LOW after databuf[0]=%d databuf[1]=%d!\n",databuf[0],databuf[1]);
 		#endif
 		if((err = hwmsen_get_interrupt_data(ID_PROXIMITY, &sensor_data)))
 		{
@@ -1547,7 +1518,7 @@ static int set_psensor_threshold(struct i2c_client *client)
 	res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" set_psensor_threshold 1 err!\n");
+		//APS_LOG(" set_psensor_threshold 1 err!\n");
 		return res;
 	}
 	databuf[0] = TMD2772_CMM_INT_LOW_THD_HIGH;	
@@ -1555,7 +1526,7 @@ static int set_psensor_threshold(struct i2c_client *client)
 	res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" set_psensor_threshold 2 err!\n");
+		//APS_LOG(" set_psensor_threshold 2 err!\n");
 		return res;
 	}
 	databuf[0] = TMD2772_CMM_INT_HIGH_THD_LOW;	
@@ -1563,7 +1534,7 @@ static int set_psensor_threshold(struct i2c_client *client)
 	res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" set_psensor_threshold 3 err!\n");
+		//APS_LOG(" set_psensor_threshold 3 err!\n");
 		return res;
 	}
 	databuf[0] = TMD2772_CMM_INT_HIGH_THD_HIGH; 
@@ -1571,7 +1542,7 @@ static int set_psensor_threshold(struct i2c_client *client)
 	res = TMD2772_i2c_master_operate(client, databuf, 0x2, I2C_FLAG_WRITE);
 	if(res < 0)
 	{
-		APS_LOG(" set_psensor_threshold 4 err!\n");
+		//APS_LOG(" set_psensor_threshold 4 err!\n");
 		return res;
 	}
 
@@ -1945,7 +1916,7 @@ static long TMD2772_unlocked_ioctl(struct file *file, unsigned int cmd,
           	case ALSPS_SET_PS_CALI:
 			if(copy_from_user(&dat, ptr, sizeof(dat)))
 			{
-				APS_LOG("copy_from_user\n");
+				//APS_LOG("copy_from_user\n");
 				err = -EFAULT;
 				break;	  
 			}
@@ -2864,7 +2835,7 @@ static int TMD2772_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	{
 		goto exit_init_failed;
 	}
-	APS_LOG("TMD2772_init_client() OK!\n");
+	//APS_LOG("TMD2772_init_client() OK!\n");
 
 	if((err = misc_register(&TMD2772_device)))
 	{
@@ -2931,12 +2902,6 @@ static int TMD2772_i2c_probe(struct i2c_client *client, const struct i2c_device_
 static int TMD2772_i2c_remove(struct i2c_client *client)
 {
 	int err;	
-/*	
-	if(err = TMD2772_delete_attr(&TMD2772_i2c_driver.driver))
-	{
-		APS_ERR("TMD2772_delete_attr fail: %d\n", err);
-	} 
-*/
 	if((err = misc_deregister(&TMD2772_device)))
 	{
 		APS_ERR("misc_deregister fail: %d\n", err);    
@@ -2986,7 +2951,7 @@ static int __init TMD2772_init(void)
 {
 	//APS_FUN();
     struct alsps_hw *hw = TMD2772_get_cust_alsps_hw();
-	APS_LOG("%s: i2c_number=%d\n", __func__,hw->i2c_num); 
+	//APS_LOG("%s: i2c_number=%d\n", __func__,hw->i2c_num); 
 	i2c_register_board_info(hw->i2c_num, &i2c_TMD2772, 1);
 	hwmsen_alsps_sensor_add(&TMD2772_init_info);
 	return 0;
@@ -3006,4 +2971,3 @@ EXPORT_SYMBOL(TMD2772_get_ps_value_tp);
 MODULE_AUTHOR("Dexiang Liu");
 MODULE_DESCRIPTION("TMD2772 driver");
 MODULE_LICENSE("GPL");
-
