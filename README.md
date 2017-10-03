@@ -38,7 +38,7 @@
 
   * And for compile:
 
-        $ Enter to the Daredevil kernel directory 
+        * Enter to the Daredevil kernel directory 
 
         $ . daredevil.sh
 
@@ -55,13 +55,14 @@
    * @zormax for the bring up LP/MM project ---- 4PDA
 
 # Filesystems that the kernel supports:
-   *EXT4
-   *EXT3
-   *EXT2
-   *NTFS
-   *F2FS
-   *FUSE
-   *SDCARDFS
+
+   * EXT4
+   * EXT3
+   * EXT2
+   * NTFS
+   * F2FS
+   * FUSE
+   * SDCARDFS
 
 # Updated drivers (from the google source common kernel):
 

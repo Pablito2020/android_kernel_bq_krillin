@@ -17,8 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+
 # Since we have the script in the Daredevil-Scripts folder that is needed:
 cd ..
+
 
 # Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
 blue='\033[0;34m'
@@ -30,6 +32,7 @@ nocol='\033[0m'
 orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
+
 
 # Say info about the kernel
 echo -e "${orange}####################################################"
@@ -49,33 +52,30 @@ echo -e "${orange}####################################################"
 if [ ! -f ../arm-eabi-4.8/bin/arm-eabi-addr2line ]
 then
     echo -e "####################################"
-    echo -e "#   GOOGLE TOOLCHAIN NOT FOUND!    #"
+    echo -e "#       TOOLCHAIN NOT FOUND!       #"
     echo -e "####################################"
 cd ..
 git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8
-if [ ! -f Daredevil-Kernel/daredevil.sh ]
-then
-    mv android_kernel_bq_krillin Daredevil-Kernel
-    cd Daredevil-Kernel
-else
-    cd Daredevil-Kernel
-fi
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 else
 export ARCH=arm CROSS_COMPILE=../arm-eabi-4.8/bin/arm-eabi-
 fi
+
 
 # User and Build Host
 export KBUILD_BUILD_USER=pablito
 export KBUILD_BUILD_HOST=linuxmachine
 
+
 # Read the lineage/AOSP DEFCONFIG
-echo -e "${orange} CONFIGURE KRILLIN.."
+echo -e "${orange} Read the defconfig file ..."
 make lineage_krillin_defconfig
 
+
 # Build zImage (Thanks to Joel for the all command)
-echo -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make -j all zImage > build-log.txt
+echo -e "${orange} Building Daredevil Kernel for krillin ..."
+make -j4 zImage
+
 
 # Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]
@@ -84,7 +84,6 @@ then
     echo -e "${red}#        BUILD ERROR!      #"
     echo -e "${red}############################"
 else
-
 # If the kernel compiles succesfully
 echo -e "${green} #########################################"
 echo -e "${green} #                                       #"

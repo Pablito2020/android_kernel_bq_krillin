@@ -17,8 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+
 # Since we have the kernel in the Daredevil-Scripts folder.. That is needed...
 cd ..
+
 
 # Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
 blue='\033[0;34m'
@@ -30,6 +32,7 @@ nocol='\033[0m'
 orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
+
 
 # Say info about the kernel in terminal
 echo -e "${orange}####################################################"
@@ -44,20 +47,20 @@ echo -e "${orange}#           KERNEL TOOLCHAIN: LINARO 7.X           #"
 echo -e "${orange}#                                                  #"
 echo -e "${orange}####################################################"
 
-# If the ubertc toolchain 6.0 doesn't exist, clone it. 
+# If the linaro toolchain 7.x doesn't exist, clone it. 
 # If exists, export the toolchain path
-if [ ! -f ../arm-linaro-linux-androideabi/bin/arm-linaro-linux-androideabi-addr2line ]
+if [ ! -f ../linaro-7.x/bin/arm-linaro-linux-androideabi-addr2line ]
 then
     echo -e "####################################"
-    echo -e "#   LINARO TOOLCHAIN NOT FOUND!    #"
+    echo -e "#       TOOLCHAIN NOT FOUND!       #"
     echo -e "####################################"
 cd ..
 git clone https://github.com/Pablito2020/linaro-7.x.git
 mv android_kernel_bq_krillin Daredevil
 cd Daredevil
-export ARCH=arm CROSS_COMPILE=../arm-linaro-linux-androideabi-addr2line/bin/arm-linaro-linux-androideabi-
+export ARCH=arm CROSS_COMPILE=../linaro-7.x/bin/arm-linaro-linux-androideabi-
 else
-export ARCH=arm CROSS_COMPILE=../arm-linaro-linux-androideabi/bin/arm-linaro-linux-androideabi-
+export ARCH=arm CROSS_COMPILE=../linaro-7.x/bin/arm-linaro-linux-androideabi-
 fi
 
 # User and Build Host

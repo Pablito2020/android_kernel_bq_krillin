@@ -56,12 +56,9 @@ echo
 read opt
 
 	case $opt in
-		1) . build-gcc.sh; break;;
-		2) . build-linaro.sh; break;;
+		1) . build-gcc.sh;;
+		2) . build-linaro.sh;;
 		3) . clean.sh;;
 		x) clear; echo; echo "Goodbye."; echo; exit 1;;
 		*) ERR_MSG="Invalid option!"; clear;;
 esac
-
-# Exit the daredevil script folder
-cd ..
