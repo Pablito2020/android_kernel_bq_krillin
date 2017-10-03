@@ -60,10 +60,6 @@ uint32_t in_lowmem = 0;
 /* From page_alloc.c, for urgent allocations in preemptible situation */
 extern void show_free_areas_minimum(void);
 
-#ifdef CONFIG_ZRAM
-extern void mlog(int type);
-#endif
-
 #ifdef CONFIG_ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES
 #define CONVERT_ADJ(x) ((x * OOM_SCORE_ADJ_MAX) / -OOM_DISABLE)
 #define REVERT_ADJ(x)  (x * (-OOM_DISABLE + 1) / OOM_SCORE_ADJ_MAX)
@@ -468,9 +464,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		}
 #endif
 
-#ifdef CONFIG_ZRAM
-		mlog(1);
-#endif
 		send_sig(SIGKILL, selected, 0);
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		rem -= selected_tasksize;
