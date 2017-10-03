@@ -472,7 +472,7 @@ static long task_close_fd(struct binder_proc *proc, unsigned int fd)
 static inline void binder_lock(struct binder_context *context, const char *tag)
 {
 	trace_binder_lock(tag);
-	mutex_lock(&binder_main_lock);
+	mutex_lock(&context->binder_main_lock);
 	preempt_disable();
 	trace_binder_locked(tag);
 }
@@ -481,7 +481,7 @@ static inline void binder_unlock(struct binder_context *context,
 				 const char *tag)
 {
 	trace_binder_unlock(tag);
-	mutex_unlock(&binder_main_lock);
+	mutex_unlock(&context->binder_main_lock);
 	preempt_enable();
 }
 
@@ -2351,7 +2351,9 @@ static void binder_transaction(struct binder_proc *proc,
 	list_add_tail(&tcomplete->entry, &thread->todo);
 	if (target_wait) {
 		if (reply || !(t->flags & TF_ONE_WAY)) {
+			preempt_disable();
 			wake_up_interruptible_sync(target_wait);
+			sched_preempt_enable_no_resched();
 		} else {
 			wake_up_interruptible(target_wait);
 		}
@@ -3866,14 +3868,15 @@ static void binder_deferred_func(struct work_struct *work)
 
 	do {
 		trace_binder_lock(__func__);
-		mutex_lock(&binder_main_lock);
+		mutex_lock(&context->binder_main_lock);
 		trace_binder_locked(__func__);
 
-		mutex_lock(&binder_deferred_lock);
+		mutex_lock(&context->binder_deferred_lock);
 		preempt_disable();
-		if (!hlist_empty(&binder_deferred_list)) {
-			proc = hlist_entry(binder_deferred_list.first,
-					struct binder_proc, deferred_work_node);
+		if (!hlist_empty(&context->binder_deferred_list)) {
+			proc = hlist_entry(context->binder_deferred_list.first,
+					   struct binder_proc,
+					   deferred_work_node);
 			hlist_del_init(&proc->deferred_work_node);
 			defer = proc->deferred_work;
 			proc->deferred_work = 0;
@@ -3897,7 +3900,7 @@ static void binder_deferred_func(struct work_struct *work)
 			binder_deferred_release(proc); /* frees proc */
 
 		trace_binder_unlock(__func__);
-		mutex_unlock(&binder_main_lock);
+		mutex_unlock(&context->binder_main_lock);
 		preempt_enable_no_resched();
 		if (files)
 			put_files_struct(files);
