@@ -630,9 +630,8 @@ static int udf_remount_fs(struct super_block *sb, int *flags, char *options)
 	struct udf_sb_info *sbi = UDF_SB(sb);
 	int error = 0;
 
-	sync_filesystem(sb);
-	if (lvidiu) {
-		int write_rev = le16_to_cpu(lvidiu->minUDFWriteRev);
+	if (sbi->s_lvid_bh) {
+		int write_rev = le16_to_cpu(udf_sb_lvidiu(sbi)->minUDFWriteRev);
 		if (write_rev > UDF_MAX_WRITE_VERSION && !(*flags & MS_RDONLY))
 			return -EACCES;
 	}
