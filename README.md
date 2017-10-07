@@ -25,7 +25,7 @@
 
         * Enter to the Daredevil kernel directory 
 
-        $ . daredevil.sh
+        $ . dd.sh
 
   * The kernel file (called zImage, will be found in arch/arm/boot folder)
 
@@ -38,32 +38,3 @@
    * Vineeth Raj for his dt2wake and sweep2wake commits for sprout. ---- GITHUB
    * Varun Chitre for his "thunder" drivers for sprout. ---- GITHUB
    * @zormax for the bring up LP/MM project ---- 4PDA
-
-# Filesystems that the kernel supports:
-
-   * EXT4
-   * EXT3
-   * EXT2
-   * NTFS
-   * F2FS
-   * FUSE
-   * SDCARDFS
-
-# Updated drivers (from the google source common kernel):
-
-  * Android Binder
-  * LZ4 Compression Driver 
-  * EXT4
-
-# Cleaned drivers (added by bq and then cleaned by me)
-
-  * Focaltech FT5336 (touchscreen driver)
-  * Fan5405 (Power driver --- charger driver)
-  * Yusu Android Speaker (Writted by VO-1 and edited for krillin by me)
-  
-# Added drivers ( Drivers that are created from scratch by a great developers and are added to my kernel)
-
-  * ThunderCharge (driver for optimize battery charge on mtk devices) by Varun Chitre
-  * ThunderPlug (driver that Enable plugging down/up of cores based on load per core) by Varun Chitre
-  * ThunderSonic ( Sound driver ) by Varun Chitre
-  * SDCardFS (new sdcard read driver by google) -- This driver is added and updated
