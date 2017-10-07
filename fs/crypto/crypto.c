@@ -170,16 +170,9 @@ int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
 		req, CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
 		page_crypt_complete, &ecr);
 
-<<<<<<< HEAD
-	BUILD_BUG_ON(FS_XTS_TWEAK_SIZE < sizeof(index));
-	memcpy(xts_tweak, &inode->i_ino, sizeof(index));
-	memset(&xts_tweak[sizeof(index)], 0,
-			FS_XTS_TWEAK_SIZE - sizeof(index));
-=======
 	BUILD_BUG_ON(sizeof(xts_tweak) != FS_XTS_TWEAK_SIZE);
 	xts_tweak.index = cpu_to_le64(lblk_num);
 	memset(xts_tweak.padding, 0, sizeof(xts_tweak.padding));
->>>>>>> 91ec76f... fscrypt: catch up to v4.11-rc1
 
 	sg_init_table(&dst, 1);
 	sg_set_page(&dst, dest_page, len, offs);
@@ -337,22 +330,15 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
 	struct fscrypt_info *ci = dir->i_crypt_info;
 	int dir_has_key, cached_with_key;
 
-<<<<<<< HEAD
-	if (!dir->i_sb->s_cop->is_encrypted(dir))
-=======
 	if (flags & LOOKUP_RCU)
 		return -ECHILD;
 
 	dir = dget_parent(dentry);
 	if (!d_inode(dir)->i_sb->s_cop->is_encrypted(d_inode(dir))) {
 		dput(dir);
->>>>>>> 91ec76f... fscrypt: catch up to v4.11-rc1
 		return 0;
 
-<<<<<<< HEAD
-=======
 	ci = d_inode(dir)->i_crypt_info;
->>>>>>> 91ec76f... fscrypt: catch up to v4.11-rc1
 	if (ci && ci->ci_keyring_key &&
 	    (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
 					  (1 << KEY_FLAG_REVOKED) |
