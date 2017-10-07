@@ -814,32 +814,21 @@ static void zs_exit(void)
 {
 	int cpu;
 
-	cpu_notifier_register_begin();
-
 	for_each_online_cpu(cpu)
 		zs_cpu_notifier(NULL, CPU_DEAD, (void *)(long)cpu);
-	__unregister_cpu_notifier(&zs_cpu_nb);
-
-	cpu_notifier_register_done();
+	unregister_cpu_notifier(&zs_cpu_nb);
 }
 
 static int zs_init(void)
 {
 	int cpu, ret;
 
-	cpu_notifier_register_begin();
-
-	__register_cpu_notifier(&zs_cpu_nb);
+	register_cpu_notifier(&zs_cpu_nb);
 	for_each_online_cpu(cpu) {
 		ret = zs_cpu_notifier(NULL, CPU_UP_PREPARE, (void *)(long)cpu);
-		if (notifier_to_errno(ret)) {
-			cpu_notifier_register_done();
+		if (notifier_to_errno(ret))
 			goto fail;
-		}
 	}
-
-	cpu_notifier_register_done();
-
 	return 0;
 fail:
 	zs_exit();
