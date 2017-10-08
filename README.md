@@ -32,7 +32,11 @@
 
 # Important Notice:
 
-The Daredevil Kernel is already implemented on my Unofficial lineage os builds
+        * The Daredevil Kernel is already implemented on my Unofficial lineage os builds
+
+        * The OFFICIAL linux 3.x readme can be found on the Documentation folder
+
+        * If you use this kernel for your custom roms, please atach the git contributors and put me on the credit section
 
 
 # Thanks to (In alphabetical order):
