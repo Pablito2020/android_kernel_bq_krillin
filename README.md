@@ -30,6 +30,11 @@
   * The kernel file (called zImage, will be found in arch/arm/boot folder)
 
 
+# Important Notice:
+
+The Daredevil Kernel is already implemented on my Unofficial lineage os builds
+
+
 # Thanks to (In alphabetical order):
 
    * ANDR7E ( help with kpd buttons + device info app for mtk devices) ---- XDA, 4PDA, GITHUB
