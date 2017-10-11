@@ -9,8 +9,6 @@
  * AUTHOR:                                                                    *
  *     Kirby.Wu (mtk02247)                                                    *
  *                                                                            *
- * MODIFIED BY PABLITO2020 FOR FT5336 DRIVER                                  *
- *                                                                            *
  * NOTE:                                                                      *
  * 1. Sensitivity for touch screen should be set to edge-sensitive.           *
  *    But in this driver it is assumed to be done by interrupt core,          *
@@ -39,6 +37,9 @@
 #endif
 #endif
 
+#if defined(CONFIG_MTK_S3320) || defined(CONFIG_MTK_S3320_47) || defined(CONFIG_MTK_MIT200) || defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) || defined(CONFIG_MTK_S7020)
+#include <linux/input/mt.h>
+#endif /* CONFIG_MTK_S3320 */
 /* for magnify velocity******************************************** */
 #define TOUCH_IOC_MAGIC 'A'
 
@@ -46,12 +47,18 @@
 #define TPD_GET_VELOCITY_CUSTOM_Y _IO(TOUCH_IOC_MAGIC, 1)
 #define TPD_GET_FILTER_PARA _IOWR(TOUCH_IOC_MAGIC,2,struct tpd_filter_t) 
 
+
+
 extern int tpd_v_magnify_x;
 extern int tpd_v_magnify_y;
 struct tpd_filter_t tpd_filter;
 
+
 extern UINT32 DISP_GetScreenHeight(void);
 extern UINT32 DISP_GetScreenWidth(void);
+#if defined(CONFIG_MTK_S3320) || defined(CONFIG_MTK_S3320_47)
+extern void synaptics_init_sysfs ( void );
+#endif /* CONFIG_MTK_S3320 */
 
 static int tpd_misc_open(struct inode *inode, struct file *file)
 {
@@ -414,6 +421,9 @@ static int tpd_probe(struct platform_device *pdev)
 	set_bit(ABS_X, tpd->dev->absbit);
 	set_bit(ABS_Y, tpd->dev->absbit);
 	set_bit(ABS_PRESSURE, tpd->dev->absbit);
+#if !defined(CONFIG_MTK_S3320) && !defined(CONFIG_MTK_S3320_47) && !defined(CONFIG_MTK_MIT200) && !defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) && !defined(CONFIG_MTK_S7020)
+	set_bit(BTN_TOUCH, tpd->dev->keybit);
+#endif /* CONFIG_MTK_S3320 */
 	set_bit(INPUT_PROP_DIRECT, tpd->dev->propbit);
 #if 1
 	for (i = 1; i < TP_DRV_MAX_COUNT; i++) {
@@ -491,8 +501,15 @@ static int tpd_probe(struct platform_device *pdev)
 #else
 		input_set_abs_params(tpd->dev, ABS_MT_POSITION_X, 0, TPD_RES_X, 0, 0);
 		input_set_abs_params(tpd->dev, ABS_MT_POSITION_Y, 0, TPD_RES_Y, 0, 0);
+#if defined(CONFIG_MTK_S3320) || defined(CONFIG_MTK_S3320_47) || defined(CONFIG_MTK_MIT200) || defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) || defined(CONFIG_MTK_S7020)
+		input_set_abs_params(tpd->dev, ABS_MT_PRESSURE, 0, 255, 0, 0);
+		input_set_abs_params(tpd->dev, ABS_MT_WIDTH_MAJOR, 0, 15, 0, 0);
+		input_set_abs_params(tpd->dev, ABS_MT_WIDTH_MINOR, 0, 15, 0, 0);
+        input_mt_init_slots(tpd->dev, 10, 0);
+#else
 		input_set_abs_params(tpd->dev, ABS_MT_TOUCH_MAJOR, 0, 100, 0, 0);
 		input_set_abs_params(tpd->dev, ABS_MT_TOUCH_MINOR, 0, 100, 0, 0);
+#endif /* CONFIG_MTK_S3320 */
 #endif
 		TPD_DMESG("Cap touch panel driver\n");
 	}
