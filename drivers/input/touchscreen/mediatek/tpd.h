@@ -26,7 +26,6 @@
 #include <generated/autoconf.h>
 #include <linux/kobject.h>
 #include <linux/earlysuspend.h>
-/* #include "tpd_custom.h" */
 
 /* debug macros */
 /* //#define TPD_DEBUG */

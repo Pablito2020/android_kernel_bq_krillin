@@ -1,8 +1,8 @@
 #ifndef TOUCHPANEL_H__
 #define TOUCHPANEL_H__
 
-#define KEY_APP_SWITCH 580 /*In the stock kernel source provided by bq, the definition of APP_SWITCH was on include/uapi/linux/input.h 
-I moved it here for a "compact" touch driver*/
+#define KEY_APP_SWITCH 580 /*
+In the stock kernel source provided by bq, the definition of APP_SWITCH was on include/uapi/linux/input.h I moved it here for a "compact" touch driver */
 #define TPD_TYPE_CAPACITIVE
 #define TPD_TYPE_RESISTIVE
 #define TPD_I2C_NUMBER           0
@@ -19,7 +19,7 @@ I moved it here for a "compact" touch driver*/
 #define TPD_KEY_COUNT           3
 #define TPD_KEYS                { KEY_APP_SWITCH, KEY_HOMEPAGE, KEY_BACK}
 #define TPD_KEYS_DIM            {{80,1020,100,100},{240,1020,100,100},{400,1020,100,100}}
-// LCM Drivers from krillin
+
 #define FTS_PRESSURE
 #define LCM_NAME1 "hx8389_qhd_dsi_vdo_truly"
 #define LCM_NAME2 "hx8389b_qhd_dsi_vdo_tianma"
@@ -28,7 +28,6 @@ static unsigned char CTPM_FW[]=
 {
 #include "FT5336_HiKe_Krilin_OGS_540X960_Truly0x5a_Ver0x15_20140618_app.i"
 };
-
 static unsigned char CTPM_FW2[]=
 {
 #include "FT5336_Hike_Krilin_540X960_LaiBao0x55_Ver0x12_20140729_app.i"
