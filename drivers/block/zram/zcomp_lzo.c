@@ -15,7 +15,7 @@
 
 static void *lzo_create(void)
 {
-	return kzalloc(LZO1X_MEM_COMPRESS, GFP_NOIO);
+	return kzalloc(LZO1X_MEM_COMPRESS, GFP_KERNEL);
 }
 
 static void lzo_destroy(void *private)
