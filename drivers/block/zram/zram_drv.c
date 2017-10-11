@@ -107,7 +107,7 @@ static void zram_set_obj_size(struct zram_meta *meta,
 	meta->table[index].value = (flags << ZRAM_FLAG_SHIFT) | size;
 }
 
-static inline bool is_partial_io(struct bio_vec *bvec)
+static inline int is_partial_io(struct bio_vec *bvec)
 {
 	return bvec->bv_len != PAGE_SIZE;
 }
@@ -115,25 +115,25 @@ static inline bool is_partial_io(struct bio_vec *bvec)
 /*
  * Check if request is within bounds and aligned on zram logical blocks.
  */
-static inline bool valid_io_request(struct zram *zram,
+static inline int valid_io_request(struct zram *zram,
 		sector_t start, unsigned int size)
 {
 	u64 end, bound;
 
 	/* unaligned request */
 	if (unlikely(start & (ZRAM_SECTOR_PER_LOGICAL_BLOCK - 1)))
-		return false;
+		return 0;
 	if (unlikely(size & (ZRAM_LOGICAL_BLOCK_SIZE - 1)))
-		return false;
+		return 0;
 
 	end = start + (size >> SECTOR_SHIFT);
 	bound = zram->disksize >> SECTOR_SHIFT;
 	/* out of range range */
 	if (unlikely(start >= bound || end > bound || start > end))
-		return false;
+		return 0;
 
 	/* I/O request is valid */
-	return true;
+	return 1;
 }
 
 static void update_position(u32 *index, int *offset, struct bio_vec *bvec)
@@ -158,7 +158,7 @@ static inline void update_used_max(struct zram *zram,
 	} while (old_max != cur_max);
 }
 
-static bool page_zero_filled(void *ptr)
+static int page_zero_filled(void *ptr)
 {
 	unsigned int pos;
 	unsigned long *page;
@@ -167,10 +167,10 @@ static bool page_zero_filled(void *ptr)
 
 	for (pos = 0; pos != PAGE_SIZE / sizeof(*page); pos++) {
 		if (page[pos])
-			return false;
+			return 0;
 	}
 
-	return true;
+	return 1;
 }
 
 static void handle_zero_page(struct bio_vec *bvec)
