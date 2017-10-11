@@ -28,14 +28,13 @@
 #include <linux/string.h>
 #include <linux/vmalloc.h>
 #include <linux/err.h>
-#include <linux/idr.h>
 
 #include "zram_drv.h"
 
-static DEFINE_IDR(zram_index_idr);
+/* Globals */
 static int zram_major;
 struct zram *zram_devices;
-static const char *default_compressor = "lz4";
+static const char *default_compressor = "lzo";
 
 /* Module params (documentation at end) */
 static unsigned int num_devices = 1;
@@ -1111,20 +1110,10 @@ static struct attribute_group zram_disk_attr_group = {
 	.attrs = zram_disk_attrs,
 };
 
-static int zram_add(int device_id)
+static int create_device(struct zram *zram, int device_id)
 {
-	struct zram *zram;
 	struct request_queue *queue;
-	int ret;
-
-	zram = kzalloc(sizeof(struct zram), GFP_KERNEL);
-	if (!zram)
-		return -ENOMEM;
-
-	ret = idr_alloc(&zram_index_idr, zram, device_id,
-			device_id + 1, GFP_KERNEL);
-	if (ret < 0)
-		goto out_free_dev;
+	int ret = -ENOMEM;
 
 	init_rwsem(&zram->init_lock);
 
@@ -1132,13 +1121,12 @@ static int zram_add(int device_id)
 	if (!queue) {
 		pr_err("Error allocating disk queue for device %d\n",
 			device_id);
-		ret = -ENOMEM;
-		goto out_free_idr;
+		goto out;
 	}
 
 	blk_queue_make_request(queue, zram_make_request);
 
-	/* gendisk structure */
+	 /* gendisk structure */
 	zram->disk = alloc_disk(1);
 	if (!zram->disk) {
 		pr_warn("Error allocating disk structure for device %d\n",
@@ -1203,42 +1191,34 @@ out_free_disk:
 	put_disk(zram->disk);
 out_free_queue:
 	blk_cleanup_queue(queue);
-out_free_idr:
-	idr_remove(&zram_index_idr, device_id);
-out_free_dev:
-	kfree(zram);
+out:
 	return ret;
 }
 
-static void zram_remove(struct zram *zram)
+static void destroy_devices(unsigned int nr)
 {
-	/*
-	 * Remove sysfs first, so no one will perform a disksize
-	 * store while we destroy the devices
-	 */
-	sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
-			&zram_disk_attr_group);
+	struct zram *zram;
+	unsigned int i;
 
-	zram_reset_device(zram);
-	idr_remove(&zram_index_idr, zram->disk->first_minor);
-	blk_cleanup_queue(zram->disk->queue);
-	del_gendisk(zram->disk);
-	put_disk(zram->disk);
-	kfree(zram);
-}
+	for (i = 0; i < nr; i++) {
+		zram = &zram_devices[i];
+		/*
+		 * Remove sysfs first, so no one will perform a disksize
+		 * store while we destroy the devices
+		 */
+		sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
+				&zram_disk_attr_group);
 
-static int zram_remove_cb(int id, void *ptr, void *data)
-{
-	zram_remove(ptr);
-	return 0;
-}
+		zram_reset_device(zram);
 
-static void destroy_devices(void)
-{
-	idr_for_each(&zram_index_idr, &zram_remove_cb, NULL);
-	idr_destroy(&zram_index_idr);
+		blk_cleanup_queue(zram->disk->queue);
+		del_gendisk(zram->disk);
+		put_disk(zram->disk);
+	}
+
+	kfree(zram_devices);
 	unregister_blkdev(zram_major, "zram");
-	pr_info("Destroyed device(s)\n");
+	pr_info("Destroyed %u device(s)\n", nr);
 }
 
 static int __init zram_init(void)
@@ -1257,9 +1237,16 @@ static int __init zram_init(void)
 		return -EBUSY;
 	}
 
+	/* Allocate the device array and initialize each one */
+	zram_devices = kzalloc(num_devices * sizeof(struct zram), GFP_KERNEL);
+	if (!zram_devices) {
+		unregister_blkdev(zram_major, "zram");
+		return -ENOMEM;
+	}
+
 	for (dev_id = 0; dev_id < num_devices; dev_id++) {
-		ret = zram_add(dev_id);
-		if (ret != 0)
+		ret = create_device(&zram_devices[dev_id], dev_id);
+		if (ret)
 			goto out_error;
 	}
 
@@ -1267,13 +1254,13 @@ static int __init zram_init(void)
 	return 0;
 
 out_error:
-	destroy_devices();
+	destroy_devices(dev_id);
 	return ret;
 }
 
 static void __exit zram_exit(void)
 {
-	destroy_devices();
+	destroy_devices(num_devices);
 }
 
 module_init(zram_init);
