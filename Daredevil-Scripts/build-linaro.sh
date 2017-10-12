@@ -33,28 +33,29 @@ orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
 m=make
+e=echo
 
 
 # Say info about the kernel in terminal
-echo -e "${orange}####################################################"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}#                  KERNEL INFO:                    #"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
-echo -e "${orange}#               DEVICE AKA: krillin                #"
-echo -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
-echo -e "${orange}#                DAREDEVIL VERSION: N              #"
-echo -e "${orange}#           KERNEL TOOLCHAIN: LINARO 7.X           #"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}####################################################"
+$e -e "${orange}####################################################"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}#                  KERNEL INFO:                    #"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
+$e -e "${orange}#               DEVICE AKA: krillin                #"
+$e -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
+$e -e "${orange}#                DAREDEVIL VERSION: N              #"
+$e -e "${orange}#           KERNEL TOOLCHAIN: LINARO 7.X           #"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}####################################################"
 
 # If the linaro toolchain 7.x doesn't exist, clone it. 
 # If exists, export the toolchain path
 if [ ! -f ../linaro-7.x/bin/arm-linaro-linux-androideabi-addr2line ]
 then
-    echo -e "####################################"
-    echo -e "#       TOOLCHAIN NOT FOUND!       #"
-    echo -e "####################################"
+    $e -e "####################################"
+    $e -e "#       TOOLCHAIN NOT FOUND!       #"
+    $e -e "####################################"
 cd ..
 git clone https://github.com/Pablito2020/linaro-7.x.git
 mv android_kernel_bq_krillin Daredevil
@@ -69,26 +70,26 @@ export KBUILD_BUILD_USER=pablito
 export KBUILD_BUILD_HOST=linuxmachine
 
 # Read the lineage/AOSP DEFCONFIG
-echo -e "${orange} CONFIGURE KRILLIN.."
+$e -e "${orange} CONFIGURE KRILLIN.."
 $m lineage_krillin_defconfig
 
 # Build zImage (Thanks to Joel for the all command)
-echo -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
+$e -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
 $m -j4
 
 # Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]
 then
-    echo -e "${red}############################"
-    echo -e "${red}#        BUILD ERROR!      #"
-    echo -e "${red}############################"
+    $e -e "${red}############################"
+    $e -e "${red}#        BUILD ERROR!      #"
+    $e -e "${red}############################"
 else
 
 # If the kernel compiles succesfully
-echo -e "${green} #########################################"
-echo -e "${green} #                                       #"
-echo -e "${green} # SUCCESSFULLY BUILDED DAREDEVIL KERNEL #"
-echo -e "${green} #        $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds'       #" 
-echo -e "${green} #                                       #"
-echo -e "${green} #########################################"
+$e -e "${green} #########################################"
+$e -e "${green} #                                       #"
+$e -e "${green} # SUCCESSFULLY BUILDED DAREDEVIL KERNEL #"
+$e -e "${green} #        $[$SECONDS / 60]' minutes '$[$SECONDS % 60]' seconds'       #" 
+$e -e "${green} #                                       #"
+$e -e "${green} #########################################"
 fi

@@ -27,35 +27,36 @@ nocol='\033[0m'
 orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
+e=echo
 
 # Say info about the script in terminal
-echo -e "${orange}####################################################"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}#                  SCRIPT INFO:                    #"
-echo -e "${orange}#  THIS IS A SCRIPT FOR BUILDING DAREDEVIL KERNEL  #"
-echo -e "${orange}#     NOW, PLEASE SELECT THE TOOLCHAIN YOU WANT    #"
-echo -e "${orange}#            FOR THE KERNEL COMPILATION            #"
-echo -e "${orange}# OR SELECT THE CLEAN THE KERNEL SOURCE OPTION FOR #"
-echo -e "${orange}#           A MAKE CLEAN AND MAKE PROPER           #"
-echo -e "${orange}#                                                  #"
-echo -e "${orange}####################################################"
+$e -e "${orange}####################################################"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}#                  SCRIPT INFO:                    #"
+$e -e "${orange}#  THIS IS A SCRIPT FOR BUILDING DAREDEVIL KERNEL  #"
+$e -e "${orange}#     NOW, PLEASE SELECT THE TOOLCHAIN YOU WANT    #"
+$e -e "${orange}#            FOR THE KERNEL COMPILATION            #"
+$e -e "${orange}# OR SELECT THE CLEAN THE KERNEL SOURCE OPTION FOR #"
+$e -e "${orange}#           A MAKE CLEAN AND MAKE PROPER           #"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}####################################################"
 
 # Enter to the Daredevil-Scripts folder
 cd Daredevil-Scripts
 
 # Say what toolchain do you want to build
-echo
-  echo "Select what do you want to do:"
-  echo
-  echo "  1 - Build Daredevil with the Google gcc 4.8 toolchain"
-  echo "  2 - Build Daredevil with the Linaro 7.2.1 toolchain"
-  echo "  3 - Clean the kernel source"
-  echo "  x - Exit"
-  echo
-  echo -n "Enter Option: "
-read opt
+$e
+  $e "Select what do you want to do:"
+  $e
+  $e "  1 - Build Daredevil with the Google gcc 4.8 toolchain"
+  $e "  2 - Build Daredevil with the Linaro 7.2.1 toolchain"
+  $e "  3 - Clean the kernel source"
+  $e "  x - Exit"
+  $e
+  $e -n "Enter Option: "
+read o
 
-	case $opt in
+	case $o in
 		1) . build-gcc.sh;;
 		2) . build-linaro.sh;;
 		3) . clean.sh;;

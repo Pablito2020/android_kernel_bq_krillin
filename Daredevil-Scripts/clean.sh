@@ -17,25 +17,30 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+# Variables
+e=echo
+m=make
+
 # This is needed since we have the script on the Daredevil-Script folder
 cd ..
 
 # Say info
-echo '################################# '
-echo '#                               # '
-echo '#  CLEANING THE KERNEL SOURCE   # '
-echo '#                               # '
-echo '################################# '
+$e '################################# '
+$e '#                               # '
+$e '#  CLEANING THE KERNEL SOURCE   # '
+$e '#                               # '
+$e '################################# '
 
-make clean
-make mrproper
+$m clean
+$m mrproper
 if [ ! -f build-log.txt ]
 then
-    echo -e "############################"
-    echo -e "#   NO BUILD LOG FOUND     #"
-    echo -e "############################"
+    $e -e "############################"
+    $e -e "#   NO BUILD LOG FOUND     #"
+    $e -e "############################"
 else
 rm -rf build-log.txt
 fi
+
 # Now clear the terminal log.
 clear
