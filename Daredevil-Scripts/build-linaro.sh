@@ -32,6 +32,7 @@ nocol='\033[0m'
 orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
+m=make
 
 
 # Say info about the kernel in terminal
@@ -69,11 +70,11 @@ export KBUILD_BUILD_HOST=linuxmachine
 
 # Read the lineage/AOSP DEFCONFIG
 echo -e "${orange} CONFIGURE KRILLIN.."
-make lineage_krillin_defconfig
+$m lineage_krillin_defconfig
 
 # Build zImage (Thanks to Joel for the all command)
 echo -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
-make -j4
+$m -j4
 
 # Check if there are errors in the kernel
 if [ ! -f arch/arm/boot/zImage ]

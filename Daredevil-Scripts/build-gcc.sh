@@ -21,8 +21,7 @@
 # Since we have the script in the Daredevil-Scripts folder that is needed:
 cd ..
 
-
-# Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
+# Set Variables!
 blue='\033[0;34m'
 cyan='\033[0;36m'
 yellow='\033[0;33m'
@@ -32,6 +31,7 @@ nocol='\033[0m'
 orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
+m=make
 
 
 # Say info about the kernel
@@ -69,12 +69,12 @@ export KBUILD_BUILD_HOST=linuxmachine
 
 # Read the lineage/AOSP DEFCONFIG
 echo -e "${orange} Read the defconfig file ..."
-make lineage_krillin_defconfig
+$m lineage_krillin_defconfig
 
 
 # Build zImage (Thanks to Joel for the all command)
 echo -e "${orange} Building Daredevil Kernel for krillin ..."
-make -j4 zImage
+$m -j4 zImage
 
 
 # Check if there are errors in the kernel
@@ -84,6 +84,7 @@ then
     echo -e "${red}#        BUILD ERROR!      #"
     echo -e "${red}############################"
 else
+
 # If the kernel compiles succesfully
 echo -e "${green} #########################################"
 echo -e "${green} #                                       #"

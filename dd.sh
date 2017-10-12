@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
-# Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
+# Set Variables
 blue='\033[0;34m'
 cyan='\033[0;36m'
 yellow='\033[0;33m'
