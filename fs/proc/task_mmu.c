@@ -217,7 +217,7 @@ static void *m_start(struct seq_file *m, loff_t *pos)
 		return mm;
 	down_read(&mm->mmap_sem);
 
-	tail_vma = get_gate_vma(mm);
+	tail_vma = get_gate_vma(priv->task->mm);
 	priv->tail_vma = tail_vma;
 	hold_task_mempolicy(priv);
 	/* Start with last addr hint */
@@ -394,11 +394,12 @@ static int show_map(struct seq_file *m, void *v, int is_pid)
 {
 	struct vm_area_struct *vma = v;
 	struct proc_maps_private *priv = m->private;
+	struct task_struct *task = priv->task;
 
 	show_map_vma(m, vma, is_pid);
 
 	if (m->count < m->size)  /* vma is copied successfully */
-		m->version = (vma != priv->tail_vma)
+		m->version = (vma != get_gate_vma(task->mm))
 			? vma->vm_start : 0;
 	return 0;
 }
@@ -653,6 +654,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
 static int show_smap(struct seq_file *m, void *v, int is_pid)
 {
 	struct proc_maps_private *priv = m->private;
+	struct task_struct *task = priv->task;
 	struct vm_area_struct *vma = v;
 	struct mem_size_stats mss;
 	struct mm_walk smaps_walk = {
@@ -715,7 +717,7 @@ static int show_smap(struct seq_file *m, void *v, int is_pid)
 	}
 
 	if (m->count < m->size)  /* vma is copied successfully */
-		m->version = (vma != priv->tail_vma)
+		m->version = (vma != get_gate_vma(task->mm))
 			? vma->vm_start : 0;
 	return 0;
 }
