@@ -27,17 +27,15 @@ nocol='\033[0m'
 orange='\033[0;33m'
 light_red='\033[1;31m'
 purple='\033[0;35m'
+ddv=1.0
+kv=3.10.107
 e=echo
 
 # Say info about the script in terminal
 $e -e "${orange}####################################################"
 $e -e "${orange}#                                                  #"
-$e -e "${orange}#                  SCRIPT INFO:                    #"
-$e -e "${orange}#  THIS IS A SCRIPT FOR BUILDING DAREDEVIL KERNEL  #"
-$e -e "${orange}#     NOW, PLEASE SELECT THE TOOLCHAIN YOU WANT    #"
-$e -e "${orange}#            FOR THE KERNEL COMPILATION            #"
-$e -e "${orange}# OR SELECT THE CLEAN THE KERNEL SOURCE OPTION FOR #"
-$e -e "${orange}#           A MAKE CLEAN AND MAKE PROPER           #"
+$e -e "${orange}#         DAREDEVIL SCRIPT VERSION: $ddv            #"
+$e -e "${orange}#            KERNEL VERSION: $kv              #"
 $e -e "${orange}#                                                  #"
 $e -e "${orange}####################################################"
 

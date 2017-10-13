@@ -35,20 +35,6 @@ purple='\033[0;35m'
 m=make
 e=echo
 
-
-# Say info about the kernel in terminal
-$e -e "${orange}####################################################"
-$e -e "${orange}#                                                  #"
-$e -e "${orange}#                  KERNEL INFO:                    #"
-$e -e "${orange}#                                                  #"
-$e -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
-$e -e "${orange}#               DEVICE AKA: krillin                #"
-$e -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
-$e -e "${orange}#                DAREDEVIL VERSION: N              #"
-$e -e "${orange}#           KERNEL TOOLCHAIN: LINARO 7.X           #"
-$e -e "${orange}#                                                  #"
-$e -e "${orange}####################################################"
-
 # If the linaro toolchain 7.x doesn't exist, clone it. 
 # If exists, export the toolchain path
 if [ ! -f ../linaro-7.x/bin/arm-linaro-linux-androideabi-addr2line ]

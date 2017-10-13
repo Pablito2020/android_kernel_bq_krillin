@@ -34,20 +34,6 @@ purple='\033[0;35m'
 m=make
 echo=e
 
-
-# Say info about the kernel
-$e -e "${orange}####################################################"
-$e -e "${orange}#                                                  #"
-$e -e "${orange}#                  KERNEL INFO:                    #"
-$e -e "${orange}#                                                  #"
-$e -e "${orange}#             DEVICE: BQ AQUARIS E4.5              #"
-$e -e "${orange}#               DEVICE AKA: krillin                #"
-$e -e "${orange}#          LINUX KERNEL VERSION: 3.10.107          #"
-$e -e "${orange}#                DAREDEVIL VERSION: N              #"
-$e -e "${orange}#            KERNEL TOOLCHAIN: GCC 4.8             #"
-$e -e "${orange}#                                                  #"
-$e -e "${orange}####################################################"
-
 # If the google toolchain 4.8 doesn't exist, clone it. 
 # If exists, export the toolchain path
 if [ ! -f ../arm-eabi-4.8/bin/arm-eabi-addr2line ]
