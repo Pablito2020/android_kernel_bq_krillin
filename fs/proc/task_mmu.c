@@ -212,7 +212,7 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
 	if (last_addr == -1UL)
 		return NULL;
 
-	priv->task = get_proc_task(priv->inode);
+	priv->task = get_pid_task(priv->pid, PIDTYPE_PID);
 	if (!priv->task)
 		return ERR_PTR(-ESRCH);
 
@@ -279,7 +279,7 @@ static int proc_maps_open(struct inode *inode, struct file *file,
 	if (!priv)
 		return -ENOMEM;
 
-	priv->inode = inode;
+	priv->pid = proc_pid(inode);
 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
 	if (IS_ERR(priv->mm)) {
 		int err = PTR_ERR(priv->mm);
