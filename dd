@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Daredevil Kernel compilation script
+#
+# Copyright (C) 2017 Pablo Fraile Alonso (Github aka: Pablito2020)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+# Set Variables
+blue='\033[0;34m'
+cyan='\033[0;36m'
+yellow='\033[0;33m'
+green='\033[0;32m'
+red='\033[0;31m'
+nocol='\033[0m'
+orange='\033[0;33m'
+light_red='\033[1;31m'
+purple='\033[0;35m'
+ddv=1.0
+kv=3.10.107
+e=echo
+
+# Say info about the script in terminal
+$e -e "${orange}####################################################"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}#         DAREDEVIL SCRIPT VERSION: $ddv            #"
+$e -e "${orange}#            KERNEL VERSION: $kv              #"
+$e -e "${orange}#                                                  #"
+$e -e "${orange}####################################################"
+
+# Enter to the Daredevil-Scripts folder
+cd Daredevil-Scripts
+
+# Say what toolchain do you want to build
+$e
+  $e "Select what do you want to do:"
+  $e
+  $e "  1 - Build Daredevil with the Google gcc 4.8 toolchain"
+  $e "  2 - Build Daredevil with the Linaro 7.2.1 toolchain"
+  $e "  3 - Clean the kernel source"
+  $e "  x - Exit"
+  $e
+  $e -n "Enter Option: "
+read o
+
+	case $o in
+		1) . build-gcc.sh;;
+		2) . build-linaro.sh;;
+		3) . clean.sh;;
+		x) clear; echo; echo "Goodbye."; echo; exit 1;;
+		*) ERR_MSG="Invalid option!"; clear;;
+esac
