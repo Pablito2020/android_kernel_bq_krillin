@@ -25,7 +25,7 @@
 
         * Enter to the Daredevil kernel directory 
 
-        $ . dd.sh
+        $ ./dd
 
   * The kernel file (called zImage, will be found in arch/arm/boot folder)
 
