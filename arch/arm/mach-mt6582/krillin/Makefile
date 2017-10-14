@@ -2,8 +2,10 @@ include $(srctree)/drivers/misc/mediatek/Makefile.custom
 
 # Module project related part
 
-# ALSPS
+
 ifeq ($(CONFIG_MTK_SENSOR_SUPPORT),y)
+
+# ALSPS (proximity sensor)
 ifeq ($(CONFIG_MTK_CM36283),y)
 obj-y	+=  alsps/cm36283/
 endif

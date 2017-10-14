@@ -9,7 +9,6 @@ enum mt65xx_led_mode
 	MT65XX_LED_MODE_PWM,
 	MT65XX_LED_MODE_GPIO,
 	MT65XX_LED_MODE_PMIC,
-	//MT65XX_LED_MODE_CUST,
 	MT65XX_LED_MODE_CUST_LCM,	
 	MT65XX_LED_MODE_CUST_BLS_PWM
 };
@@ -34,7 +33,7 @@ typedef int (*cust_brightness_set)(int level, int div);
 typedef int (*cust_set_brightness)(int level);
 
 /*
- * name : must the same as lights HAL
+ * name : must be the same as lights HAL
  * mode : control mode
  * data :
  *    PWM:  pwm number

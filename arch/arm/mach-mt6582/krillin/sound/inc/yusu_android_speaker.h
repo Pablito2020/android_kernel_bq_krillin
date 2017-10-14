@@ -132,15 +132,8 @@ void AudioAMPDevice_SpeakerLouderOpen(void); //some times kernal need to force  
 void AudioAMPDevice_SpeakerLouderClose(void);
 void AudioAMPDevice_mute(void);
 
-
 int Audio_eamp_command(unsigned int type, unsigned long args, unsigned int count);
-
-
-
 
 kal_int32 Sound_ExtFunction(const char* name, void* param, int param_size);
 
-
 #endif
-
-

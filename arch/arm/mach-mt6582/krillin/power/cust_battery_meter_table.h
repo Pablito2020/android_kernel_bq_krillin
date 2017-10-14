@@ -944,4 +944,3 @@ int fgauge_get_saddles_r_table(void);
 R_PROFILE_STRUC_P fgauge_get_profile_r_table(kal_uint32 temperature);
 
 #endif	//#ifndef _CUST_BATTERY_METER_TABLE_H
-

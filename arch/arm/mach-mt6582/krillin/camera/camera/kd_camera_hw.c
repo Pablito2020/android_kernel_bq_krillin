@@ -9,7 +9,6 @@
 #include <linux/xlog.h>
 #include <linux/kernel.h>
 
-
 #include "kd_camera_hw.h"
 
 #include "kd_imgsensor.h"
@@ -363,37 +362,20 @@ u32 pinSet[2][8] = {
         	if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D, VOL_1200,mode_name))
         	{
             	PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-            	//return -EIO;
-            	//goto _kdCISModulePowerOn_exit_;
         	}
-        	//mdelay(10);
-		
-        	//AVDD = 2V8
         	PK_DBG("[20121217] AVDD is 2v8\n");
         	if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A, VOL_2800,mode_name))
         	{
             	PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
-            	//return -EIO;
-            	//goto _kdCISModulePowerOn_exit_;
         	}
-        	//mdelay(10);
-		
-        	//DOVDD = 1V8
         	PK_DBG("[20121217] DOVDD is 1v8\n");
         	if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D2, VOL_1800,mode_name))
         	{
              	PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-             	//return -EIO;
-             	//goto _kdCISModulePowerOn_exit_;
         	}
-        	//mdelay(10);
-
-
-        	//AF_VCC
         	if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A2, VOL_2800,mode_name))
         	{
             	PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
-            	//return -EIO;
             	goto _kdCISModulePowerOn_exit_;
         	}
 			mdelay(1);
@@ -417,7 +399,6 @@ u32 pinSet[2][8] = {
 				goto _kdCISModulePowerOn_exit_;
 			}
 			PK_DBG("kdCISModulePowerOn get in--- %s \n",currSensorName);
-			//PK_DBG("[ON_general 2.8V]sensorIdx:%d \n",SensorIdx);
 			if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D2, VOL_1800,mode_name))
 			{
 				PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
@@ -564,37 +545,17 @@ u32 pinSet[2][8] = {
 			if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D2, VOL_1800,mode_name))
 			{
 				PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-
-				//return -EIO;
-				//goto _kdCISModulePowerOn_exit_;
 			}
 			//AVDD
 			if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A, VOL_2800,mode_name))
 			{
 				PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
-
-				//return -EIO;
-				//goto _kdCISModulePowerOn_exit_;
 			}
-			//	mdelay(10);
-
 			//DVDD
 			if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D, VOL_1800,mode_name))
 			{
 				PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-
-				//return -EIO;
-				//goto _kdCISModulePowerOn_exit_;
 			}
-
-
-			//AF_VCC
-			/*	if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A2, VOL_2800,mode_name))
-				{
-				PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
-			//return -EIO;
-			goto _kdCISModulePowerOn_exit_;
-			}*/
 			mdelay(10);
 			//disable inactive sensor
 
@@ -674,15 +635,6 @@ u32 pinSet[2][8] = {
 							 //return -EIO;
 							 //goto _kdCISModulePowerOn_exit_;
 						}
-						
-				
-						//AF_VCC
-					/*	if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_A2, VOL_2800,mode_name))
-						{
-							PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
-							//return -EIO;
-							goto _kdCISModulePowerOn_exit_;
-						}*/
 						mdelay(10);
 					  //disable inactive sensor
 						
@@ -746,8 +698,6 @@ u32 pinSet[2][8] = {
 		        if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D2, VOL_1800,mode_name))
 		        {
 		            PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-		            //return -EIO;
-		            //goto _kdCISModulePowerOn_exit_;
 		        }
 		    }
 		    else //general case on
@@ -775,16 +725,12 @@ u32 pinSet[2][8] = {
 		        if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D, VOL_1200,mode_name))
 		    	{
 		         PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-		         //return -EIO;
-		         //goto _kdCISModulePowerOn_exit_;
 		    	}
 		    }
 		    else {
 		        if(TRUE != hwPowerOn(CAMERA_POWER_VCAM_D, VOL_1800,mode_name))
 		    {
 		         PK_DBG("[CAMERA SENSOR] Fail to enable digital power\n");
-		         //return -EIO;
-		         //goto _kdCISModulePowerOn_exit_;
 		    }
 		    }            
 		        
@@ -864,13 +810,6 @@ u32 pinSet[2][8] = {
 				//return -EIO;
 				goto _kdCISModulePowerOn_exit_;
 			}
-
-			//if(TRUE != hwPowerDown(CAMERA_POWER_VCAM_A2,mode_name))
-			//{
-			//	PK_DBG("[CAMERA SENSOR] Fail to enable analog power\n");
-				//return -EIO;
-			//	goto _kdCISModulePowerOn_exit_;
-			//}
 		}
         else if(currSensorName && (0 == strcmp(SENSOR_DRVNAME_S5K3H7Y_MIPI_RAW,currSensorName)))
         {
@@ -960,7 +899,6 @@ u32 pinSet[2][8] = {
 		}
 		else
 		{
-        //PK_DBG("[OFF]sensorIdx:%d \n",SensorIdx);
         if (GPIO_CAMERA_INVALID != pinSet[pinSetIdx][IDX_PS_CMRST]) {
             if(mt_set_gpio_mode(pinSet[pinSetIdx][IDX_PS_CMRST],pinSet[pinSetIdx][IDX_PS_CMRST+IDX_PS_MODE])){PK_DBG("[CAMERA SENSOR] set gpio mode failed!! \n");}
             if(mt_set_gpio_mode(pinSet[pinSetIdx][IDX_PS_CMPDN],pinSet[pinSetIdx][IDX_PS_CMPDN+IDX_PS_MODE])){PK_DBG("[CAMERA LENS] set gpio mode failed!! \n");}
@@ -992,7 +930,7 @@ u32 pinSet[2][8] = {
             //return -EIO;
             goto _kdCISModulePowerOn_exit_;
         }
-    }//
+    }
 }
 
 	return 0;
@@ -1002,11 +940,3 @@ _kdCISModulePowerOn_exit_:
 }
 
 EXPORT_SYMBOL(kdCISModulePowerOn);
-
-
-//!--
-//
-
-
-
-

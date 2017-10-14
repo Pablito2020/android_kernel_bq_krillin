@@ -1,4 +1,3 @@
-
 // LVDSTX(Base Address:+800h/+900h)
 // 1.Basic setting
 #define LVDS_OUTPUT_CTRL   0x0818

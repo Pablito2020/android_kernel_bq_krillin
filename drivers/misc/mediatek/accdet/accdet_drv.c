@@ -88,17 +88,12 @@ static struct dev_pm_ops accdet_pm_ops = {
 struct platform_device accdet_device = {
 	.name	  ="Accdet_Driver",
 	.id		  = -1,
-	/* .dev    ={ */
-	/* .release = accdet_dumy_release, */
-	/* } */
 };
 
 #endif
 
 static struct platform_driver accdet_driver = {
 	.probe = accdet_probe,
-	/* .suspend      = accdet_suspend, */
-	/* .resume               = accdet_resume, */
 	.remove = accdet_remove,
 	.driver = {
 		   .name = "Accdet_Driver",
@@ -162,11 +157,9 @@ static void accdet_mod_exit(void)
 /*Patch for CR ALPS00804150 & ALPS00804802 PMIC temp not correct issue*/
 int accdet_cable_type_state(void)
 {
-	/* ACCDET_DEBUG("[ACCDET] accdet_cable_type_state=%d\n",accdet_get_cable_type()); */
 	return accdet_get_cable_type();
 }
 EXPORT_SYMBOL(accdet_cable_type_state);
-/*Patch for CR ALPS00804150 & ALPS00804802 PMIC temp not correct issue*/
 
 
 module_init(accdet_mod_init);
@@ -178,4 +171,3 @@ module_param(debug_enable_drv, int, 0644);
 MODULE_DESCRIPTION("MTK MT6588 ACCDET driver");
 MODULE_AUTHOR("Anny <Anny.Hu@mediatek.com>");
 MODULE_LICENSE("GPL");
-

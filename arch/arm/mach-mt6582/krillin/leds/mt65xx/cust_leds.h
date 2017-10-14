@@ -13,8 +13,5 @@ enum mt65xx_led_type
 	MT65XX_LED_TYPE_LCD,
 	MT65XX_LED_TYPE_TOTAL,
 };
-
-
-
 #endif
 

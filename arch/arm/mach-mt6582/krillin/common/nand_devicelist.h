@@ -59,5 +59,3 @@ static const flashdev_info g_FlashTable[]={
 	{0xBC20,	5,	16,	512,	128,	2048,	 0x01123,	 "ST04GR4B",	0},
 	{0x0000,  0,  0,  0,	0,	  0,	 0,    "xxxxxxxxxxxxx", 0}
 };
-
-
