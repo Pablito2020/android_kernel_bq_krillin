@@ -21,7 +21,6 @@
 # Since we have the kernel in the Daredevil-Scripts folder.. That is needed...
 cd ..
 
-
 # Set Colors! (some of there aren't used, but if you like, you can add it in the echo lines.)
 blue='\033[0;34m'
 cyan='\033[0;36m'
@@ -44,8 +43,6 @@ then
     $e -e "####################################"
 cd ..
 git clone https://github.com/Pablito2020/linaro-7.x.git
-mv android_kernel_bq_krillin Daredevil
-cd Daredevil
 export ARCH=arm CROSS_COMPILE=../linaro-7.x/bin/arm-linaro-linux-androideabi-
 else
 export ARCH=arm CROSS_COMPILE=../linaro-7.x/bin/arm-linaro-linux-androideabi-
@@ -59,7 +56,7 @@ export KBUILD_BUILD_HOST=linuxmachine
 $e -e "${orange} CONFIGURE KRILLIN.."
 $m lineage_krillin_defconfig
 
-# Build zImage (Thanks to Joel for the all command)
+# Build zImage
 $e -e "${orange} BUILD DAREDEVIL KERNEL FOR KRILLIN.."
 $m -j4
 
