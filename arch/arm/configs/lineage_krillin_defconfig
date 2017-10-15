@@ -987,7 +987,6 @@ CONFIG_CFG80211_WEXT=y
 # CONFIG_NET_9P is not set
 # CONFIG_CAIF is not set
 # CONFIG_CEPH_LIB is not set
-# CONFIG_NFC is not set
 CONFIG_HAVE_BPF_JIT=y
 # CONFIG_MTK_NET_LOGGING is not set
 
