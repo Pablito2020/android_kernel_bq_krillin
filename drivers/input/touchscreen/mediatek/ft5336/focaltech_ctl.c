@@ -147,7 +147,6 @@ static int ft_rw_iic_drv_open(struct inode *inode, struct file *filp)
 */
 static int ft_rw_iic_drv_release(struct inode *inode, struct file *filp)
 {
-
 	return 0;
 }
 
@@ -179,8 +178,8 @@ static int ft_rw_iic_drv_ioctl(struct file *filp, unsigned
 static const struct file_operations ft_rw_iic_drv_fops = {
 	.owner			= THIS_MODULE,
 	.open			= ft_rw_iic_drv_open,
-	.release			= ft_rw_iic_drv_release,
-	.unlocked_ioctl	= ft_rw_iic_drv_ioctl,
+	.release		= ft_rw_iic_drv_release,
+	.unlocked_ioctl	        = ft_rw_iic_drv_ioctl,
 };
 
 
@@ -254,4 +253,3 @@ void  ft_rw_iic_drv_exit(void)
 	kfree(ft_rw_i2c_dev_tt);
 	unregister_chrdev_region(MKDEV(ft_rw_iic_drv_major, 0), 1); 
 }
-

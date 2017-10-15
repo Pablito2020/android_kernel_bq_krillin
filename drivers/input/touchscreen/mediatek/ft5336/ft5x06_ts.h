@@ -5,7 +5,7 @@
 #define CFG_MAX_TOUCH_POINTS	5
 
 #define PRESS_MAX	0xFF
-#define FT_PRESS		0x7F
+#define FT_PRESS	0x7F
 
 #define FT5X0X_NAME	"ft5x0x_ts"
 
@@ -21,13 +21,16 @@
 #define POINT_READ_BUF	(3 + FT_TOUCH_STEP * CFG_MAX_TOUCH_POINTS)
 
 /*register address*/
-#define FT5x0x_REG_FW_VER		0xA6
+#define FT5x0x_REG_FW_VER	0xA6
 #define FT5x0x_REG_POINT_RATE	0x88
 #define FT5X0X_REG_THGROUP	0x80
 
+// focaltech read and write variables
 int ft5x0x_i2c_Read(struct i2c_client *client, char *writebuf, int writelen,
 		    char *readbuf, int readlen);
+
 int ft5x0x_i2c_Write(struct i2c_client *client, char *writebuf, int writelen);
+
 
 /* The platform data for the Focaltech ft5x0x touchscreen driver */
 struct ft5x0x_platform_data {
@@ -37,5 +40,4 @@ struct ft5x0x_platform_data {
 	unsigned int irq;
 	unsigned int reset;
 };
-
 #endif

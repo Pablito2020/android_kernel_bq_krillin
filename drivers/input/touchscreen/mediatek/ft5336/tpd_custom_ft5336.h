@@ -1,8 +1,9 @@
 #ifndef TOUCHPANEL_H__
 #define TOUCHPANEL_H__
 
-#define KEY_APP_SWITCH 580 /*
-In the stock kernel source provided by bq, the definition of APP_SWITCH was on include/uapi/linux/input.h I moved it here for a "compact" touch driver */
+// necessary for APP_SWITCH
+#define KEY_APP_SWITCH 580
+
 #define TPD_TYPE_CAPACITIVE
 #define TPD_TYPE_RESISTIVE
 #define TPD_I2C_NUMBER           0
@@ -12,7 +13,7 @@ In the stock kernel source provided by bq, the definition of APP_SWITCH was on i
 #define TPD_VELOCITY_CUSTOM_X 15
 #define TPD_VELOCITY_CUSTOM_Y 15
 #define TPD_POWER_SOURCE_CUSTOM         MT6323_POWER_LDO_VGP1
-#define TPD_DELAY                (2*HZ/100)
+#define TPD_DELAY               (2*HZ/100)
 #define TPD_CALIBRATION_MATRIX  {962,0,0,0,1600,0,0,0};
 #define TPD_HAVE_BUTTON
 #define TPD_BUTTON_HEIGH        (100)

@@ -17,7 +17,6 @@
 
 #include <linux/i2c.h>
 #include <linux/input.h>
-//#include <linux/i2c/ft5x06_ts.h>
 #include <linux/earlysuspend.h>
 #include <linux/delay.h>
 #include <linux/slab.h>
@@ -36,8 +35,6 @@
 #include <linux/timer.h>
 
 #define FTS_CTL_IIC
-//#define FTS_APK_DEBUG
-//#define SYSFS_DEBUG
 #ifdef FTS_CTL_IIC
 #include "focaltech_ctl.h"
 #include "ft5x06_ts.h"
@@ -48,8 +45,7 @@
 struct ts_event {
 	u16 au16_x[CFG_MAX_TOUCH_POINTS];	/*x coordinate */
 	u16 au16_y[CFG_MAX_TOUCH_POINTS];	/*y coordinate */
-	u8 au8_touch_event[CFG_MAX_TOUCH_POINTS];	/*touch event:
-					0 -- down; 1-- contact; 2 -- contact */
+	u8 au8_touch_event[CFG_MAX_TOUCH_POINTS];	/*touch event: 0 -- down; 1-- contact; 2 -- contact */
 	u8 au8_finger_id[CFG_MAX_TOUCH_POINTS];	/*touch ID */
 	u16 pressure;
 	u8 touch_point;
@@ -72,8 +68,6 @@ struct ft5x0x_ts_data {
 #define FTS_POINT_DOWN		0x00
 #define FTS_POINT_CONTACT	0x02
 
-
-
 /*
 *ft5x0x_i2c_Read-read data and write data by i2c
 *@client: handle of i2c
@@ -84,22 +78,19 @@ struct ft5x0x_ts_data {
 *
 *Returns negative errno, else the number of messages executed
 *
-*
 */
-int ft5x0x_i2c_Read(struct i2c_client *client, char *writebuf,
-		    int writelen, char *readbuf, int readlen)
+int ft5x0x_i2c_Read(struct i2c_client *client, char *writebuf, int writelen, char *readbuf, int readlen)
 {
 	int ret;
-
 	if (writelen > 0) {
 		struct i2c_msg msgs[] = {
-			{
+			 {
 			 .addr = client->addr,
 			 .flags = 0,
 			 .len = writelen,
 			 .buf = writebuf,
 			 },
-			{
+			 {
 			 .addr = client->addr,
 			 .flags = I2C_M_RD,
 			 .len = readlen,
@@ -112,7 +103,7 @@ int ft5x0x_i2c_Read(struct i2c_client *client, char *writebuf,
 				__func__);
 	} else {
 		struct i2c_msg msgs[] = {
-			{
+			 {
 			 .addr = client->addr,
 			 .flags = I2C_M_RD,
 			 .len = readlen,
@@ -125,13 +116,13 @@ int ft5x0x_i2c_Read(struct i2c_client *client, char *writebuf,
 	}
 	return ret;
 }
-/*write data by i2c*/
+
+/* write data by i2c function */
 int ft5x0x_i2c_Write(struct i2c_client *client, char *writebuf, int writelen)
 {
 	int ret;
-
 	struct i2c_msg msg[] = {
-		{
+		 {
 		 .addr = client->addr,
 		 .flags = 0,
 		 .len = writelen,
@@ -168,8 +159,8 @@ static int ft5x0x_read_Touchdata(struct ft5x0x_ts_data *data)
 			__func__);
 		return ret;
 	}
-	memset(event, 0, sizeof(struct ts_event));
 
+	memset(event, 0, sizeof(struct ts_event));
 	event->touch_point = 0;
 	for (i = 0; i < CFG_MAX_TOUCH_POINTS; i++) {
 		pointid = (buf[FT_TOUCH_ID_POS + FT_TOUCH_STEP * i]) >> 4;
@@ -177,6 +168,7 @@ static int ft5x0x_read_Touchdata(struct ft5x0x_ts_data *data)
 			break;
 		else
 			event->touch_point++;
+
 		event->au16_x[i] =
 		    (s16) (buf[FT_TOUCH_X_H_POS + FT_TOUCH_STEP * i] & 0x0F) <<
 		    8 | (s16) buf[FT_TOUCH_X_L_POS + FT_TOUCH_STEP * i];
@@ -188,9 +180,7 @@ static int ft5x0x_read_Touchdata(struct ft5x0x_ts_data *data)
 		event->au8_finger_id[i] =
 		    (buf[FT_TOUCH_ID_POS + FT_TOUCH_STEP * i]) >> 4;
 	}
-
 	event->pressure = FT_PRESS;
-
 	return 0;
 }
 
@@ -202,7 +192,6 @@ static void ft5x0x_report_value(struct ft5x0x_ts_data *data)
 	struct ts_event *event = &data->event;
 	int i = 0;
 	int up_point = 0;
-	//int touch_point = 0;
 
 	for (i = 0; i < event->touch_point; i++) {
 		/* LCD view area */
@@ -226,7 +215,6 @@ static void ft5x0x_report_value(struct ft5x0x_ts_data *data)
 						 ABS_MT_TOUCH_MAJOR, 0);
 				up_point++;
 			}
-			//touch_point ++;
 		}
 
 		input_mt_sync(data->input_dev);
@@ -235,7 +223,6 @@ static void ft5x0x_report_value(struct ft5x0x_ts_data *data)
 
 	if (event->touch_point == 0)
 		ft5x0x_ts_release(data);
-
 }
 
 /*The ft5x0x device will signal the host about TRIGGER_FALLING.
@@ -246,13 +233,7 @@ static irqreturn_t ft5x0x_ts_interrupt(int irq, void *dev_id)
 	struct ft5x0x_ts_data *ft5x0x_ts = dev_id;
 	int ret = 0;
 	disable_irq_nosync(ft5x0x_ts->irq);
-/*
-	ret = ft5x0x_read_Touchdata(ft5x0x_ts);
-	if (ret == 0)
-		ft5x0x_report_value(ft5x0x_ts);
-*/
 	enable_irq(ft5x0x_ts->irq);
-
 	return IRQ_HANDLED;
 }
 
@@ -461,15 +442,16 @@ static int __init ft5x0x_ts_init(void)
 	int ret;
 	ret = i2c_add_driver(&ft5x0x_ts_driver);
 	if (ret) {
-		printk(KERN_WARNING "Adding ft5x0x driver failed "
+		 printk(KERN_WARNING "Adding ft5x0x driver failed "
 		       "(errno = %d)\n", ret);
 	} else {
-		pr_info("Successfully added driver %s\n",
+		 pr_info("Successfully added driver %s\n",
 			ft5x0x_ts_driver.driver.name);
 	}
 	return ret;
 }
 
+// Exit focaltech driver
 static void __exit ft5x0x_ts_exit(void)
 {
 	i2c_del_driver(&ft5x0x_ts_driver);

@@ -1,12 +1,12 @@
 #ifndef __FOCALTECH_CTL_H__
 #define __FOCALTECH_CTL_H__
 
-#define  FT_RW_IIC_DRV  "ft_rw_iic_drv"
+#define FT_RW_IIC_DRV  "ft_rw_iic_drv"
 #define FT_RW_IIC_DRV_MAJOR 210
 
 #define FT_I2C_RDWR_MAX_QUEUE 	36
-#define FT_I2C_SLAVEADDR   			11
-#define FT_I2C_RW          				12
+#define FT_I2C_SLAVEADDR   	11
+#define FT_I2C_RW          	12
 
 typedef struct ft_rw_i2c
 {

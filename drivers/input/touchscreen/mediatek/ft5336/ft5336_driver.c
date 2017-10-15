@@ -1,9 +1,13 @@
 /* 
-Mediatek Focaltech FT5336 Driver
-Published by bq on 2015
-Edited by Pablito2020 on 2016/2017
+******************************************************************************
+* @file    ft5336.c                                                          *
+* @author  MCD Application Team                                              *
+* @version V1.0.0                                                            *		
+* @date    25-June-2015                                                      *		
+* @brief   This file contains all the functions prototypes for the           *		
+*          ft5336.c Touch screen driver.                                     *		
+******************************************************************************
 */
-
 #include "tpd.h"
 #include <linux/interrupt.h>
 #include <cust_eint.h>
@@ -42,7 +46,8 @@ static DECLARE_WAIT_QUEUE_HEAD(waiter);
  
  
 static void tpd_eint_interrupt_handler(void);
- #if 0
+
+#if 0
 extern void mt65xx_eint_unmask(unsigned int line);
 extern void mt65xx_eint_mask(unsigned int line);
 extern void mt65xx_eint_set_hw_debounce(unsigned int eint_num, unsigned int ms);
@@ -115,7 +120,7 @@ static int tpd_def_calmat_local[8] = TPD_CALIBRATION_MATRIX;
 #include <linux/miscdevice.h>
 #include <asm/uaccess.h>
 
-// for magnify velocity********************************************
+// for magnify velocity
 #ifndef TPD_VELOCITY_CUSTOM_X
 #define TPD_VELOCITY_CUSTOM_X 10
 #endif
@@ -1993,3 +1998,4 @@ static struct bin_attribute tp_mode_attr = {
 
  module_init(tpd_driver_init);
  module_exit(tpd_driver_exit);
+
