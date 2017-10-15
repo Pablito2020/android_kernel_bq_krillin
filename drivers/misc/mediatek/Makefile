@@ -139,7 +139,6 @@ obj-$(CONFIG_MTK_CCCI_DRIVER)  +=  ccci/
 obj-$(CONFIG_MTK_CCCI_EXT)     +=  dual_ccci/
 obj-$(CONFIG_MTK_ECCCI_DRIVER) +=  eccci/
 obj-$(CONFIG_MTK_EEMCS_DRIVER) +=  eemcs/
-obj-$(CONFIG_MTK_NFC) += nfc/
 
 #obj-y	+= cam_cal/dummy_eeprom/
 obj-y	+= lens/

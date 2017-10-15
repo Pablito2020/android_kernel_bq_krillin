@@ -1,9 +1,7 @@
-
 #include "accel.h"
 #include "accel_factory.h"
 
 struct acc_context *acc_context_obj = NULL;
-
 
 static struct acc_init_info *gsensor_init_list[MAX_CHOOSE_G_NUM] = { 0 };	/* modified */
 #if defined(CONFIG_HAS_EARLYSUSPEND)
@@ -28,7 +26,6 @@ static void acc_work_func(struct work_struct *work)
         ACC_ERR("acc driver not register data path\n");
         return;
 	}
-
 
 	time.tv_sec = time.tv_nsec = 0;
 	time = get_monotonic_coarse();
@@ -63,11 +60,6 @@ static void acc_work_func(struct work_struct *work)
 
 		}
 	}
-	/* report data to input device */
-	/* printk("new acc work run....\n"); */
-	/* ACC_LOG("acc data[%d,%d,%d] \n" ,cxt->drv_data.acc_data.values[0], */
-	/* cxt->drv_data.acc_data.values[1],cxt->drv_data.acc_data.values[2]); */
-
 	acc_data_report(cxt->drv_data.acc_data.values[0],
 			cxt->drv_data.acc_data.values[1], cxt->drv_data.acc_data.values[2],
 			cxt->drv_data.acc_data.status);
@@ -388,10 +380,6 @@ static ssize_t acc_show_batch(struct device* dev,
 static ssize_t acc_store_flush(struct device* dev, struct device_attribute *attr,
                                   const char *buf, size_t count)
 {
-	//mutex_lock(&acc_context_obj->acc_op_mutex);
-   // struct acc_context *devobj = (struct acc_context*)dev_get_drvdata(dev);
-	//do read FIFO data function and report data immediately
-	//mutex_unlock(&acc_context_obj->acc_op_mutex);
     return count;
 }
 
@@ -754,8 +742,6 @@ static void __exit acc_exit(void)
 	platform_driver_unregister(&gsensor_driver);
 }
 late_initcall(acc_init);
-//module_init(acc_init);
-//module_exit(acc_exit);
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("ACCELEROMETER device driver");
 MODULE_AUTHOR("Mediatek");

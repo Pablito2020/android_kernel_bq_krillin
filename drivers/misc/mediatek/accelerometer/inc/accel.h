@@ -1,7 +1,5 @@
-
 #ifndef __ACC_H__
 #define __ACC_H__
-
 
 #include <linux/wakelock.h>
 #include <linux/interrupt.h>
@@ -77,7 +75,6 @@ struct acc_init_info
 struct acc_data{
 	hwm_sensor_data acc_data ;
 	int data_updata;
-	//struct mutex lock;
 };
 
 struct acc_drv_obj {
@@ -99,7 +96,6 @@ struct acc_context {
 
 	struct early_suspend    early_drv;
 	atomic_t                early_suspend;
-	//struct acc_drv_obj    drv_obj;
 	struct acc_data       drv_data;
 	int                   cali_sw[ACC_AXES_NUM+1];
 	struct acc_control_path   acc_ctl;
@@ -111,19 +107,10 @@ struct acc_context {
 	bool is_batch_enable;	//version2.this is used for judging whether sensor is in batch mode
 };
 
-//driver API for internal  
-//extern int acc_enable_nodata(int enable);
-//extern int acc_attach(struct acc_drv_obj *obj);
-//driver API for third party vendor
-
 //for auto detect
 extern int acc_driver_add(struct acc_init_info* obj) ;
 extern int acc_data_report(int x, int y, int z,int status);
 extern int acc_register_control_path(struct acc_control_path *ctl);
 extern int acc_register_data_path(struct acc_data_path *data);
-
-
-
-
 
 #endif

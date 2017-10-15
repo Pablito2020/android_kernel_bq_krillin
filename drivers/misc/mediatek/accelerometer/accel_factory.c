@@ -1,4 +1,5 @@
 #include "accel_factory.h"
+
 static int acc_factory_open(struct inode *inode, struct file *file)
 {
     file->private_data = acc_context_obj;
@@ -163,30 +164,9 @@ static long acc_factory_unlocked_ioctl(struct file *file, unsigned int cmd, unsi
 		ACC_LOG("GSENSOR_IOCTL_SET_CALI data : (%d, %d, %d)!\n", cali[0], cali[1], cali[2]);
 
 		acc_set_cali(cali);
-		/*if(cxt->acc_ctl.acc_calibration != NULL)
-		{
-			err = cxt->acc_ctl.acc_calibration(SETCALI, cali);
-			if(err < 0)
-			{
-				ACC_ERR("GSENSOR_IOCTL_SET_CALI fail!\n");
-				break;
-			}
-		}
-		*/
         break;
 
     case GSENSOR_IOCTL_CLR_CALI:
-		/*
-        if(cxt->acc_ctl.acc_calibration != NULL)
-		{
-			err = cxt->acc_ctl.acc_calibration(CLRCALI, cali);
-			if(err < 0)
-			{
-				ACC_ERR("GSENSOR_IOCTL_CLR_CALI fail!\n");
-				break;
-			}
-		} 
-		*/
 		acc_clear_cali();
         break;
 
@@ -197,17 +177,6 @@ static long acc_factory_unlocked_ioctl(struct file *file, unsigned int cmd, unsi
             err = -EINVAL;
             break;    
         }
-		/*
-        if(cxt->acc_ctl.acc_calibration != NULL)
-		{
-			err = cxt->acc_ctl.acc_calibration(GETCALI, cali);
-			if(err < 0)
-			{
-				ACC_ERR("GSENSOR_IOCTL_GET_CALI fail!\n");
-				break;
-			}
-		}
-		*/
 		ACC_LOG("GSENSOR_IOCTL_GET_CALI data : (%d, %d, %d)!\n", cxt->cali_sw[0], cxt->cali_sw[1], cxt->cali_sw[2]);
         sensor_data.x = cxt->cali_sw[0]; 
         sensor_data.y = cxt->cali_sw[1];
@@ -256,6 +225,3 @@ int acc_factory_device_init()
     }	
 	return error;
 }
-
-
-

@@ -43,8 +43,6 @@
 
 #define POWER_NONE_MACRO MT65XX_POWER_NONE
 
-
-
 /*----------------------------------------------------------------------------*/
 //#define I2C_DRIVERID_LSM330 345
 /*----------------------------------------------------------------------------*/
@@ -60,12 +58,9 @@
 #define LSM330_DEV_NAME        "LSM330"
 /*----------------------------------------------------------------------------*/
 static const struct i2c_device_id lsm330_i2c_id[] = {{LSM330_DEV_NAME,0},{}};
+
 /*the adapter id will be available in customization*/
 static struct i2c_board_info __initdata i2c_LSM330={ I2C_BOARD_INFO("LSM330", (LSM330_I2C_SLAVE_ADDR>>1))};
-
-//static unsigned short lsm330_force[] = {0x00, LSM330_I2C_SLAVE_ADDR, I2C_CLIENT_END, I2C_CLIENT_END};
-//static const unsigned short *const lsm330_forces[] = { lsm330_force, NULL };
-//static struct i2c_client_address_data lsm330_addr_data = { .forces = lsm330_forces,};
 
 /*----------------------------------------------------------------------------*/
 static int lsm330_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id); 
@@ -76,8 +71,8 @@ typedef enum {
     ADX_TRC_FILTER  = 0x01,
     ADX_TRC_RAWDATA = 0x02,
     ADX_TRC_IOCTL   = 0x04,
-    ADX_TRC_CALI	= 0X08,
-    ADX_TRC_INFO	= 0X10,
+    ADX_TRC_CALI    = 0X08,
+    ADX_TRC_INFO    = 0X10,
 } ADX_TRC;
 /*----------------------------------------------------------------------------*/
 struct scale_factor{
@@ -129,18 +124,16 @@ struct lsm330_i2c_data {
 /*----------------------------------------------------------------------------*/
 static struct i2c_driver lsm330_i2c_driver = {
     .driver = {
-//        .owner          = THIS_MODULE,
         .name           = LSM330_DEV_NAME,
     },
 	.probe      		= lsm330_i2c_probe,
-	.remove    			= lsm330_i2c_remove,
-	.detect				= lsm330_i2c_detect,
+	.remove    		= lsm330_i2c_remove,
+	.detect			= lsm330_i2c_detect,
 #if !defined(CONFIG_HAS_EARLYSUSPEND)    
     .suspend            = lsm330_suspend,
     .resume             = lsm330_resume,
 #endif
 	.id_table = lsm330_i2c_id,
-//	.address_data = &lsm330_addr_data,
 };
 
 /*----------------------------------------------------------------------------*/
@@ -149,23 +142,13 @@ static struct platform_driver lsm330_gsensor_driver;
 static struct lsm330_i2c_data *obj_i2c_data = NULL;
 static bool sensor_power = false; //true;
 static GSENSOR_VECTOR3D gsensor_gain, gsensor_offset;
-//static char selftestRes[10] = {0};
-
-
-
 /*----------------------------------------------------------------------------*/
 #define GSE_TAG                  "LHJ [Gsensor] "
 
-/*#define GSE_FUN(f)             printk(KERN_INFO GSE_TAG"%s\n", __FUNCTION__)
-#define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
-#define GSE_LOG(fmt, args...)    printk(KERN_INFO GSE_TAG fmt, ##args)*/
-
-//#define GSE_DEBUG_MSG
-
 #ifdef GSE_DEBUG_MSG
-#define GSE_FUN(f)             printk(KERN_ERR GSE_TAG"%s\n", __FUNCTION__) // printk(KERN_INFO GSE_TAG"%s\n", __FUNCTION__)
+#define GSE_FUN(f)             printk(KERN_ERR GSE_TAG"%s\n", __FUNCTION__)
 #define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
-#define GSE_LOG(fmt, args...)    printk(KERN_ERR GSE_TAG fmt, ##args)//printk(KERN_INFO GSE_TAG fmt, ##args)
+#define GSE_LOG(fmt, args...)    printk(KERN_ERR GSE_TAG fmt, ##args)
 #else
 #define GSE_FUN(f)             do {} while (0)
 #define GSE_ERR(fmt, args...)    do {} while (0)
@@ -183,8 +166,6 @@ static struct data_resolution lsm330_data_resolution[] = {
 };
 /*----------------------------------------------------------------------------*/
 static struct data_resolution lsm330_offset_resolution = {{15, 6}, 64};
-
-
 
 static void LSM330_Power_GS_CS_Setting(unsigned int on);
 static void LSM330_Power_GY_CS_Setting(unsigned int on);
@@ -235,30 +216,6 @@ static void LSM330_Power_GY_CS_Setting(unsigned int on)
 static void LSM330_Power_GYDEN_Setting(unsigned int on)
 {
 	GSE_ERR("%s\n", on ? "on" : "off");
-#if 0//LSM330_GPIO_DEFINED
-	if(1==on)
-	{
-		mt_set_gpio_mode(GPIO_GYRO_EN_PIN,GPIO_GYRO_EN_PIN_M_GPIO);
-		mt_set_gpio_dir(GPIO_GYRO_EN_PIN,GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_GYRO_EN_PIN,GPIO_OUT_ONE);
-		mdelay(10);
-		mt_set_gpio_mode(GPIO_GS_CS_PIN,GPIO_GS_CS_PIN_M_GPIO);
-		mt_set_gpio_dir(GPIO_GS_CS_PIN,GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_GS_CS_PIN,GPIO_OUT_ONE);
-		mdelay(10);
-	}
-	else
-	{
-		mt_set_gpio_mode(GPIO_GS_CS_PIN,GPIO_GS_CS_PIN_M_GPIO);
-		mt_set_gpio_dir(GPIO_GS_CS_PIN,GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_GS_CS_PIN,GPIO_OUT_ZERO);
-		mdelay(10);
-		mt_set_gpio_mode(GPIO_GYRO_EN_PIN,GPIO_GYRO_EN_PIN_M_GPIO);
-		mt_set_gpio_dir(GPIO_GYRO_EN_PIN,GPIO_DIR_OUT);
-		mt_set_gpio_out(GPIO_GYRO_EN_PIN,GPIO_OUT_ZERO);
-		mdelay(10);
-	}
-#endif
 }
 
 static void LSM330_Power_Gpio_Setting(unsigned int on)
@@ -306,27 +263,6 @@ static void LSM330_Power_Gpio_Setting(unsigned int on)
 	}
 #endif
 }
-
-/*
-static int hwmsen_read_byte_sr(struct i2c_client *client, u8 addr, u8 *data)
-{
-   u8 buf;
-    int ret = 0;
-	
-    client->addr = client->addr& I2C_MASK_FLAG | I2C_WR_FLAG |I2C_RS_FLAG;
-    buf = addr;
-	ret = i2c_master_send(client, (const char*)&buf, 1<<8 | 1);
-    //ret = i2c_master_send(client, (const char*)&buf, 1);
-    if (ret < 0) {
-        GSE_ERR("send command error!!\n");
-        return -EFAULT;
-    }
-
-    *data = buf;
-	client->addr = client->addr& I2C_MASK_FLAG;
-    return 0;
-}
-*/
 /*--------------------read function----------------------------------*/
 static int lis_i2c_read_block(struct i2c_client *client, u8 addr, u8 *data, u8 len)
 {
@@ -617,33 +553,6 @@ static int LSM330_ReadCalibration(struct i2c_client *client, int dat[LSM330_AXES
     return 0;
 }
 /*----------------------------------------------------------------------------*/
-/*
-static int LSM330_ReadCalibrationEx(struct i2c_client *client, int act[LSM330_AXES_NUM], int raw[LSM330_AXES_NUM])
-{  
-	
-	struct lsm330_i2c_data *obj = i2c_get_clientdata(client);
-	int err;
-	int mul;
-
-	if(err = LSM330_ReadOffset(client, obj->offset))
-	{
-		GSE_ERR("read offset fail, %d\n", err);
-		return err;
-	}    
-
-	mul = obj->reso->sensitivity/lsm330_offset_resolution.sensitivity;
-	raw[LSM330_AXIS_X] = obj->offset[LSM330_AXIS_X]*mul + obj->cali_sw[LSM330_AXIS_X];
-	raw[LSM330_AXIS_Y] = obj->offset[LSM330_AXIS_Y]*mul + obj->cali_sw[LSM330_AXIS_Y];
-	raw[LSM330_AXIS_Z] = obj->offset[LSM330_AXIS_Z]*mul + obj->cali_sw[LSM330_AXIS_Z];
-
-	act[obj->cvt.map[LSM330_AXIS_X]] = obj->cvt.sign[LSM330_AXIS_X]*raw[LSM330_AXIS_X];
-	act[obj->cvt.map[LSM330_AXIS_Y]] = obj->cvt.sign[LSM330_AXIS_Y]*raw[LSM330_AXIS_Y];
-	act[obj->cvt.map[LSM330_AXIS_Z]] = obj->cvt.sign[LSM330_AXIS_Z]*raw[LSM330_AXIS_Z];                        
-	                       
-	return 0;
-}
-*/
-/*----------------------------------------------------------------------------*/
 static int LSM330_WriteCalibration(struct i2c_client *client, int dat[LSM330_AXES_NUM])
 {
 	struct lsm330_i2c_data *obj = i2c_get_clientdata(client);
@@ -690,19 +599,6 @@ static int LSM330_CheckDeviceID(struct i2c_client *client)
 		
 	}
 	GSE_LOG("LSM330 Device ID=0x%x,respect=0x%x\n",databuf[0],WHO_AM_I);
-/*DO Not meet the datasheet!!! abort   */
-/*
-	if(databuf[0]!= WHO_AM_I)
-	{
-		return LSM330_ERR_IDENTIFICATION;
-	}
-
-	exit_LSM330_CheckDeviceID:
-	if (res <= 0)
-	{
-		return LSM330_ERR_I2C;
-	}
-*/
 	return LSM330_SUCCESS;
 }
 /*----------------------------------------------------------------------------*/
@@ -784,27 +680,8 @@ static int LSM330_SetPowerMode(struct i2c_client *client, bool enable)
 		}
 
 	}
-/*
-	if(enable == TRUE)
-	{
-		databuf[0] &=  ~LSM330_MEASURE_MODE;
-	}
-	else
-	{
-		databuf[0] |= LSM330_MEASURE_MODE;
-	}
-	databuf[1] = databuf[0];
-	databuf[0] = LSM330_REG_CTL_REG5;
-	
-	
-	res = i2c_master_send(client, databuf, 0x2);
 
-	if(res <= 0)
-	{
-		GSE_LOG("set power mode failed!\n");
-		return LSM330_ERR_I2C;
-	}
-	else*/ if(atomic_read(&obj->trace) & ADX_TRC_INFO)
+        if(atomic_read(&obj->trace) & ADX_TRC_INFO)
 	{
 		GSE_LOG("set power mode ok %d!\n", databuf[1]);
 	}
