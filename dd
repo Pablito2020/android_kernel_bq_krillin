@@ -48,6 +48,7 @@ $e
   $e
   $e "  1 - Build Daredevil with the Google gcc 4.8 toolchain"
   $e "  2 - Build Daredevil with the Linaro 7.2.1 toolchain"
+  $e "  2 - Build Daredevil with Enforcing Selinux"
   $e "  3 - Clean the kernel source"
   $e "  x - Exit"
   $e
@@ -57,6 +58,7 @@ read o
 	case $o in
 		1) . build-gcc.sh;;
 		2) . build-linaro.sh;;
+		2) . build-enforcing.sh;;
 		3) . clean.sh;;
 		x) clear; echo; echo "Goodbye."; echo; exit 1;;
 		*) ERR_MSG="Invalid option!"; clear;;
