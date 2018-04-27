@@ -239,7 +239,7 @@ struct mt_cpu_power_info
 ****************************/
 #if defined(HQA_LV_1_09V)
 static struct mt_cpu_freq_info mt6582_freqs_e1[] = {
-	OP(DVFS_F0_2, DVFS_V0), 
+    OP(DVFS_F0_2, DVFS_V0), 
     OP(DVFS_F0, DVFS_V0),
     OP(DVFS_F1, DVFS_V0),
     OP(DVFS_F2, DVFS_V1),
